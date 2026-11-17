@@ -7,13 +7,13 @@ function App() {
     <>
       <a className="skip-link" href="#main">Skip to content</a>
       <header className="site-header">
-        <a className="brand" href="#home">TAKINAHUA<span> / PORTFOLIO</span></a>
+        <a className="brand" href="#home">BARRY HUA<span> / PORTFOLIO</span></a>
         <nav aria-label="Main navigation">{sections.map(section => <a key={section} href={`#${section.toLowerCase()}`}>{section}</a>)}</nav>
       </header>
       <main id="main">
         <section id="home" className="hero" aria-labelledby="hero-title">
           <p className="eyebrow">SOFTWARE · MATHEMATICS · EXPLORATION</p>
-          <h1 id="hero-title">Hi, I’m TakinaHua.<br /><span>Welcome to my corner<br />of the internet.</span></h1>
+          <h1 id="hero-title">Hi, I’m Barry Hua.<br /><span>Welcome to my corner<br />of the internet.</span></h1>
           <p className="intro">Exploring software engineering through an applied mathematics lens.</p>
           <div className="actions"><a className="button" href="#projects">Explore my projects <span aria-hidden="true">↗</span></a><a className="text-link" href="#contact">Get in touch</a></div>
           <p className="note">Résumé coming soon</p>
@@ -23,7 +23,7 @@ function App() {
         <section id="experience" aria-labelledby="experience-title"><p className="eyebrow">03 / EXPERIENCE</p><h2 id="experience-title">A growing journey.</h2><div className="experience-grid"><article><h3>Experience</h3><p>Work experience and accomplishments will be added here.</p></article><article><h3>Education</h3><p>Education details and relevant coursework will be added here.</p></article></div></section>
         <section id="contact" aria-labelledby="contact-title"><p className="eyebrow">04 / CONTACT</p><h2 id="contact-title">Let’s connect.</h2><p className="section-copy">Find my work on GitHub. Email and LinkedIn links will be added soon.</p><a className="button" href="https://github.com/TakinaHua" target="_blank" rel="noreferrer">Visit GitHub <span aria-hidden="true">↗</span></a></section>
       </main>
-      <footer><span>TakinaHua</span><a href="#home">Back to top ↑</a></footer>
+      <footer><span>Barry Hua</span><a href="#home">Back to top ↑</a></footer>
     </>
   )
 }
