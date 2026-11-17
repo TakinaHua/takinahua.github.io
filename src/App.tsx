@@ -35,7 +35,7 @@ function App() {
             <article><h3>BigBet Research · Carnegie Mellon</h3><p className="role">Research Assistant</p><p>I built calculus quizzes that collected students’ answers and explanations, along with a service that gave feedback on their reasoning. I also wrote Python scripts to look for patterns in mistakes and worked on the prompts and grading criteria used to assess responses.</p></article>
           </div>
         </section>
-        <section id="contact" aria-labelledby="contact-title"><p className="eyebrow">04 / CONTACT</p><h2 id="contact-title">Let’s connect.</h2><p className="section-copy">Find my work on GitHub. Email and LinkedIn links will be added soon.</p><a className="button" href="https://github.com/TakinaHua" target="_blank" rel="noreferrer">Visit GitHub <span aria-hidden="true">↗</span></a></section>
+        <section id="contact" aria-labelledby="contact-title"><p className="eyebrow">04 / CONTACT</p><h2 id="contact-title">Let’s connect.</h2><p className="section-copy">Have a question or want to work together? Send me an email or connect on LinkedIn.</p><div className="actions contact-links"><a className="button" href="mailto:barry.shanhua@gmail.com">barry.shanhua@gmail.com</a><a className="text-link" href="https://www.linkedin.com/in/barry-shan-hua/" target="_blank" rel="noreferrer">LinkedIn ↗</a><a className="text-link" href="https://github.com/TakinaHua" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a></div></section>
       </main>
       <footer><span>Barry Hua</span><a href="#home">Back to top ↑</a></footer>
     </>
