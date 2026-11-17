@@ -18,7 +18,7 @@ function App() {
           <div className="actions"><a className="button" href="#projects">Explore my projects <span aria-hidden="true">↗</span></a><a className="text-link" href="#contact">Get in touch</a></div>
           <p className="note">Résumé coming soon</p>
         </section>
-        <section id="about" aria-labelledby="about-title"><p className="eyebrow">01 / ABOUT</p><h2 id="about-title">Curiosity meets engineering.</h2><p className="section-copy">My interests connect software engineering and applied mathematics. This portfolio is a space to share the projects I build and what I learn along the way.</p></section>
+        <section id="about" aria-labelledby="about-title"><p className="eyebrow">01 / ABOUT</p><h2 id="about-title">A little about me.</h2><p className="section-copy">I study Computational and Applied Mathematics at Carnegie Mellon, with a minor in Computer Science. I’m interested in how algorithms and software can help people solve everyday problems.</p></section>
         <section id="projects" aria-labelledby="projects-title">
           <p className="eyebrow">02 / PROJECTS</p><h2 id="projects-title">Things I’ve built.</h2>
           <div className="project-list">
@@ -26,7 +26,14 @@ function App() {
             <article className="project"><div><h3>Fire and Ice</h3><p>A Python game I built with a team. I worked on player movement, collision detection, and camera and keyboard controls to make the game feel more responsive.</p><p className="tech">Python · OpenCV · cmu_graphics</p></div><span className="project-number" aria-hidden="true">02</span></article>
           </div>
         </section>
-        <section id="experience" aria-labelledby="experience-title"><p className="eyebrow">03 / EXPERIENCE</p><h2 id="experience-title">A growing journey.</h2><div className="experience-grid"><article><h3>Experience</h3><p>Work experience and accomplishments will be added here.</p></article><article><h3>Education</h3><p>Education details and relevant coursework will be added here.</p></article></div></section>
+        <section id="experience" aria-labelledby="experience-title">
+          <p className="eyebrow">03 / EXPERIENCE</p><h2 id="experience-title">Where I’ve worked.</h2>
+          <div className="experience-list">
+            <article><h3>Avary AI</h3><p className="role">Software Engineer</p><p>I work on the backend for an interview platform, building APIs for interview links and candidate reports. I also handle access controls to keep each organization’s data separate and move file processing into background jobs so uploads don’t hold up requests.</p></article>
+            <article><h3>Parasoft</h3><p className="role">Technical Support Engineer</p><p>I wrote tests and helped track down bugs in client software. Much of the work involved reproducing API failures and debugging C and C++ programs, including issues where threads interfered with each other or got stuck.</p></article>
+            <article><h3>BigBet Research · Carnegie Mellon</h3><p className="role">Research Assistant</p><p>I built calculus quizzes that collected students’ answers and explanations, along with a service that gave feedback on their reasoning. I also wrote Python scripts to look for patterns in mistakes and worked on the prompts and grading criteria used to assess responses.</p></article>
+          </div>
+        </section>
         <section id="contact" aria-labelledby="contact-title"><p className="eyebrow">04 / CONTACT</p><h2 id="contact-title">Let’s connect.</h2><p className="section-copy">Find my work on GitHub. Email and LinkedIn links will be added soon.</p><a className="button" href="https://github.com/TakinaHua" target="_blank" rel="noreferrer">Visit GitHub <span aria-hidden="true">↗</span></a></section>
       </main>
       <footer><span>Barry Hua</span><a href="#home">Back to top ↑</a></footer>
