@@ -1,24 +1,24 @@
-# Portfolio
+# Barry Hua — Portfolio
 
-React + TypeScript + Vite personal portfolio.
+React + TypeScript + Vite portfolio with a responsive galaxy hero, two projects, and experience at Avary AI, Parasoft, and BigBet Research.
 
-## Local development
+## Run locally
 
 ```sh
 npm install
 npm run dev
 ```
 
-## Validation
+## Check
 
 ```sh
-npm run lint
 npm run build
+npm run lint
 npm run preview
 ```
 
-The five sections are in src/App.tsx. Base styles are in src/index.css and layout styles in src/App.css.
+Content lives in src/App.tsx; styles in src/App.css and src/index.css. The selected hero image is public/images/galaxy-hero.webp.
 
-Personal details not supplied yet are marked as coming soon: résumé, Atlas description and links, work and education, email and LinkedIn. Replace these with verified information before publishing.
+Each feature is saved in a separate Git commit. Use git log --oneline to browse milestones and git show COMMIT to review a change.
 
-The selected galaxy image and GitHub Pages deployment are subsequent steps and are not configured yet.
+Résumé download, email/LinkedIn links, Atlas demo URL, and GitHub Pages deployment remain to be configured.
