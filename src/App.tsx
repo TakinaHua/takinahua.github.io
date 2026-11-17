@@ -24,6 +24,7 @@ function App() {
           <div className="project-list">
             <article className="project"><div><h3>Atlas</h3><p>A trip planner for putting together, mapping, and sharing itineraries. I built the web app and a routing system that finds the shortest path between stops, so people can see how a trip fits together.</p><p className="tech">TypeScript · Next.js · Node.js · PostgreSQL</p><span className="status">Live demo coming soon</span></div><span className="project-number" aria-hidden="true">01</span></article>
             <article className="project"><div><h3>Fire and Ice</h3><p>A Python game I built with a team. I worked on player movement, collision detection, and camera and keyboard controls to make the game feel more responsive.</p><p className="tech">Python · OpenCV · cmu_graphics</p></div><span className="project-number" aria-hidden="true">02</span></article>
+            <article className="project"><div><h3>EV Optimization</h3><p>An operations research project exploring optimization for electric vehicles. More about the model and our work will be shared here soon.</p><p className="tech">Operations research · Optimization</p><span className="status">Coming soon</span></div><span className="project-number" aria-hidden="true">03</span></article>
           </div>
         </section>
         <section id="experience" aria-labelledby="experience-title">
