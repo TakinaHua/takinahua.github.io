@@ -218,7 +218,7 @@ function App() {
         <section id="about" aria-labelledby="about-title">
           <h2 id="about-title">About me</h2>
           <div className="about-grid">
-            <div>
+            <div className="about-education">
               <h3 id="education">Education</h3>
               <ul className="education-list">
                 <li>
