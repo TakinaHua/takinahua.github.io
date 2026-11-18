@@ -228,7 +228,7 @@ function App() {
                   target="_blank"
                   rel="noreferrer"
                 >
-                  GitHub repository (private) <span aria-hidden="true">↗</span>
+                  GitHub repository <span aria-hidden="true">↗</span>
                 </a>
               </div>
               <div className="project-media">Project preview coming soon</div>
