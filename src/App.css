@@ -180,15 +180,16 @@
 
 .compass {
   width: 58px;
-  opacity: .68;
-  transition: opacity 160ms ease, transform 160ms ease;
+  opacity: .36;
+  transform: scale(.5);
   transform-origin: left center;
+  transition: opacity 160ms ease, transform 160ms ease;
 }
 
 .compass-zone:hover .compass,
 .compass-zone:focus-within .compass {
   opacity: 1;
-  transform: scale(1.04);
+  transform: scale(1);
 }
 
 .compass-toggle {
@@ -234,6 +235,30 @@
 
 .compass a:focus-visible {
   outline-offset: 0;
+}
+
+.compass a {
+  position: relative;
+}
+
+.compass a::after {
+  position: absolute;
+  left: calc(100% + 5px);
+  z-index: 1;
+  padding: 3px 8px;
+  border: 1px solid #314662;
+  border-radius: 5px;
+  background: #101a2c;
+  color: #e0eafb;
+  font-size: 12px;
+  white-space: nowrap;
+  visibility: hidden;
+  pointer-events: none;
+  content: attr(aria-label);
+}
+
+.compass a:is(:hover, :focus-visible)::after {
+  visibility: visible;
 }
 
 body:has(#about:target) .compass-main[href="#about"],
@@ -306,6 +331,12 @@ main :is(h3, article, .skill-group)[id] {
   .compass a {
     width: 44px;
     height: 24px;
+  }
+
+  .compass a::after {
+    position: fixed;
+    left: 84px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
   }
 
   footer {
