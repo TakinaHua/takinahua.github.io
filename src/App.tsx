@@ -40,6 +40,15 @@ function App() {
                 </li>
               </ul>
             </div>
+            <div>
+              <h3>Interests</h3>
+              <ul className="interest-list">
+                <li>Backend development</li>
+                <li>Algorithms</li>
+                <li>Operations research</li>
+                <li>Agent development</li>
+              </ul>
+            </div>
           </div>
         </section>
         <section id="projects" aria-labelledby="projects-title">
