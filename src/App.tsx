@@ -1,7 +1,5 @@
 import './App.css'
 
-const sections = ['About', 'Projects', 'Experience', 'Contact']
-
 const skills = [
   { name: 'Python', icon: 'python' },
   { name: 'TypeScript', icon: 'typescript' },
@@ -21,7 +19,6 @@ function App() {
       <a className="skip-link" href="#main">Skip to content</a>
       <header className="site-header">
         <a className="brand" href="#home">BARRY HUA<span> / PORTFOLIO</span></a>
-        <nav aria-label="Main navigation">{sections.map(section => <a key={section} href={`#${section.toLowerCase()}`}>{section}</a>)}</nav>
       </header>
       <main id="main">
         <section id="home" className="hero" aria-labelledby="hero-title">
@@ -103,7 +100,6 @@ function App() {
             </article>
           </div>
         </section>
-        <section id="contact" aria-labelledby="contact-title"><p className="eyebrow">04 / CONTACT</p><h2 id="contact-title">Let’s connect.</h2><p className="section-copy">Have a question or want to work together? Send me an email or connect on LinkedIn.</p><div className="actions contact-links"><a className="button" href="mailto:barry.shanhua@gmail.com">barry.shanhua@gmail.com</a><a className="text-link" href="https://www.linkedin.com/in/barry-shan-hua/" target="_blank" rel="noreferrer">LinkedIn ↗</a><a className="text-link" href="https://github.com/TakinaHua" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a></div></section>
       </main>
       <footer><span>Barry Hua</span><a href="#home">Back to top ↑</a></footer>
     </>
