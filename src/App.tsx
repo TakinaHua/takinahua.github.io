@@ -231,7 +231,15 @@ function App() {
                   GitHub repository <span aria-hidden="true">↗</span>
                 </a>
               </div>
-              <div className="project-media">Project preview coming soon</div>
+              <a className="project-preview" href="/images/lol-ping-preview.png">
+                <img
+                  src="/images/lol-ping-preview.png"
+                  width="1360"
+                  height="760"
+                  loading="lazy"
+                  alt="LoL Ping wheel with eight directional options and Danger selected. Open full-size preview."
+                />
+              </a>
             </article>
             <article className="project" id="ev-optimization"><div className="project-copy"><h3>EV Optimization</h3><p>An operations research project exploring optimization for electric vehicles. More about the model and our work will be shared here soon.</p><p className="tech">Operations research · Optimization</p><span className="status">Coming soon</span></div><div className="project-media">Project preview coming soon</div></article>
           </div>

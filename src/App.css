@@ -370,3 +370,17 @@ main :is(h3, article, .skill-group)[id] {
     transition: none;
   }
 }
+
+.project-preview {
+  display: block;
+  align-self: center;
+  border: 1px solid #2c3c54;
+  border-radius: 8px;
+}
+
+.project-preview img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: inherit;
+}
