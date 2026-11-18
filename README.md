@@ -1,6 +1,6 @@
 # Barry Hua — Portfolio
 
-React + TypeScript + Vite portfolio with a responsive galaxy hero, three projects, and experience at Avary AI, Parasoft, and BigBet Research.
+React + TypeScript + Vite portfolio with a responsive galaxy hero, four projects, and experience at Avary AI, Parasoft, and BigBet Research.
 
 ## Run locally
 

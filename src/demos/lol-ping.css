@@ -1,0 +1,131 @@
+.demo {
+  width: min(880px, calc(100% - 32px));
+  margin: auto;
+  padding: 32px 0 48px;
+}
+
+.demo-back { color: #bed3f0; }
+.demo h1 { margin: 18px 0 8px; font-size: clamp(32px, 7vw, 56px); line-height: 1.1; }
+.demo p { color: #b6c6dc; }
+
+.ping-arena {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: clamp(275px, 49vh, 460px);
+  overflow: hidden;
+  border: 1px solid #3e5674;
+  border-radius: 14px;
+  background-color: #101a2b;
+  background-image:
+    linear-gradient(#27395460 1px, transparent 1px),
+    linear-gradient(90deg, #27395460 1px, transparent 1px);
+  background-size: 32px 32px;
+  touch-action: none;
+  user-select: none;
+  cursor: crosshair;
+}
+
+.field-hint {
+  color: #b6c6dc;
+  padding: 5px 12px;
+  border-radius: 6px;
+  background: #101a2b;
+  pointer-events: none;
+}
+
+.ping-wheel,
+.placed-ping {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.ping-wheel {
+  display: grid;
+  place-items: center;
+  width: 152px;
+  height: 152px;
+  border: 1px solid #537296;
+  border-radius: 50%;
+  background: #121f34f2;
+}
+
+.wheel-direction {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  transform: translate(-50%, -50%);
+  border: 1px solid #537296;
+  border-radius: 50%;
+  background: #162742;
+  font-size: 20px;
+}
+
+.wheel-direction[data-selected="true"] {
+  border-color: currentColor;
+  outline: 2px solid currentColor;
+  outline-offset: 2px;
+}
+
+.wheel-center { font-size: 13px; color: #edf2fa; }
+
+.placed-ping {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  background: #162742;
+  font-size: 22px;
+  animation: ping-fade 1.15s forwards;
+}
+
+.placed-ping::after {
+  position: absolute;
+  inset: -2px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  content: '';
+  animation: ping-ring 1.15s ease-out forwards;
+}
+
+@keyframes ping-ring {
+  to { transform: scale(3); opacity: 0; }
+}
+
+@keyframes ping-fade {
+  80% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.demo-tools { display: flex; align-items: center; gap: 14px; margin: 12px 0; }
+.demo-tools p { margin: 0; }
+.demo button {
+  padding: 8px 12px;
+  border: 1px solid #486184;
+  border-radius: 7px;
+  background: #14223a;
+  color: #edf2fa;
+  cursor: pointer;
+}
+.demo button:hover { background: #233858; }
+.demo button:focus-visible { outline: 2px solid #9acaff; outline-offset: 3px; }
+.ping-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 0 0;
+  margin: 0;
+  border: 0;
+}
+.ping-options legend { padding: 0; color: #b6c6dc; }
+.ping-options span { margin-right: 4px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .placed-ping::after { animation: none; }
+  .placed-ping { animation-timing-function: steps(1, end); }
+}
