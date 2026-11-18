@@ -409,13 +409,43 @@ main :is(h3, article, .skill-group)[id] {
 }
 
 body {
+  position: relative;
+  isolation: isolate;
   background:
-    radial-gradient(ellipse 64% 430px at 74% 335px, color-mix(in srgb, var(--purple) 13%, transparent), transparent 79%),
-    radial-gradient(ellipse 70% 158px at 75% 360px, color-mix(in srgb, var(--soft-violet) 8%, transparent), transparent 76%),
+    radial-gradient(ellipse 72% 525px at 82% 340px, #7964d815, transparent 82%),
     radial-gradient(ellipse 78% 760px at 100% 38%, #363e8426, transparent 78%),
     radial-gradient(ellipse 72% 820px at 0% 69%, #59418a20, transparent 76%),
     var(--night);
 }
+
+/* Paint the edge across the page canvas so it can fade into About. */
+body::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0 0 auto;
+  height: min(850px, 100%);
+  background: radial-gradient(
+    ellipse 76% 590px at 107% 690px,
+    transparent 83%,
+    color-mix(in srgb, var(--purple) 19%, transparent) 91%,
+    color-mix(in srgb, var(--soft-violet) 40%, transparent) 95%,
+    color-mix(in srgb, #8f99ff 56%, transparent) 96%,
+    color-mix(in srgb, var(--purple) 18%, transparent) 97.5%,
+    transparent 103%
+  );
+  mask-image: radial-gradient(ellipse 69% 56% at 84% 34%, #000 18%, transparent 100%);
+  content: '';
+  pointer-events: none;
+}
+
+@media (max-width: 640px) {
+  body::before {
+    background-position: 42px 0;
+    background-repeat: no-repeat;
+    opacity: .66;
+  }
+}
+
 
 .site-header,
 footer,
