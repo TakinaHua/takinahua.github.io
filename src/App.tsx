@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import './App.css'
 
 const skillGroups = [
@@ -23,14 +23,43 @@ const skillGroups = [
   },
 ]
 
+const compactCompass = '(max-width: 1350px), (hover: none), (max-height: 520px)'
+
 const compassStops = [
-  { id: 'about', label: 'About me' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'experience', label: 'Experiences' },
+  {
+    id: 'about',
+    label: 'About me',
+    subsections: [
+      { id: 'education', label: 'Education' },
+      { id: 'interests', label: 'Interests' },
+      { id: 'programming-languages', label: 'Programming Languages' },
+      { id: 'frameworks', label: 'Frameworks' },
+    ],
+  },
+  {
+    id: 'projects',
+    label: 'Projects',
+    subsections: [
+      { id: 'atlas', label: 'Atlas' },
+      { id: 'fire-and-ice', label: 'Fire and Ice' },
+      { id: 'ev-optimization', label: 'EV Optimization' },
+    ],
+  },
+  {
+    id: 'experience',
+    label: 'Experiences',
+    subsections: [
+      { id: 'avary-ai', label: 'Avary AI' },
+      { id: 'bigbet-research', label: 'BigBet Research' },
+      { id: 'parasoft', label: 'Parasoft' },
+    ],
+  },
 ]
 
 function SectionCompass() {
   const dial = useRef<HTMLElement>(null)
+  const menuId = useId()
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     const nav = dial.current
@@ -40,7 +69,7 @@ function SectionCompass() {
     let wheelDistance = 0
 
     function spin(event: WheelEvent) {
-      if (event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !event.deltaY) return
+      if (matchMedia(compactCompass).matches || event.ctrlKey || Math.abs(event.deltaX) > Math.abs(event.deltaY) || !event.deltaY) return
 
       event.preventDefault()
       const now = performance.now()
@@ -68,10 +97,32 @@ function SectionCompass() {
 
   return (
     <div className="compass-zone">
-      <nav className="compass" ref={dial} aria-label="Section compass">
-        <ul>
-          {compassStops.map(({ id, label }) => (
-            <li key={id}><a href={`#${id}`}>{label}</a></li>
+      <button
+        type="button"
+        className="compass-toggle"
+        aria-controls={menuId}
+        aria-expanded={menuOpen}
+        onClick={() => setMenuOpen(!menuOpen)}
+      >
+        Sections
+      </button>
+      <nav className="compass" id={menuId} ref={dial} aria-label="Section compass" data-open={menuOpen}>
+        <ul className="compass-groups">
+          {compassStops.map(({ id, label, subsections }) => (
+            <li key={id} className="compass-group">
+              <a className="compass-main" href={`#${id}`} onClick={() => setMenuOpen(false)}>
+                <span>{label}</span>
+              </a>
+              <ul className="compass-subsections">
+                {subsections.map(({ id, label }) => (
+                  <li key={id}>
+                    <a className="compass-sub" href={`#${id}`} onClick={() => setMenuOpen(false)}>
+                      <span>{label}</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </li>
           ))}
         </ul>
       </nav>
