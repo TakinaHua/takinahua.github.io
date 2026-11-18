@@ -42,6 +42,7 @@ const compassStops = [
     subsections: [
       { id: 'atlas', label: 'Atlas' },
       { id: 'fire-and-ice', label: 'Fire and Ice' },
+      { id: 'lol-ping', label: 'LoL Ping' },
       { id: 'ev-optimization', label: 'EV Optimization' },
     ],
   },
@@ -216,6 +217,22 @@ function App() {
               <p className="entry-date"><time dateTime="2026-08">Aug 2026</time> – Present</p><p>A trip planner for putting together, mapping, and sharing itineraries. I built the web app and a routing system that finds the shortest path between stops, so people can see how a trip fits together.</p><p className="tech">TypeScript · Next.js · Node.js · PostgreSQL</p><span className="status">Live demo coming soon</span></div><div className="project-media">Project screenshot coming soon</div></article>
             <article className="project" id="fire-and-ice"><div className="project-copy"><h3>Fire and Ice</h3>
               <p className="entry-date"><time dateTime="2025-03">Mar 2025</time> – <time dateTime="2025-04">Apr 2025</time></p><p>A Python game I built with a team. I worked on player movement, collision detection, and camera and keyboard controls to make the game feel more responsive.</p><p className="tech">Python · OpenCV · cmu_graphics</p><a className="project-link" href="https://github.com/TakinaHua/Fire-and-Ice" target="_blank" rel="noreferrer">View repository <span aria-hidden="true">↗</span></a><span className="project-link-placeholder">Demo link coming soon</span></div><div className="project-media">Gameplay preview coming soon</div></article>
+            <article className="project" id="lol-ping">
+              <div className="project-copy">
+                <h3>LoL Ping</h3>
+                <p>I built a macOS menu bar app inspired by the League of Legends ping wheel. Hold a keyboard shortcut and move your cursor to place a directional ping anywhere on your desktop.</p>
+                <p className="tech">Swift · AppKit · macOS</p>
+                <a
+                  className="project-link"
+                  href="https://github.com/TakinaHua/lol-ping-mac"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  GitHub repository (private) <span aria-hidden="true">↗</span>
+                </a>
+              </div>
+              <div className="project-media">Project preview coming soon</div>
+            </article>
             <article className="project" id="ev-optimization"><div className="project-copy"><h3>EV Optimization</h3><p>An operations research project exploring optimization for electric vehicles. More about the model and our work will be shared here soon.</p><p className="tech">Operations research · Optimization</p><span className="status">Coming soon</span></div><div className="project-media">Project preview coming soon</div></article>
           </div>
         </section>
