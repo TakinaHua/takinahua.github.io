@@ -56,6 +56,11 @@ const compassStops = [
   },
 ]
 
+const compassBars = compassStops.flatMap(({ id, label, subsections }) => [
+  { id, label, main: true },
+  ...subsections.map(section => ({ ...section, main: false })),
+])
+
 function SectionCompass() {
   const dial = useRef<HTMLElement>(null)
   const menuId = useId()
@@ -100,30 +105,30 @@ function SectionCompass() {
       <button
         type="button"
         className="compass-toggle"
+        aria-label="Sections"
         aria-controls={menuId}
         aria-expanded={menuOpen}
-        onClick={() => setMenuOpen(!menuOpen)}
+        onClick={() => setMenuOpen(open => !open)}
       >
-        Sections
+        <span aria-hidden="true" />
       </button>
       <nav className="compass" id={menuId} ref={dial} aria-label="Section compass" data-open={menuOpen}>
-        <ul className="compass-groups">
-          {compassStops.map(({ id, label, subsections }) => (
-            <li key={id} className="compass-group">
-              <a className="compass-main" href={`#${id}`} onClick={() => setMenuOpen(false)}>
-                <span>{label}</span>
-              </a>
-              <ul className="compass-subsections">
-                {subsections.map(({ id, label }) => (
-                  <li key={id}>
-                    <a className="compass-sub" href={`#${id}`} onClick={() => setMenuOpen(false)}>
-                      <span>{label}</span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </li>
-          ))}
+        <ul className="compass-bars">
+          {compassBars.map(({ id, label, main }, index) => {
+            const position = (2 * index) / (compassBars.length - 1) - 1
+            const curveOffset = 15 * (1 - position ** 2)
+
+            return (
+              <li key={id} style={{ marginInlineStart: curveOffset }}>
+                <a
+                  className={main ? 'compass-main' : 'compass-sub'}
+                  href={`#${id}`}
+                  aria-label={label}
+                  onClick={() => setMenuOpen(false)}
+                />
+              </li>
+            )
+          })}
         </ul>
       </nav>
     </div>

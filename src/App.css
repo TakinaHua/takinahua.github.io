@@ -179,7 +179,7 @@
 }
 
 .compass {
-  width: 106px;
+  width: 58px;
   opacity: .68;
   transition: opacity 160ms ease, transform 160ms ease;
   transform-origin: left center;
@@ -195,81 +195,36 @@
   display: none;
 }
 
-.compass ul {
+.compass-bars {
+  display: grid;
+  gap: 1px;
   padding: 0;
   margin: 0;
   list-style: none;
 }
 
-.compass-groups {
-  display: grid;
-  gap: 8px;
-}
-
-.compass-group:nth-child(2) {
-  padding-left: 7px;
-}
-
-.compass-group:nth-child(3) {
-  padding-left: 2px;
-}
-
 .compass a {
-  position: relative;
   display: flex;
   align-items: center;
-  gap: 6px;
-  width: fit-content;
-  min-height: 24px;
-  padding: 1px 4px;
+  width: 36px;
+  height: 15px;
+  padding: 0 4px;
   border-radius: 4px;
   color: #c6d9f1;
-  font-size: 11px;
-  white-space: nowrap;
 }
 
 .compass a::before {
-  flex: none;
-  width: 25px;
-  height: 2px;
+  width: 26px;
+  height: 3px;
   border-radius: 2px;
   background: currentColor;
   content: '';
 }
 
-.compass-main {
-  font-weight: 600;
-}
-
-.compass-subsections {
-  display: grid;
-  justify-items: start;
-}
-
-.compass-subsections li:nth-child(1) { margin-left: 4px; }
-.compass-subsections li:nth-child(2) { margin-left: 6px; }
-.compass-subsections li:nth-child(3) { margin-left: 8px; }
-.compass-subsections li:nth-child(4) { margin-left: 10px; }
-
 .compass a.compass-sub::before {
-  width: 11px;
-  opacity: .68;
-}
-
-.compass-sub span {
-  position: absolute;
-  left: calc(100% + 3px);
-  padding: 3px 8px;
-  border: 1px solid #314662;
-  border-radius: 5px;
-  background: #101a2c;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 120ms ease;
-}
-
-.compass-sub:is(:hover, :focus-visible) span {
-  opacity: 1;
+  width: 12px;
+  height: 2px;
+  opacity: .72;
 }
 
 .compass a:is(:hover, :focus-visible) {
@@ -305,13 +260,24 @@ main :is(h3, article, .skill-group)[id] {
   .compass-toggle {
     grid-row: 2;
     display: block;
-    min-height: 36px;
-    padding: 5px 12px;
+    width: 40px;
+    height: 36px;
+    padding: 0;
     border: 1px solid #314662;
     border-radius: 8px;
     background: #101a2c;
     color: #c6d9f1;
     cursor: pointer;
+  }
+
+  .compass-toggle span {
+    display: block;
+    width: 18px;
+    height: 2px;
+    margin: auto;
+    border-radius: 2px;
+    background: currentColor;
+    box-shadow: 0 -5px currentColor, 0 5px currentColor;
   }
 
   .compass {
@@ -338,15 +304,8 @@ main :is(h3, article, .skill-group)[id] {
   }
 
   .compass a {
-    min-height: 30px;
-  }
-
-  .compass-sub span {
-    position: static;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    opacity: 1;
+    width: 44px;
+    height: 24px;
   }
 
   footer {
@@ -355,8 +314,7 @@ main :is(h3, article, .skill-group)[id] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .compass,
-  .compass-sub span {
+  .compass {
     transition: none;
   }
 }
