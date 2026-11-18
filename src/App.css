@@ -384,3 +384,13 @@ main :is(h3, article, .skill-group)[id] {
   height: auto;
   border-radius: inherit;
 }
+
+.project-actions {
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin-top: auto;
+}
+
+.project-actions .project-link {
+  margin-top: 0;
+}

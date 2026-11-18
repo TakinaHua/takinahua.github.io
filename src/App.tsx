@@ -222,14 +222,17 @@ function App() {
                 <h3>LoL Ping</h3>
                 <p>I built a macOS menu bar app inspired by the League of Legends ping wheel. Hold a keyboard shortcut and move your cursor to place a directional ping anywhere on your desktop.</p>
                 <p className="tech">Swift · AppKit · macOS</p>
-                <a
-                  className="project-link"
-                  href="https://github.com/TakinaHua/lol-ping-mac"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  GitHub repository <span aria-hidden="true">↗</span>
-                </a>
+                <div className="actions project-actions">
+                  <a className="button" href="/demos/lol-ping/">Try demo</a>
+                  <a
+                    className="project-link"
+                    href="https://github.com/TakinaHua/lol-ping-mac"
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    GitHub repository <span aria-hidden="true">↗</span>
+                  </a>
+                </div>
               </div>
               <a className="project-preview" href="/images/lol-ping-preview.png">
                 <img
