@@ -22,7 +22,26 @@ function App() {
           </div>
           <p className="note">Résumé coming soon</p>
         </section>
-        <section id="about" aria-labelledby="about-title"><p className="eyebrow">01 / ABOUT</p><h2 id="about-title">A little about me.</h2><p className="section-copy">I study Computational and Applied Mathematics at Carnegie Mellon, with a minor in Computer Science. I’m interested in how algorithms and software can help people solve everyday problems.</p></section>
+        <section id="about" aria-labelledby="about-title">
+          <h2 id="about-title">About me</h2>
+          <div className="about-grid">
+            <div>
+              <h3>Education</h3>
+              <ul className="education-list">
+                <li>
+                  <strong>Carnegie Mellon University</strong>
+                  <span>Pittsburgh, Pennsylvania · Expected graduation 2028</span>
+                  <span>B.S. in Computational and Applied Mathematics · Computer Science minor</span>
+                </li>
+                <li>
+                  <strong>Avon Old Farms School</strong>
+                  <span>Avon, Connecticut</span>
+                  <span>Cum Laude Society</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
         <section id="projects" aria-labelledby="projects-title">
           <p className="eyebrow">02 / PROJECTS</p><h2 id="projects-title">Things I’ve built.</h2>
           <div className="project-list">

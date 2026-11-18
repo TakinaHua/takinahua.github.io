@@ -26,3 +26,36 @@
     padding: 56px 0 48px;
   }
 }
+
+.about-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 32px;
+}
+
+.education-list {
+  display: grid;
+  gap: 16px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.education-list li {
+  display: grid;
+  gap: 4px;
+  padding: 16px 20px;
+  border: 1px solid #2c3c54;
+  border-radius: 10px;
+  background: #0c1525;
+}
+
+.education-list span {
+  color: #aab7cb;
+}
+
+@media (max-width: 640px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+  }
+}
