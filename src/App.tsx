@@ -2,6 +2,19 @@ import './App.css'
 
 const sections = ['About', 'Projects', 'Experience', 'Contact']
 
+const skills = [
+  { name: 'Python', icon: 'python' },
+  { name: 'TypeScript', icon: 'typescript' },
+  { name: 'Java', icon: 'java' },
+  { name: 'C', icon: 'c' },
+  { name: 'React', icon: 'react' },
+  { name: 'Next.js', icon: 'nextjs' },
+  { name: 'Node.js', icon: 'nodejs' },
+  { name: 'Spring Boot', icon: 'spring' },
+  { name: 'PostgreSQL', icon: 'postgresql' },
+  { name: 'OpenCV', icon: 'opencv' },
+]
+
 function App() {
   return (
     <>
@@ -49,6 +62,17 @@ function App() {
                 <li>Agent development</li>
               </ul>
             </div>
+          </div>
+          <div className="skills">
+            <h3>Technical skills</h3>
+            <ul className="skills-list">
+              {skills.map(({ name, icon }) => (
+                <li key={icon}>
+                  <img src={`/skills/${icon}.svg`} width="24" height="24" alt="" />
+                  {name}
+                </li>
+              ))}
+            </ul>
           </div>
         </section>
         <section id="projects" aria-labelledby="projects-title">
