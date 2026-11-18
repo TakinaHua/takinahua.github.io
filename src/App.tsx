@@ -216,6 +216,16 @@ function App() {
                 <li>Operations research</li>
                 <li>Agent development</li>
               </ul>
+              <div className="about-portrait">
+                <img
+                  src="/images/barry-waterfront.jpg"
+                  alt="Barry Hua standing by the waterfront"
+                  width="1200"
+                  height="675"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
             </div>
           </div>
           <div className="skills">

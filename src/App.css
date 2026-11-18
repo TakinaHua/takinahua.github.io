@@ -578,3 +578,31 @@ footer {
     transition: none;
   }
 }
+
+.about-portrait {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 3 / 2;
+  margin-top: 20px;
+  border: 1px solid var(--atmosphere-border);
+  border-radius: var(--atmosphere-radius);
+  background: var(--midnight);
+  box-shadow: var(--atmosphere-shadow);
+}
+
+.about-portrait img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 25% center;
+  filter: brightness(.82) saturate(.76);
+}
+
+.about-portrait::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(155deg, #40366a18, transparent 45%, #080a1438);
+  content: '';
+  pointer-events: none;
+}
