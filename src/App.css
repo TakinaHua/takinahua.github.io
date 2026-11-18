@@ -300,16 +300,3 @@
     transition: none;
   }
 }
-
-.project,
-.education-list li,
-.skills-list li {
-  background: linear-gradient(135deg, #13213a, #0c1525 70%);
-}
-
-.experience-list article {
-  padding-top: 12px;
-  padding-bottom: 8px;
-  border-left-color: #597aa6;
-  background: linear-gradient(90deg, #16264182, transparent 78%);
-}
