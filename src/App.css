@@ -170,133 +170,113 @@
   margin-top: 0;
 }
 
-.portfolio-layout {
-  display: grid;
-  grid-template-columns: 210px minmax(0, 1fr);
-  gap: 32px;
-  width: min(1360px, calc(100% - 64px));
-  margin: 0 auto;
+.compass-zone {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  z-index: 3;
+  padding: 14px 12px 14px 5px;
+  transform: translateY(-50%);
+  pointer-events: auto;
 }
 
-.portfolio-layout main {
-  width: 100%;
-}
-
-.portfolio-layout [id] {
-  scroll-margin-top: 32px;
-}
-
-.hero::before {
-  inset: 0;
-  border-radius: 0 0 20px 20px;
-}
-
-.sidebar-zone {
-  position: sticky;
-  top: 12px;
-  align-self: start;
-  z-index: 2;
-  padding: 16px 12px;
-  perspective: 720px;
-}
-
-.sidebar {
-  transform: rotateY(15deg) scale(.97);
+.compass {
+  padding: 3px 0 3px 5px;
+  border-left: 1px solid #5a7798;
+  border-radius: 30% 0 0 30%;
+  opacity: .67;
+  transform: rotate(-5deg);
   transform-origin: left center;
-  padding: 10px 12px;
-  border: 1px solid #314662;
-  border-radius: 12px;
-  background: #101a2c;
-  color: #c5d5eb;
-  box-shadow: 0 12px 32px #04081266;
-  opacity: .72;
-  transition: transform 200ms ease, opacity 200ms ease, border-color 200ms ease;
+  transition: opacity 160ms ease, transform 160ms ease;
 }
 
-.sidebar-zone:hover .sidebar,
-.sidebar-zone:focus-within .sidebar {
-  transform: rotateY(5deg) scale(1.03);
+.compass-zone:hover .compass,
+.compass-zone:focus-within .compass {
   opacity: 1;
-  border-color: #6389b6;
+  transform: rotate(0) scale(1.07);
 }
 
-.sidebar ul {
+.compass ul {
   display: grid;
-  gap: 2px;
-  max-height: calc(100dvh - 72px);
-  overflow-y: auto;
+  gap: 3px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.sidebar a {
-  display: block;
-  padding: 4px 8px;
+.compass li:nth-child(2) {
+  transform: translateX(-3px);
+}
+
+.compass a {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 5px;
   border-radius: 5px;
-  font-size: 13px;
-}
-
-.sidebar-subsection a {
-  padding-left: 20px;
+  color: #c6d9f1;
   font-size: 12px;
+  white-space: nowrap;
 }
 
-.sidebar a:hover,
-.sidebar a:focus-visible {
-  background: #223652;
+.compass a::before {
+  content: '';
+  width: 6px;
+  height: 1px;
+  background: currentColor;
+}
+
+.compass a:hover,
+.compass a:focus-visible,
+body:has(#about:target) .compass a[href="#about"],
+body:has(#projects:target) .compass a[href="#projects"],
+body:has(#experience:target) .compass a[href="#experience"] {
+  background: #1a2c46;
   color: #fff;
 }
 
-.sidebar a:focus-visible {
-  outline-offset: -2px;
-}
-
-@media (max-width: 900px), (hover: none) {
-  .portfolio-layout {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-    width: min(1120px, calc(100% - 40px));
-  }
-
-  .portfolio-layout [id] {
-    scroll-margin-top: 74px;
-  }
-
-  .sidebar-zone {
-    top: 0;
-    padding: 6px 0;
-    background: #080e1b;
-  }
-
-  .sidebar,
-  .sidebar-zone:hover .sidebar,
-  .sidebar-zone:focus-within .sidebar {
+@media (max-width: 1350px), (hover: none) {
+  .compass-zone {
+    top: auto;
+    bottom: 0;
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
     transform: none;
+  }
+
+  .compass,
+  .compass-zone:hover .compass,
+  .compass-zone:focus-within .compass {
+    padding: 3px 6px;
+    border: 1px solid #314662;
+    border-radius: 8px;
+    background: #101a2c;
     opacity: 1;
+    transform: none;
   }
 
-  .sidebar {
-    padding: 4px;
-  }
-
-  .sidebar ul {
+  .compass ul {
     display: flex;
-    overflow-x: auto;
-    scrollbar-width: thin;
   }
 
-  .sidebar li {
-    flex: none;
+  .compass li:nth-child(2) {
+    transform: none;
   }
 
-  .sidebar-subsection a {
-    padding-left: 8px;
+  .compass a {
+    padding: 7px 6px;
+  }
+
+  .compass a::before {
+    display: none;
+  }
+
+  footer {
+    margin-bottom: calc(56px + env(safe-area-inset-bottom));
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sidebar {
+  .compass {
     transition: none;
   }
 }
