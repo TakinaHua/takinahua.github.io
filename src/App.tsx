@@ -84,11 +84,23 @@ function App() {
           </div>
         </section>
         <section id="experience" aria-labelledby="experience-title">
-          <p className="eyebrow">03 / EXPERIENCE</p><h2 id="experience-title">Where I’ve worked.</h2>
+          <h2 id="experience-title">Experience</h2>
           <div className="experience-list">
-            <article><h3>Avary AI</h3><p className="role">Software Engineer</p><p>I work on the backend for an interview platform, building APIs for interview links and candidate reports. I also handle access controls to keep each organization’s data separate and move file processing into background jobs so uploads don’t hold up requests.</p></article>
-            <article><h3>Parasoft</h3><p className="role">Technical Support Engineer</p><p>I wrote tests and helped track down bugs in client software. Much of the work involved reproducing API failures and debugging C and C++ programs, including issues where threads interfered with each other or got stuck.</p></article>
-            <article><h3>BigBet Research · Carnegie Mellon</h3><p className="role">Research Assistant</p><p>I built calculus quizzes that collected students’ answers and explanations, along with a service that gave feedback on their reasoning. I also wrote Python scripts to look for patterns in mistakes and worked on the prompts and grading criteria used to assess responses.</p></article>
+            <article>
+              <h3>Avary AI</h3>
+              <p className="role">Software Engineer</p>
+              <p>I build Spring Boot APIs that let clients create secure interview links and retrieve candidate evaluation reports. I implemented role-based access controls and request validation to keep each organization’s data separate, and moved file processing to background jobs so uploads don’t block other requests.</p>
+            </article>
+            <article>
+              <h3>BigBet Research · Carnegie Mellon</h3>
+              <p className="role">Research Assistant</p>
+              <p>I built interactive calculus assessments that collected students’ answers and explanations. I developed a Node.js service that gave feedback on their reasoning, used Python to identify patterns in common mistakes, and refined the prompts and grading criteria used to assess responses.</p>
+            </article>
+            <article>
+              <h3>Parasoft</h3>
+              <p className="role">Technical Support Engineer</p>
+              <p>I wrote unit and regression tests and investigated API failures in client software. I also reproduced and diagnosed race conditions and deadlocks in multithreaded C and C++ applications.</p>
+            </article>
           </div>
         </section>
         <section id="contact" aria-labelledby="contact-title"><p className="eyebrow">04 / CONTACT</p><h2 id="contact-title">Let’s connect.</h2><p className="section-copy">Have a question or want to work together? Send me an email or connect on LinkedIn.</p><div className="actions contact-links"><a className="button" href="mailto:barry.shanhua@gmail.com">barry.shanhua@gmail.com</a><a className="text-link" href="https://www.linkedin.com/in/barry-shan-hua/" target="_blank" rel="noreferrer">LinkedIn ↗</a><a className="text-link" href="https://github.com/TakinaHua" target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span></a></div></section>
