@@ -158,3 +158,14 @@
   color: #122541;
   font: 700 8px system-ui, sans-serif;
 }
+
+.project .entry-date,
+.experience-list .entry-date {
+  margin: -8px 0 10px;
+  color: #a9c7eb;
+  font-size: 13px;
+}
+
+.experience-list .role {
+  margin-top: 0;
+}

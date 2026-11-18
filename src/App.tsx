@@ -98,8 +98,10 @@ function App() {
         <section id="projects" aria-labelledby="projects-title">
           <h2 id="projects-title">Things I’ve built.</h2>
           <div className="project-list">
-            <article className="project"><div className="project-copy"><h3>Atlas</h3><p>A trip planner for putting together, mapping, and sharing itineraries. I built the web app and a routing system that finds the shortest path between stops, so people can see how a trip fits together.</p><p className="tech">TypeScript · Next.js · Node.js · PostgreSQL</p><span className="status">Live demo coming soon</span></div><div className="project-media">Project screenshot coming soon</div></article>
-            <article className="project"><div className="project-copy"><h3>Fire and Ice</h3><p>A Python game I built with a team. I worked on player movement, collision detection, and camera and keyboard controls to make the game feel more responsive.</p><p className="tech">Python · OpenCV · cmu_graphics</p><a className="project-link" href="https://github.com/TakinaHua/Fire-and-Ice" target="_blank" rel="noreferrer">View repository <span aria-hidden="true">↗</span></a><span className="project-link-placeholder">Demo link coming soon</span></div><div className="project-media">Gameplay preview coming soon</div></article>
+            <article className="project"><div className="project-copy"><h3>Atlas</h3>
+              <p className="entry-date"><time dateTime="2026-08">Aug 2026</time> – Present</p><p>A trip planner for putting together, mapping, and sharing itineraries. I built the web app and a routing system that finds the shortest path between stops, so people can see how a trip fits together.</p><p className="tech">TypeScript · Next.js · Node.js · PostgreSQL</p><span className="status">Live demo coming soon</span></div><div className="project-media">Project screenshot coming soon</div></article>
+            <article className="project"><div className="project-copy"><h3>Fire and Ice</h3>
+              <p className="entry-date"><time dateTime="2025-03">Mar 2025</time> – <time dateTime="2025-04">Apr 2025</time></p><p>A Python game I built with a team. I worked on player movement, collision detection, and camera and keyboard controls to make the game feel more responsive.</p><p className="tech">Python · OpenCV · cmu_graphics</p><a className="project-link" href="https://github.com/TakinaHua/Fire-and-Ice" target="_blank" rel="noreferrer">View repository <span aria-hidden="true">↗</span></a><span className="project-link-placeholder">Demo link coming soon</span></div><div className="project-media">Gameplay preview coming soon</div></article>
             <article className="project"><div className="project-copy"><h3>EV Optimization</h3><p>An operations research project exploring optimization for electric vehicles. More about the model and our work will be shared here soon.</p><p className="tech">Operations research · Optimization</p><span className="status">Coming soon</span></div><div className="project-media">Project preview coming soon</div></article>
           </div>
         </section>
@@ -108,16 +110,19 @@ function App() {
           <div className="experience-list">
             <article>
               <h3>Avary AI</h3>
+              <p className="entry-date"><time dateTime="2026-10">Oct 2026</time> – Present</p>
               <p className="role">Software Engineer</p>
               <p>I build Spring Boot APIs that let clients create secure interview links and retrieve candidate evaluation reports. I implemented role-based access controls and request validation to keep each organization’s data separate, and moved file processing to background jobs so uploads don’t block other requests.</p>
             </article>
             <article>
               <h3>BigBet Research · Carnegie Mellon</h3>
+              <p className="entry-date"><time dateTime="2026-05">May 2026</time> – <time dateTime="2026-08">Aug 2026</time></p>
               <p className="role">Research Assistant</p>
               <p>I built interactive calculus assessments that collected students’ answers and explanations. I developed a Node.js service that gave feedback on their reasoning, used Python to identify patterns in common mistakes, and refined the prompts and grading criteria used to assess responses.</p>
             </article>
             <article>
               <h3>Parasoft</h3>
+              <p className="entry-date"><time dateTime="2025-06">Jun 2025</time> – <time dateTime="2025-07">Jul 2025</time></p>
               <p className="role">Technical Support Engineer</p>
               <p>I wrote unit and regression tests and investigated API failures in client software. I also reproduced and diagnosed race conditions and deadlocks in multithreaded C and C++ applications.</p>
             </article>
