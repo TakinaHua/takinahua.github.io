@@ -28,7 +28,8 @@
 .about-grid {
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-  gap: 32px;
+  gap: 20px 32px;
+  align-items: start;
 }
 
 .education-list {
@@ -59,18 +60,66 @@
 }
 
 .interest-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
   margin: 0;
-  padding-left: 20px;
-  color: #b9c7da;
-  line-height: 2;
+  list-style: none;
 }
 
-.interest-list li::marker {
-  color: #9fbfe4;
+.interest-list button {
+  min-height: 40px;
+  padding: 7px 12px;
+  border: 1px solid var(--atmosphere-border);
+  border-radius: 100px;
+  background: var(--atmosphere-surface);
+  color: #d8d4ec;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color var(--atmosphere-ease), border-color var(--atmosphere-ease);
 }
 
-.skills {
-  margin-top: 32px;
+.interest-list button:is(:hover, [aria-pressed="true"]) {
+  border-color: var(--atmosphere-highlight);
+  background: #252046;
+}
+
+.interest-list button[aria-pressed="true"] {
+  color: #f1e9ff;
+}
+
+.interest-project {
+  display: inline-block;
+  margin-top: 12px;
+  color: #d7cfff;
+  text-decoration: underline;
+  text-underline-offset: .25em;
+  font-size: 14px;
+}
+
+.about-announcement {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.about-details {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: 24px 32px;
+  align-items: start;
+  margin-top: 28px;
+}
+
+@media (max-width: 640px) {
+  .about-details {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .skills-list {
@@ -582,8 +631,8 @@ footer {
 .about-portrait {
   position: relative;
   overflow: hidden;
-  aspect-ratio: 3 / 2;
-  margin-top: 20px;
+  aspect-ratio: 1.85;
+  max-height: 250px;
   border: 1px solid var(--atmosphere-border);
   border-radius: var(--atmosphere-radius);
   background: var(--midnight);
@@ -595,7 +644,7 @@ footer {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: 25% center;
+  object-position: 25% 58%;
   filter: brightness(.82) saturate(.76);
 }
 
@@ -605,4 +654,28 @@ footer {
   background: linear-gradient(155deg, #40366a18, transparent 45%, #080a1438);
   content: '';
   pointer-events: none;
+}
+
+.education-list li {
+  transition: border-color var(--atmosphere-ease);
+}
+
+@media (hover: hover) {
+  .education-list li:hover {
+    border-color: var(--atmosphere-highlight);
+  }
+}
+
+.skills-list li[data-related] {
+  border-color: var(--atmosphere-highlight);
+  background: #252046;
+  box-shadow: inset 0 0 0 1px #a18bff45;
+  color: #f1e9ff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .education-list li,
+  .interest-list button {
+    transition: none;
+  }
 }

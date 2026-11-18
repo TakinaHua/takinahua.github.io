@@ -170,7 +170,32 @@ function SectionCompass() {
   )
 }
 
+const interests = [
+  {
+    label: 'Backend development',
+    skills: ['Java', 'TypeScript', 'Spring Boot', 'Node.js', 'PostgreSQL'],
+    project: { id: 'atlas', label: 'Atlas' },
+  },
+  {
+    label: 'Algorithms',
+    skills: ['Python', 'C', 'C++', 'TypeScript'],
+    project: { id: 'atlas', label: 'Atlas' },
+  },
+  {
+    label: 'Operations research',
+    skills: ['Python', 'NumPy', 'Pandas'],
+    project: { id: 'ev-optimization', label: 'EV Optimization' },
+  },
+  {
+    label: 'Agent development',
+    skills: ['Python', 'TypeScript', 'Node.js', 'PyTorch'],
+  },
+]
+
 function App() {
+  const [activeInterest, setActiveInterest] = useState<number | null>(null)
+  const selectedInterest = activeInterest === null ? undefined : interests[activeInterest]
+
   return (
     <>
       <a className="skip-link" href="#main">Skip to content</a>
@@ -208,50 +233,68 @@ function App() {
                 </li>
               </ul>
             </div>
+            <div className="about-portrait">
+              <img
+                src="/images/barry-waterfront.jpg"
+                alt="Barry Hua standing by the waterfront"
+                width="1200"
+                height="675"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </div>
+          <div className="about-details">
             <div>
               <h3 id="interests">Interests</h3>
               <ul className="interest-list">
-                <li>Backend development</li>
-                <li>Algorithms</li>
-                <li>Operations research</li>
-                <li>Agent development</li>
+                {interests.map(({ label }, index) => (
+                  <li key={label}>
+                    <button
+                      type="button"
+                      aria-pressed={activeInterest === index}
+                      aria-controls="about-skills"
+                      onClick={() => setActiveInterest(current => current === index ? null : index)}
+                    >
+                      {label}
+                    </button>
+                  </li>
+                ))}
               </ul>
-              <div className="about-portrait">
-                <img
-                  src="/images/barry-waterfront.jpg"
-                  alt="Barry Hua standing by the waterfront"
-                  width="1200"
-                  height="675"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
+              {selectedInterest?.project && (
+                <a className="interest-project" href={`#${selectedInterest.project.id}`}>
+                  Related project: {selectedInterest.project.label} <span aria-hidden="true">↗</span>
+                </a>
+              )}
+              <span className="about-announcement" role="status">
+                {selectedInterest && `Related skills: ${selectedInterest.skills.join(', ')}.`}
+              </span>
             </div>
-          </div>
-          <div className="skills">
-            <h3>Technical skills</h3>
-            {skillGroups.map(({ id, title, skills }) => (
-              <div className="skill-group" id={id} key={id}>
-                <h4>{title}</h4>
-                <ul className="skills-list">
-                  {skills.map(([name, icon]) => (
-                    <li key={name}>
-                      {icon === 'sql' || icon === 'rpc' ? (
-                        <span className="skill-mark" aria-hidden="true">{name}</span>
-                      ) : icon === 'html-css' ? (
-                        <span className="skill-pair" aria-hidden="true">
-                          <img src="/skills/html5.svg" width="24" height="24" alt="" />
-                          <img src="/skills/css3.svg" width="24" height="24" alt="" />
-                        </span>
-                      ) : (
-                        <img src={`/skills/${icon}.svg`} width="24" height="24" alt="" />
-                      )}
-                      {name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            <div className="skills" id="about-skills">
+              <h3>Technical skills</h3>
+              {skillGroups.map(({ id, title, skills }) => (
+                <div className="skill-group" id={id} key={id}>
+                  <h4>{title}</h4>
+                  <ul className="skills-list">
+                    {skills.map(([name, icon]) => (
+                      <li key={name} data-related={selectedInterest?.skills.includes(name) ? true : undefined}>
+                        {icon === 'sql' || icon === 'rpc' ? (
+                          <span className="skill-mark" aria-hidden="true">{name}</span>
+                        ) : icon === 'html-css' ? (
+                          <span className="skill-pair" aria-hidden="true">
+                            <img src="/skills/html5.svg" width="24" height="24" alt="" />
+                            <img src="/skills/css3.svg" width="24" height="24" alt="" />
+                          </span>
+                        ) : (
+                          <img src={`/skills/${icon}.svg`} width="24" height="24" alt="" />
+                        )}
+                        {name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
         <section id="projects" aria-labelledby="projects-title">
