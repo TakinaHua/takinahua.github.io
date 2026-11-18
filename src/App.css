@@ -179,15 +179,13 @@
 
 .compass {
   width: 58px;
-  opacity: .36;
   transform: scale(.5);
   transform-origin: left center;
-  transition: opacity 160ms ease, transform 160ms ease;
+  transition: transform 160ms ease;
 }
 
 .compass-zone:hover .compass,
 .compass-zone:focus-within .compass {
-  opacity: 1;
   transform: scale(1);
 }
 
@@ -212,6 +210,13 @@
   padding: 0 4px;
   border-radius: 4px;
   color: #c6d9f1;
+  opacity: .36;
+  transition: opacity 160ms ease;
+}
+
+.compass-zone:is(:hover, :focus-within) .compass a,
+.compass a[aria-current="location"] {
+  opacity: 1;
 }
 
 .compass a::before {
@@ -280,13 +285,6 @@
   visibility: visible;
 }
 
-body:has(#about:target) .compass-main[href="#about"],
-body:has(#projects:target) .compass-main[href="#projects"],
-body:has(#experience:target) .compass-main[href="#experience"] {
-  color: #fff;
-  background: #1a2c46;
-}
-
 main :is(h3, article, .skill-group)[id] {
   scroll-margin-top: 32px;
 }
@@ -343,13 +341,13 @@ main :is(h3, article, .skill-group)[id] {
   .compass,
   .compass-zone:hover .compass,
   .compass-zone:focus-within .compass {
-    opacity: 1;
     transform: none;
   }
 
   .compass a {
     width: 44px;
     height: 24px;
+    opacity: 1;
   }
 
   .compass a::after {
@@ -365,6 +363,7 @@ main :is(h3, article, .skill-group)[id] {
 
 @media (prefers-reduced-motion: reduce) {
   .compass,
+  .compass a,
   .compass a::before {
     transition: none;
   }
@@ -518,14 +517,20 @@ footer {
 }
 
 .compass a:is(:hover, :focus-visible),
-body:has(#about:target) .compass-main[href="#about"],
-body:has(#projects:target) .compass-main[href="#projects"],
-body:has(#experience:target) .compass-main[href="#experience"] {
+.compass a[aria-current="location"] {
   background: #252046;
 }
 
 :is(a, button):focus-visible {
   outline: 2px solid #c9b8ff;
+}
+
+.compass a[aria-current="location"] {
+  color: #f0e8ff;
+}
+
+.compass a[aria-current="location"]::before {
+  box-shadow: 0 0 6px #a18bff99;
 }
 
 @media (max-width: 1350px), (hover: none), (max-height: 520px) {

@@ -66,6 +66,39 @@ function SectionCompass() {
   const dial = useRef<HTMLElement>(null)
   const menuId = useId()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState<string | null>(null)
+
+  useEffect(() => {
+    const sections = compassStops.flatMap(({ id }) => {
+      const section = document.getElementById(id)
+      return section ? [section] : []
+    })
+    let frame: number | null = null
+
+    function updateActiveSection() {
+      frame = null
+      const page = document.documentElement
+      const atBottom = window.scrollY > 0 && window.scrollY + window.innerHeight >= page.scrollHeight - 2
+      const readingLine = Math.min(140, window.innerHeight * 0.3)
+      const section = atBottom
+        ? sections.at(-1)
+        : sections.findLast(item => item.getBoundingClientRect().top <= readingLine)
+      setActiveSection(section?.id ?? null)
+    }
+
+    function scheduleUpdate() {
+      if (frame === null) frame = requestAnimationFrame(updateActiveSection)
+    }
+
+    updateActiveSection()
+    window.addEventListener('scroll', scheduleUpdate, { passive: true })
+    window.addEventListener('resize', scheduleUpdate)
+    return () => {
+      window.removeEventListener('scroll', scheduleUpdate)
+      window.removeEventListener('resize', scheduleUpdate)
+      if (frame !== null) cancelAnimationFrame(frame)
+    }
+  }, [])
 
   useEffect(() => {
     const nav = dial.current
@@ -125,6 +158,7 @@ function SectionCompass() {
                   className={main ? 'compass-main' : 'compass-sub'}
                   href={`#${id}`}
                   aria-label={label}
+                  aria-current={id === activeSection ? 'location' : undefined}
                   onClick={() => setMenuOpen(false)}
                 />
               </li>
