@@ -12,10 +12,14 @@ function App() {
       </header>
       <main id="main">
         <section id="home" className="hero" aria-labelledby="hero-title">
-          <p className="eyebrow">SOFTWARE · MATHEMATICS · EXPLORATION</p>
-          <h1 id="hero-title">Hi, I’m Barry Hua.<br /><span>Welcome to my corner<br />of the internet.</span></h1>
-          <p className="intro">Exploring software engineering through an applied mathematics lens.</p>
-          <div className="actions"><a className="button" href="#projects">Explore my projects <span aria-hidden="true">↗</span></a><a className="text-link" href="#contact">Get in touch</a></div>
+          <h1 id="hero-title">Hi, I’m Barry Hua.</h1>
+          <p className="intro">I’m a junior at Carnegie Mellon studying computational and applied mathematics. I like taking problems I run into in everyday life and building something to solve them. That’s where many of my projects start.</p>
+          <div className="actions hero-links">
+            <a className="button" href="#projects">Explore my projects</a>
+            <a className="text-link" href="https://github.com/TakinaHua">GitHub</a>
+            <a className="text-link" href="https://www.linkedin.com/in/barry-shan-hua/">LinkedIn</a>
+            <a className="text-link" href="mailto:barry.shanhua@gmail.com">Email</a>
+          </div>
           <p className="note">Résumé coming soon</p>
         </section>
         <section id="about" aria-labelledby="about-title"><p className="eyebrow">01 / ABOUT</p><h2 id="about-title">A little about me.</h2><p className="section-copy">I study Computational and Applied Mathematics at Carnegie Mellon, with a minor in Computer Science. I’m interested in how algorithms and software can help people solve everyday problems.</p></section>
