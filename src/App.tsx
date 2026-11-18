@@ -228,7 +228,7 @@ function App() {
                 </li>
                 <li>
                   <strong>Avon Old Farms School</strong>
-                  <span>Avon, Connecticut</span>
+                  <span>Avon, Connecticut · <time dateTime="2020">2020</time>–<time dateTime="2024">2024</time></span>
                   <span>Cum Laude Society</span>
                 </li>
               </ul>
