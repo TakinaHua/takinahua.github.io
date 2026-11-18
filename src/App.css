@@ -169,3 +169,134 @@
 .experience-list .role {
   margin-top: 0;
 }
+
+.portfolio-layout {
+  display: grid;
+  grid-template-columns: 210px minmax(0, 1fr);
+  gap: 32px;
+  width: min(1360px, calc(100% - 64px));
+  margin: 0 auto;
+}
+
+.portfolio-layout main {
+  width: 100%;
+}
+
+.portfolio-layout [id] {
+  scroll-margin-top: 32px;
+}
+
+.hero::before {
+  inset: 0;
+  border-radius: 0 0 20px 20px;
+}
+
+.sidebar-zone {
+  position: sticky;
+  top: 12px;
+  align-self: start;
+  z-index: 2;
+  padding: 16px 12px;
+  perspective: 720px;
+}
+
+.sidebar {
+  transform: rotateY(15deg) scale(.97);
+  transform-origin: left center;
+  padding: 10px 12px;
+  border: 1px solid #314662;
+  border-radius: 12px;
+  background: #101a2c;
+  color: #c5d5eb;
+  box-shadow: 0 12px 32px #04081266;
+  opacity: .72;
+  transition: transform 200ms ease, opacity 200ms ease, border-color 200ms ease;
+}
+
+.sidebar-zone:hover .sidebar,
+.sidebar-zone:focus-within .sidebar {
+  transform: rotateY(5deg) scale(1.03);
+  opacity: 1;
+  border-color: #6389b6;
+}
+
+.sidebar ul {
+  display: grid;
+  gap: 2px;
+  max-height: calc(100dvh - 72px);
+  overflow-y: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar a {
+  display: block;
+  padding: 4px 8px;
+  border-radius: 5px;
+  font-size: 13px;
+}
+
+.sidebar-subsection a {
+  padding-left: 20px;
+  font-size: 12px;
+}
+
+.sidebar a:hover,
+.sidebar a:focus-visible {
+  background: #223652;
+  color: #fff;
+}
+
+.sidebar a:focus-visible {
+  outline-offset: -2px;
+}
+
+@media (max-width: 900px), (hover: none) {
+  .portfolio-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+    width: min(1120px, calc(100% - 40px));
+  }
+
+  .portfolio-layout [id] {
+    scroll-margin-top: 74px;
+  }
+
+  .sidebar-zone {
+    top: 0;
+    padding: 6px 0;
+    background: #080e1b;
+  }
+
+  .sidebar,
+  .sidebar-zone:hover .sidebar,
+  .sidebar-zone:focus-within .sidebar {
+    transform: none;
+    opacity: 1;
+  }
+
+  .sidebar {
+    padding: 4px;
+  }
+
+  .sidebar ul {
+    display: flex;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  .sidebar li {
+    flex: none;
+  }
+
+  .sidebar-subsection a {
+    padding-left: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar {
+    transition: none;
+  }
+}
