@@ -205,6 +205,7 @@
 }
 
 .compass a {
+  position: relative;
   display: flex;
   align-items: center;
   width: 36px;
@@ -219,6 +220,10 @@
   height: 3px;
   border-radius: 2px;
   background: currentColor;
+  transform: scale(var(--bar-width, 1), var(--bar-height, 1));
+  transform-origin: left center;
+  transition: transform 160ms ease, opacity 160ms ease;
+  pointer-events: none;
   content: '';
 }
 
@@ -228,22 +233,37 @@
   opacity: .72;
 }
 
+/* Grow nearby marks without moving the links under the pointer. */
+.compass-bars li:has(+ li + li > a:is(:hover, :focus-visible)) > a,
+.compass-bars li:has(> a:is(:hover, :focus-visible)) + li + li > a {
+  --bar-width: 1.12;
+  --bar-height: 1.15;
+}
+
+.compass-bars li:has(+ li > a:is(:hover, :focus-visible)) > a,
+.compass-bars li:has(> a:is(:hover, :focus-visible)) + li > a {
+  --bar-width: 1.32;
+  --bar-height: 1.35;
+}
+
 .compass a:is(:hover, :focus-visible) {
+  --bar-width: 1.6;
+  --bar-height: 1.7;
   background: #1a2c46;
   color: #fff;
+}
+
+.compass a:is(:hover, :focus-visible)::before {
+  opacity: 1;
 }
 
 .compass a:focus-visible {
   outline-offset: 0;
 }
 
-.compass a {
-  position: relative;
-}
-
 .compass a::after {
   position: absolute;
-  left: calc(100% + 5px);
+  left: calc(100% + 15px);
   z-index: 1;
   padding: 3px 8px;
   border: 1px solid #314662;
@@ -345,7 +365,8 @@ main :is(h3, article, .skill-group)[id] {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .compass {
+  .compass,
+  .compass a::before {
     transition: none;
   }
 }
