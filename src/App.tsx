@@ -1,16 +1,25 @@
 import './App.css'
 
-const skills = [
-  { name: 'Python', icon: 'python' },
-  { name: 'TypeScript', icon: 'typescript' },
-  { name: 'Java', icon: 'java' },
-  { name: 'C', icon: 'c' },
-  { name: 'React', icon: 'react' },
-  { name: 'Next.js', icon: 'nextjs' },
-  { name: 'Node.js', icon: 'nodejs' },
-  { name: 'Spring Boot', icon: 'spring' },
-  { name: 'PostgreSQL', icon: 'postgresql' },
-  { name: 'OpenCV', icon: 'opencv' },
+const skillGroups = [
+  {
+    id: 'programming-languages',
+    title: 'Programming Languages',
+    skills: [
+      ['Python', 'python'], ['Java', 'java'], ['C', 'c'], ['C++', 'cplusplus'],
+      ['TypeScript', 'typescript'], ['JavaScript', 'javascript'],
+      ['SQL', 'sql'], ['Bash', 'bash'],
+    ],
+  },
+  {
+    id: 'frameworks',
+    title: 'Frameworks',
+    skills: [
+      ['Spring Boot', 'spring'], ['NumPy', 'numpy'], ['Pandas', 'pandas'],
+      ['PyTorch', 'pytorch'], ['Node.js', 'nodejs'], ['React.js', 'react'],
+      ['Django', 'django'], ['RPC', 'rpc'], ['MySQL', 'mysql'],
+      ['PostgreSQL', 'postgresql'], ['HTML/CSS', 'html-css'],
+    ],
+  },
 ]
 
 function App() {
@@ -62,14 +71,28 @@ function App() {
           </div>
           <div className="skills">
             <h3>Technical skills</h3>
-            <ul className="skills-list">
-              {skills.map(({ name, icon }) => (
-                <li key={icon}>
-                  <img src={`/skills/${icon}.svg`} width="24" height="24" alt="" />
-                  {name}
-                </li>
-              ))}
-            </ul>
+            {skillGroups.map(({ id, title, skills }) => (
+              <div className="skill-group" id={id} key={id}>
+                <h4>{title}</h4>
+                <ul className="skills-list">
+                  {skills.map(([name, icon]) => (
+                    <li key={name}>
+                      {icon === 'sql' || icon === 'rpc' ? (
+                        <span className="skill-mark" aria-hidden="true">{name}</span>
+                      ) : icon === 'html-css' ? (
+                        <span className="skill-pair" aria-hidden="true">
+                          <img src="/skills/html5.svg" width="24" height="24" alt="" />
+                          <img src="/skills/css3.svg" width="24" height="24" alt="" />
+                        </span>
+                      ) : (
+                        <img src={`/skills/${icon}.svg`} width="24" height="24" alt="" />
+                      )}
+                      {name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </section>
         <section id="projects" aria-labelledby="projects-title">

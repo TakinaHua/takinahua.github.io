@@ -132,3 +132,29 @@
     grid-template-columns: 1fr;
   }
 }
+
+.skill-group + .skill-group {
+  margin-top: 22px;
+}
+
+.skill-group h4 {
+  margin: 0 0 10px;
+  color: #d0e0f3;
+  font-size: 15px;
+}
+
+.skill-pair {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.skill-mark {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  background: #e9eff8;
+  color: #122541;
+  font: 700 8px system-ui, sans-serif;
+}
