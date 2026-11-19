@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react'
-import type { FormEvent } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { createRoot } from 'react-dom/client'
-import '../index.css'
-import './atlas.css'
+import 'leaflet/dist/leaflet.css'
+import './atlas-original/atlas.css'
+import TripMap from './atlas-original/components/TripMap'
+import EditorDialog from './atlas-original/components/EditorDialog'
+import type { DestinationLocation, Place } from './atlas-original/lib/types'
 
 const storageKey = 'portfolio.atlas-demo.v1'
 const maxAdds = 2
@@ -51,101 +53,191 @@ function loadDays(): Day[] {
   return initialDays()
 }
 
+// The itinerary uses approximate visitor locations on Oʻahu.
+const coordinates: Record<string, readonly [number, number]> = {
+  Arrival: [21.331, -157.923],
+  'Waikiki Beach': [21.276, -157.827],
+  'Lanikai Beach (morning)': [21.39294, -157.715622],
+  'Kualoa Ranch (afternoon)': [21.520581, -157.837281],
+  'Dole Plantation': [21.527051, -158.037614],
+  'Waikele Outlets': [21.401673, -158.006973],
+  'Pearl Harbor': [21.36719, -157.937905],
+  'Kakaʻako': [21.297949, -157.861889],
+  'Haleʻiwa Town': [21.590892, -158.102737],
+  'Waimea Valley': [21.636026, -158.054024],
+}
+
+const extraPlaces = ['Kakaʻako', 'Haleʻiwa Town', 'Waimea Valley']
+const oahu: DestinationLocation = {
+  id: 'oahu', name: 'Oʻahu', label: 'Oʻahu, Hawaii', kind: 'city',
+  state: 'Hawaii', stateCode: 'HI', latitude: 21.47, longitude: -157.98, zoom: 10,
+}
+
+function mapPlace(stop: Stop): Place {
+  const pin = Object.hasOwn(coordinates, stop.name) ? coordinates[stop.name] : undefined
+  return {
+    ...stop, address: '', category: 'Sightseeing', notes: '',
+    latitude: pin?.[0] ?? null, longitude: pin?.[1] ?? null,
+  }
+}
+
 export function AtlasDemo() {
   const [days, setDays] = useState(loadDays)
-  const [notice, setNotice] = useState('')
+  const [dayIndex, setDayIndex] = useState(0)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
+  const [editorOpen, setEditorOpen] = useState(false)
+  const day = days[dayIndex]
+  const places = useMemo(() => day.stops.map(mapPlace), [day.stops])
+  const pins = places.filter(place => place.latitude !== null).length
 
   useEffect(() => {
     try {
       sessionStorage.setItem(storageKey, JSON.stringify(days))
     } catch {
-      // Storage is optional for the current page session.
+      // The demo remains usable when tab storage is unavailable.
     }
   }, [days])
 
-  function updateDay(dayIndex: number, update: (day: Day) => Day) {
-    setDays(current => current.map((day, index) => index === dayIndex ? update(day) : day))
+  function updateDay(update: (day: Day) => Day) {
+    setDays(current => current.map((entry, index) => index === dayIndex ? update(entry) : entry))
   }
 
-  function moveStop(dayIndex: number, index: number, direction: -1 | 1) {
-    updateDay(dayIndex, day => {
-      const next = index + direction
-      if (next < 0 || next >= day.stops.length) return day
-      const stops = [...day.stops]
-      ;[stops[index], stops[next]] = [stops[next], stops[index]]
-      return { ...day, stops }
+  function moveStop(index: number, direction: -1 | 1) {
+    updateDay(current => {
+      const target = index + direction
+      if (target < 0 || target >= current.stops.length) return current
+      const stops = [...current.stops]
+      const [stop] = stops.splice(index, 1)
+      stops.splice(target, 0, stop)
+      return { ...current, stops }
     })
   }
 
-  function addStop(event: FormEvent<HTMLFormElement>, dayIndex: number) {
-    event.preventDefault()
-    const form = event.currentTarget
-    const name = String(new FormData(form).get('place') ?? '').trim()
-    if (!name) return
-
-    updateDay(dayIndex, day => {
-      if (day.added >= maxAdds) return day
-      const stop = { id: `${dayIndex}-added-${day.added}`, name }
-      return { added: day.added + 1, stops: [...day.stops, stop] }
+  async function addStop(data: FormData) {
+    const name = String(data.get('place') ?? '').trim()
+    if (!name || name.length > 80) throw new Error('Enter a place name up to 80 characters.')
+    if (day.added >= maxAdds) throw new Error('This day has reached the demo limit.')
+    updateDay(current => {
+      if (current.added >= maxAdds) return current
+      const stop = { id: `${dayIndex}-added-${current.added}`, name }
+      return { added: current.added + 1, stops: [...current.stops, stop] }
     })
-    form.reset()
+  }
+
+  function resetDemo() {
+    setDays(initialDays())
+    setDayIndex(0)
+    setSelectedId(null)
+    setEditorOpen(false)
   }
 
   return (
-    <main className="atlas-planner">
-      <header className="atlas-header">
-        <div>
-          <p className="atlas-brand">Atlas</p>
-          <h1>Hawaii · 4-day itinerary</h1>
-        </div>
-        <button className="atlas-reset" type="button" onClick={() => {
-          setDays(initialDays())
-          setNotice('Demo reset.')
-        }}>Reset Demo</button>
+    <>
+      <a className="skip-link" href="#main">Skip to content</a>
+      <header className="topbar">
+        <a className="brand" href="#main"><span aria-hidden="true" className="brand-mark">↗</span> Atlas</a>
+        <span className="brand-tagline">A little less rush. A lot more world.</span>
       </header>
-      <p className="atlas-notice">
-        Demo · Reorder or remove stops and add up to two places per day. The four days are fixed. Edits stay in this browser tab.
-      </p>
-      <span className="atlas-sr-only" role="status">{notice}</span>
-      <div className="atlas-days">
-        {days.map((day, dayIndex) => (
-          <section className="atlas-day" key={dayIndex} aria-labelledby={`day-${dayIndex}`}>
-            <h2 id={`day-${dayIndex}`}>Day {dayIndex + 1}</h2>
-            {day.stops.length === 0 ? <p className="atlas-muted">No stops yet.</p> : (
-              <ol className="atlas-stops">
-                {day.stops.map((stop, index) => (
-                  <li key={stop.id}>
-                    <span>{stop.name}</span>
-                    <div className="atlas-stop-actions">
-                      <button type="button" disabled={index === 0} onClick={() => moveStop(dayIndex, index, -1)} aria-label={`Move ${stop.name} up`}>↑</button>
-                      <button type="button" disabled={index === day.stops.length - 1} onClick={() => moveStop(dayIndex, index, 1)} aria-label={`Move ${stop.name} down`}>↓</button>
-                      <button type="button" onClick={() => updateDay(dayIndex, current => ({
-                        ...current,
-                        stops: current.stops.filter(item => item.id !== stop.id),
-                      }))} aria-label={`Remove ${stop.name}`}>×</button>
+      <main id="main">
+        <div className="trip-overview">
+          <div className="destination-photo">
+            <img src="/images/atlas-oahu.jpg" alt="Waikīkī coastline and Honolulu, Oʻahu" />
+          </div>
+          <div>
+            <p className="eyebrow">Oʻahu, Hawaii</p>
+            <h1>Hawaii itinerary</h1>
+            <p>4 days</p>
+          </div>
+          <div className="actions">
+            <button className="secondary" type="button" onClick={resetDemo}>Reset Demo</button>
+          </div>
+        </div>
+        <p className="sample-notice">Demo · Reorder or remove stops and add up to two places per day. The four days are fixed. Edits stay in this browser tab.</p>
+        <nav className="days" aria-label="Itinerary days">
+          {days.map((entry, index) => (
+            <button
+              key={index}
+              type="button"
+              className={dayIndex === index ? 'active' : 'secondary'}
+              aria-current={dayIndex === index ? 'step' : undefined}
+              onClick={() => {
+                setDayIndex(index)
+                setSelectedId(null)
+              }}
+            >
+              Day {index + 1}
+              <span className="day-count">{entry.stops.length} {entry.stops.length === 1 ? 'stop' : 'stops'}</span>
+            </button>
+          ))}
+        </nav>
+        <div className="planner">
+          <section className="itinerary" aria-labelledby="itinerary-heading">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">YOUR ITINERARY · {places.length} STOPS</p>
+                <h2 id="itinerary-heading">A day to discover</h2>
+              </div>
+              <button type="button" disabled={day.added >= maxAdds} onClick={() => setEditorOpen(true)}>＋ Add place</button>
+            </div>
+            <p className="muted" role="status">{maxAdds - day.added} of {maxAdds} additions left</p>
+            {places.length === 0 && <p className="empty">Start with one place you can’t wait to see.</p>}
+            <ol className="stops">
+              {places.map((place, index) => (
+                <li className={selectedId === place.id ? 'selected' : ''} key={place.id}>
+                  <button type="button" className="stop-title" aria-pressed={selectedId === place.id} onClick={() => setSelectedId(place.id)}>
+                    <span className="stop-number">{index + 1}</span>
+                    <strong>{place.name}</strong>
+                  </button>
+                  {place.latitude === null && <p className="muted">This stop has no map pin.</p>}
+                  <div className="stop-tools">
+                    <div className="actions">
+                      <button type="button" className="text-button" aria-label={`Move ${place.name} up`} disabled={index === 0} onClick={() => moveStop(index, -1)}>↑</button>
+                      <button type="button" className="text-button" aria-label={`Move ${place.name} down`} disabled={index === places.length - 1} onClick={() => moveStop(index, 1)}>↓</button>
+                      <button type="button" className="text-button" aria-label={`Remove ${place.name}`} onClick={() => {
+                        updateDay(current => ({ ...current, stops: current.stops.filter(item => item.id !== place.id) }))
+                        if (selectedId === place.id) setSelectedId(null)
+                      }}>Remove</button>
                     </div>
-                  </li>
-                ))}
-              </ol>
-            )}
-            <form className="atlas-add" onSubmit={event => addStop(event, dayIndex)}>
-              <input name="place" placeholder="New place" aria-label={`New place for Day ${dayIndex + 1}`} maxLength={80} required disabled={day.added >= maxAdds} />
-              <button type="submit" disabled={day.added >= maxAdds}>Add place</button>
-            </form>
-            <p className="atlas-limit">{maxAdds - day.added} of {maxAdds} additions left</p>
-            <h3>Meal suggestions</h3>
-            <dl className="atlas-meals">
-              {['Breakfast', 'Lunch', 'Dinner'].map((meal, index) => (
-                <div key={meal}>
-                  <dt>{meal}</dt>
-                  <dd>{itinerary[dayIndex].meals[index]}</dd>
-                </div>
+                  </div>
+                </li>
               ))}
-            </dl>
+            </ol>
+            <div className="route-box">
+              <h3>Meal suggestions</h3>
+              <dl className="atlas-meals">
+                {['Breakfast', 'Lunch', 'Dinner'].map((meal, index) => (
+                  <div key={meal}><dt>{meal}</dt><dd>{itinerary[dayIndex].meals[index]}</dd></div>
+                ))}
+              </dl>
+            </div>
           </section>
-        ))}
-      </div>
-    </main>
+          <section className="map-panel" aria-labelledby="map-heading">
+            <div className="section-heading">
+              <div>
+                <p className="eyebrow">FOLLOW YOUR CURIOSITY</p>
+                <h2 id="map-heading">Your day, mapped.</h2>
+              </div>
+              <span className="badge">{pins} {pins === 1 ? 'pin' : 'pins'}</span>
+            </div>
+            <TripMap destinationLocation={oahu} places={places} route={null} selectedId={selectedId} onSelect={setSelectedId} />
+            <p className="muted">Drag to explore, scroll to zoom, or select a numbered destination. Map tiles use OpenStreetMap.</p>
+          </section>
+        </div>
+      </main>
+      <footer>Atlas ✳ <span>Leave a little room for the unexpected.</span></footer>
+      {editorOpen && (
+        <EditorDialog title="Add a place" onClose={() => setEditorOpen(false)} onSave={addStop}>
+          <label>
+            Place name
+            <input name="place" list="atlas-place-suggestions" maxLength={80} required />
+          </label>
+          <datalist id="atlas-place-suggestions">
+            {extraPlaces.map(name => <option key={name} value={name} />)}
+          </datalist>
+          <p className="muted">Choose a suggested place for a map pin, or enter your own stop.</p>
+        </EditorDialog>
+      )}
+    </>
   )
 }
 
