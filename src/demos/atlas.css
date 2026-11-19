@@ -1,0 +1,67 @@
+.atlas-embed {
+  width: min(1120px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 30px 0 48px;
+}
+
+.atlas-back { color: #c7bdf8; }
+.atlas-embed h1 { margin: 12px 0 18px; font-size: clamp(28px, 5vw, 44px); line-height: 1.15; }
+
+.atlas-embed iframe {
+  display: block;
+  width: 100%;
+  height: clamp(650px, 82vh, 860px);
+  border: 1px solid #3d3a60;
+  border-radius: 12px;
+  background: #101426;
+}
+
+.atlas-planner {
+  width: min(1040px, 100%);
+  margin: 0 auto;
+  padding: clamp(14px, 3vw, 26px);
+}
+
+.atlas-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 16px; }
+.atlas-brand { margin: 0; color: #bcb0fa; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; }
+.atlas-header h1 { margin: 2px 0; font-size: clamp(21px, 4vw, 32px); line-height: 1.2; }
+.atlas-notice { color: #b3bdd7; margin: 10px 0 18px; font-size: 14px; }
+.atlas-days { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.atlas-day { min-width: 0; padding: 14px; border: 1px solid #343658; border-radius: 10px; background: #12182b; }
+.atlas-day h2 { margin: 0 0 8px; font-size: 18px; }
+.atlas-day h3 { margin: 10px 0 4px; font-size: 14px; }
+.atlas-stops { padding-left: 22px; margin: 0 0 10px; }
+.atlas-stops li { padding: 4px 0; }
+.atlas-stops li > span { overflow-wrap: anywhere; }
+.atlas-stop-actions { display: inline-flex; float: right; gap: 3px; margin-left: 5px; }
+.atlas-stops li::after { display: block; clear: both; content: ''; }
+
+.atlas-planner button,
+.atlas-add input {
+  min-height: 34px;
+  border: 1px solid #494771;
+  border-radius: 6px;
+  background: #1c2340;
+  color: #edf2fa;
+  font: inherit;
+  font-size: 13px;
+}
+
+.atlas-planner button { padding: 4px 8px; cursor: pointer; }
+.atlas-stop-actions button { min-width: 30px; }
+.atlas-planner button:hover:not(:disabled) { background: #33305c; }
+.atlas-planner button:disabled, .atlas-add input:disabled { opacity: .46; cursor: default; }
+.atlas-planner :is(button, input):focus-visible { outline: 2px solid #a18bff; outline-offset: 2px; }
+.atlas-add { display: flex; flex-wrap: wrap; gap: 6px; }
+.atlas-add input { flex: 1 1 115px; min-width: 0; padding: 4px 8px; }
+.atlas-add input::placeholder { color: #abb6d2; }
+.atlas-limit, .atlas-muted { margin: 4px 0; color: #b3bdd7; font-size: 12px; }
+.atlas-meals { margin: 0; font-size: 13px; }
+.atlas-meals div { display: grid; grid-template-columns: 5rem 1fr; gap: 6px; }
+.atlas-meals dt { color: #c3b7fb; }
+.atlas-meals dd { margin: 0; }
+.atlas-sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+@media (max-width: 620px) {
+  .atlas-days { grid-template-columns: 1fr; }
+}

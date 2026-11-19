@@ -10,6 +10,8 @@ export default defineConfig({
       input: [
         fileURLToPath(new URL('./index.html', import.meta.url)),
         fileURLToPath(new URL('./demos/lol-ping/index.html', import.meta.url)),
+        fileURLToPath(new URL('./demos/atlas/index.html', import.meta.url)),
+        fileURLToPath(new URL('./demos/atlas/planner/index.html', import.meta.url)),
       ],
     },
   },
