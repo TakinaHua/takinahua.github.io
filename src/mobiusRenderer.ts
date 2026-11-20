@@ -9,7 +9,6 @@ const vertexSource = `
 
   varying vec3 surfaceNormal;
   varying vec3 surfaceTangent;
-  varying vec3 surfacePosition;
   varying vec2 surfaceUv;
 
   vec3 rotate(vec3 p) {
@@ -23,13 +22,11 @@ const vertexSource = `
 
   void main() {
     vec3 p = rotate(position);
-    float depth = 4.2 - p.z;
-    surfacePosition = p;
     surfaceNormal = rotate(normal);
     surfaceTangent = rotate(tangent);
     surfaceUv = materialPosition;
-    float scale = 3.74 * clamp(aspect / 1.34, 1.0, 1.27);
-    gl_Position = vec4(p.x * scale / aspect - 0.045 * depth, p.y * scale, depth - 0.2, depth);
+    float scale = 0.92 * clamp(aspect / 1.36, 1.0, 1.15);
+    gl_Position = vec4(p.x * scale / aspect - 0.078, p.y * scale - 0.025, -p.z * 0.5, 1.0);
   }
 `
 
@@ -40,7 +37,6 @@ const fragmentSource = `
 
   varying vec3 surfaceNormal;
   varying vec3 surfaceTangent;
-  varying vec3 surfacePosition;
   varying vec2 surfaceUv;
 
   float fiberNoise(float coordinate) {
@@ -66,13 +62,13 @@ const fragmentSource = `
     vec3 shadow = vec3(0.041, 0.033, 0.072);
     vec3 violet = vec3(0.21, 0.145, 0.33);
     vec3 lavender = vec3(0.79, 0.63, 0.95);
-    vec3 view = normalize(vec3(0.0, 0.0, 4.2) - surfacePosition);
+    vec3 view = vec3(0.0, 0.0, 1.0);
     vec3 normal = normalize(surfaceNormal);
     normal *= dot(normal, view) < 0.0 ? -1.0 : 1.0;
     vec3 tangent = normalize(surfaceTangent - normal * dot(normal, surfaceTangent));
     vec3 across = cross(normal, tangent);
-    vec3 key = normalize(vec3(0.58 + lightPosition.x * 0.29, -0.86 + lightPosition.y * 0.27, -0.26));
-    vec3 bounce = normalize(vec3(-0.36, 0.81, -0.21));
+    vec3 key = normalize(vec3(0.58 + lightPosition.x * 0.22, -0.86 + lightPosition.y * 0.22, -0.26));
+    vec3 bounce = normalize(vec3(0.14, 0.80, -0.54));
     float diffuse = 0.54 * max(dot(normal, key), 0.0) + 0.31 * max(dot(normal, bounce), 0.0);
     float reflection = 0.91 * satinReflection(normal, tangent, across, view, key)
       + 0.54 * satinReflection(normal, tangent, across, view, bounce);
@@ -117,7 +113,6 @@ function createMesh() {
   const majorRadius = 1.12
   const minorRadius = .82
   const halfWidth = .40
-  const twistOffset = .34
   const vertices: number[] = []
   const indices: number[] = []
 
@@ -129,8 +124,8 @@ function createMesh() {
     // The last row matches the first row in reverse. Duplicate seam vertices
     // carry the flipped normals required by the non-orientable surface.
     const seamSign = along === segments ? -1 : 1
-    const halfCos = seamSign * Math.cos(angle / 2 + twistOffset)
-    const halfSin = seamSign * Math.sin(angle / 2 + twistOffset)
+    const halfCos = seamSign * Math.cos(angle / 2)
+    const halfSin = seamSign * Math.sin(angle / 2)
     const length = Math.hypot(minorRadius * cos, majorRadius * sin)
     const lengthDerivative = (majorRadius ** 2 - minorRadius ** 2) * sin * cos / length
     const outwardX = minorRadius * cos / length
@@ -232,7 +227,9 @@ export function createMobiusRenderer(gl: WebGLRenderingContext) {
       gl.viewport(0, 0, width, height)
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
       gl.uniform1f(aspect, width / height)
-      gl.uniform3f(angles, 1.05 + y * .19, -.29 + x * .25, .51 + x * .065)
+      // An orthographic view with no resting yaw keeps the projected long
+      // axis symmetric. Cursor input tilts around that fixed composition.
+      gl.uniform3f(angles, .97 + y * .095, x * .14, .46)
       gl.uniform2f(light, x, -y)
       gl.drawElements(gl.TRIANGLES, mesh.indices.length, gl.UNSIGNED_SHORT, 0)
     },

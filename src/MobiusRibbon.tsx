@@ -4,6 +4,8 @@ import { createMobiusRenderer } from './mobiusRenderer'
 type Point = { x: number; y: number }
 
 const rest: Point = { x: .5, y: .5 }
+const still: Point = { x: 0, y: 0 }
+const springRate = .016
 const keyboardStep = .04
 const arrowSteps = new Map<string, Point>([
   ['ArrowLeft', { x: -keyboardStep, y: 0 }],
@@ -11,6 +13,17 @@ const arrowSteps = new Map<string, Point>([
   ['ArrowUp', { x: 0, y: -keyboardStep }],
   ['ArrowDown', { x: 0, y: keyboardStep }],
 ])
+
+// Critical damping gives a soft arrival without a bounce. Retaining velocity
+// keeps the tilt continuous when the cursor reverses or leaves the artwork.
+function advanceAxis(value: number, velocity: number, target: number, elapsed: number, decay: number) {
+  const distance = value - target
+  const slope = velocity + springRate * distance
+  return {
+    value: target + (distance + slope * elapsed) * decay,
+    velocity: (velocity - springRate * slope * elapsed) * decay,
+  }
+}
 
 function withinPlane(value: number) {
   return Math.max(.08, Math.min(.92, value))
@@ -31,6 +44,7 @@ export default function MobiusRibbon() {
     let renderer = createMobiusRenderer(gl)
     let current = rest
     let target = rest
+    let velocity = still
     let frame: number | null = null
     let previousTime = 0
 
@@ -49,18 +63,26 @@ export default function MobiusRibbon() {
       frame = null
       const elapsed = previousTime ? Math.min(time - previousTime, 50) : 16
       const remaining = Math.hypot(target.x - current.x, target.y - current.y)
-      const settled = motion.matches || remaining < .001
-      const blend = 1 - Math.exp(-elapsed / 75)
-      current = settled ? target : {
-        x: current.x + (target.x - current.x) * blend,
-        y: current.y + (target.y - current.y) * blend,
+      const speed = Math.hypot(velocity.x, velocity.y)
+      const settled = motion.matches || (remaining < .0008 && speed < .000015)
+      if (settled) {
+        current = target
+        velocity = still
+      } else {
+        const decay = Math.exp(-springRate * elapsed)
+        const x = advanceAxis(current.x, velocity.x, target.x, elapsed, decay)
+        const y = advanceAxis(current.y, velocity.y, target.y, elapsed, decay)
+        current = { x: x.value, y: y.value }
+        velocity = { x: x.velocity, y: y.velocity }
       }
+
       draw()
       previousTime = settled ? 0 : time
       if (!settled) frame = requestAnimationFrame(tick)
     }
 
     function setTarget(next: Point) {
+      if (!renderer) return
       target = next
       if (frame === null) frame = requestAnimationFrame(tick)
     }
@@ -116,6 +138,11 @@ export default function MobiusRibbon() {
     const onContextLost = (event: Event) => {
       event.preventDefault()
       renderer = null
+      if (frame !== null) cancelAnimationFrame(frame)
+      frame = null
+      previousTime = 0
+      current = target = rest
+      velocity = still
       showStill()
     }
 
