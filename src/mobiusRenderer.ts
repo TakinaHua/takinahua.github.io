@@ -25,8 +25,8 @@ const vertexSource = `
     surfaceNormal = rotate(normal);
     surfaceTangent = rotate(tangent);
     surfaceUv = materialPosition;
-    float scale = 0.92 * clamp(aspect / 1.36, 1.0, 1.15);
-    gl_Position = vec4(p.x * scale / aspect - 0.078, p.y * scale - 0.025, -p.z * 0.5, 1.0);
+    float scale = 0.88 * clamp(aspect / 1.36, 1.0, 1.15);
+    gl_Position = vec4(p.x * scale / aspect, p.y * scale, -p.z * 0.5, 1.0);
   }
 `
 
@@ -113,6 +113,10 @@ function createMesh() {
   const majorRadius = 1.12
   const minorRadius = .82
   const halfWidth = .40
+  const tipLean = .24
+  const twistStart = .094
+  const twistSpan = .312
+  const twistTaper = .18
   const vertices: number[] = []
   const indices: number[] = []
 
@@ -124,8 +128,20 @@ function createMesh() {
     // The last row matches the first row in reverse. Duplicate seam vertices
     // carry the flipped normals required by the non-orientable surface.
     const seamSign = along === segments ? -1 : 1
-    const halfCos = seamSign * Math.cos(angle / 2)
-    const halfSin = seamSign * Math.sin(angle / 2)
+    // Keep opposite tips congruent by putting the half-turn on one long side.
+    // The quintic ramp leaves both curvature and tangent smooth at its ends.
+    const progress = along === segments
+      ? 0
+      : Math.max(0, Math.min(1, (u - twistStart) / twistSpan))
+    const ease = progress ** 3 * (10 + progress * (-15 + 6 * progress))
+    const twist = tipLean * cos + Math.PI * ease
+    const twistDerivative = -tipLean * sin + 15 * (progress * (1 - progress)) ** 2 / twistSpan
+    const twistCos = seamSign * Math.cos(twist)
+    const twistSin = seamSign * Math.sin(twist)
+    const taperPhase = Math.PI * progress
+    const taperSin = Math.sin(taperPhase)
+    const taper = halfWidth * (1 - twistTaper * taperSin ** 4)
+    const taperDerivative = -2 * halfWidth * twistTaper * taperSin ** 3 * Math.cos(taperPhase) / twistSpan
     const length = Math.hypot(minorRadius * cos, majorRadius * sin)
     const lengthDerivative = (majorRadius ** 2 - minorRadius ** 2) * sin * cos / length
     const outwardX = minorRadius * cos / length
@@ -135,13 +151,16 @@ function createMesh() {
 
     for (let column = 0; column <= across; column++) {
       const v = (2 * column - across) / across
-      const offset = v * halfWidth
-      const wx = outwardX * halfCos
-      const wy = outwardY * halfCos
-      const wz = halfSin
-      const tx = -majorRadius * sin + offset * (outwardDerivativeX * halfCos - .5 * outwardX * halfSin)
-      const ty = minorRadius * cos + offset * (outwardDerivativeY * halfCos - .5 * outwardY * halfSin)
-      const tz = .5 * offset * halfCos
+      const offset = v * taper
+      const offsetDerivative = v * taperDerivative
+      const wx = outwardX * twistCos
+      const wy = outwardY * twistCos
+      const wz = twistSin
+      const tx = -majorRadius * sin + offsetDerivative * wx
+        + offset * (outwardDerivativeX * twistCos - twistDerivative * outwardX * twistSin)
+      const ty = minorRadius * cos + offsetDerivative * wy
+        + offset * (outwardDerivativeY * twistCos - twistDerivative * outwardY * twistSin)
+      const tz = offsetDerivative * wz + offset * twistDerivative * twistCos
 
       vertices.push(
         majorRadius * cos + offset * wx,
@@ -227,8 +246,8 @@ export function createMobiusRenderer(gl: WebGLRenderingContext) {
       gl.viewport(0, 0, width, height)
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
       gl.uniform1f(aspect, width / height)
-      // An orthographic view with no resting yaw keeps the projected long
-      // axis symmetric. Cursor input tilts around that fixed composition.
+      // Orthographic projection keeps both rounded ends the same size.
+      // Cursor input tilts the strip around its center.
       gl.uniform3f(angles, .97 + y * .095, x * .14, .46)
       gl.uniform2f(light, x, -y)
       gl.drawElements(gl.TRIANGLES, mesh.indices.length, gl.UNSIGNED_SHORT, 0)
