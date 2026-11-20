@@ -10,6 +10,7 @@ const vertexSource = `
   varying vec3 surfaceNormal;
   varying vec3 surfaceTangent;
   varying vec2 surfaceUv;
+  varying float surfaceDepth;
 
   vec3 rotate(vec3 p) {
     vec3 s = sin(angles);
@@ -25,8 +26,9 @@ const vertexSource = `
     surfaceNormal = rotate(normal);
     surfaceTangent = rotate(tangent);
     surfaceUv = materialPosition;
+    surfaceDepth = p.z;
     float scale = 0.92 * clamp(aspect / 1.36, 1.0, 1.15);
-    gl_Position = vec4(p.x * scale / aspect - 0.078, p.y * scale - 0.025, -p.z * 0.5, 1.0);
+    gl_Position = vec4(p.x * scale / aspect + 0.035, p.y * scale + 0.06, -p.z * 0.5, 1.0);
   }
 `
 
@@ -38,6 +40,7 @@ const fragmentSource = `
   varying vec3 surfaceNormal;
   varying vec3 surfaceTangent;
   varying vec2 surfaceUv;
+  varying float surfaceDepth;
 
   float fiberNoise(float coordinate) {
     float fiber = floor(coordinate);
@@ -90,7 +93,10 @@ const fragmentSource = `
     vec3 color = shadow + violet * (0.10 + 0.62 * diffuse + 0.16 * grazing);
     color *= 1.0 + 0.055 * fibers;
     color += lavender * reflection * brush;
-    color += lavender * edge * edgeLight;
+    // A soft rim on the near side keeps the edge readable through the fold.
+    float frontAmount = smoothstep(0.13, 0.69, surfaceDepth);
+    color += violet * frontAmount * (0.21 + 0.25 * grazing);
+    color += lavender * edge * (edgeLight + 0.65 * frontAmount);
     gl_FragColor = vec4(color, 1.0);
   }
 `
@@ -115,7 +121,8 @@ function createMesh() {
   const halfWidth = .40
   const shoulderReach = .64 * Math.PI
   const shoulderTaper = .28
-  const shoulderTurn = .23
+  const frontTwistPhase = 1.65
+  const frontTwistBias = .28
   const vertices: number[] = []
   const indices: number[] = []
 
@@ -127,14 +134,14 @@ function createMesh() {
     // The last row matches the first row in reverse. Duplicate seam vertices
     // carry the flipped normals required by the non-orientable surface.
     const seamSign = along === segments ? -1 : 1
-    // Round the upper-right shoulder locally. The twist keeps turning in
-    // the same direction, and the original lower-left curve is outside this region.
+    // Keep the rounded shoulder and give the visible near half more of the
+    // twist. Its rotation stays monotonic and adds up to one half-turn.
     const signedAngle = angle > Math.PI ? angle - 2 * Math.PI : angle
     const shoulder = Math.max(0, 1 - (signedAngle / shoulderReach) ** 2)
     const weight = shoulder ** 3
     const weightDerivative = -6 * signedAngle * shoulder ** 2 / shoulderReach ** 2
-    const twist = angle / 2 + shoulderTurn * weight
-    const twistDerivative = .5 + shoulderTurn * weightDerivative
+    const twist = angle / 2 + frontTwistPhase + frontTwistBias * cos
+    const twistDerivative = .5 - frontTwistBias * sin
     const twistCos = seamSign * Math.cos(twist)
     const twistSin = seamSign * Math.sin(twist)
     const width = halfWidth * (1 - shoulderTaper * weight)
@@ -243,8 +250,8 @@ export function createMobiusRenderer(gl: WebGLRenderingContext) {
       gl.viewport(0, 0, width, height)
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
       gl.uniform1f(aspect, width / height)
-      // Keep the resting view fixed while the cursor adds a small tilt.
-      gl.uniform3f(angles, .97 + y * .095, x * .14, .46)
+      // Look onto the near half-turn, with the crossover below the opening.
+      gl.uniform3f(angles, -.91 + y * .095, -.20 + x * .14, .36)
       gl.uniform2f(light, x, -y)
       gl.drawElements(gl.TRIANGLES, mesh.indices.length, gl.UNSIGNED_SHORT, 0)
     },
