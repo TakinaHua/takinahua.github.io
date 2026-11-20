@@ -1,6 +1,6 @@
 # Barry Hua — Portfolio
 
-React + TypeScript + Vite portfolio with a responsive galaxy hero, four projects, and experience at Avary AI, Parasoft, and BigBet Research.
+React + TypeScript + Vite portfolio with a waterfront portrait, engineering experience at Avary AI, BigBet Research, and Parasoft, and four projects.
 
 ## Run locally
 
@@ -17,11 +17,11 @@ npm run lint
 npm run preview
 ```
 
-Content lives in src/App.tsx; styles in src/App.css and src/index.css. The selected hero image is public/images/galaxy-hero.webp.
+Portfolio content lives in `src/App.tsx`. Portfolio design tokens live in `src/portfolio-base.css` and page styles in `src/App.css`. The hero portrait is `public/images/barry-waterfront.jpg`. See `DESIGN.md` for design conventions.
 
 Each feature is saved in a separate Git commit. Use git log --oneline to browse milestones and git show COMMIT to review a change.
 
-Résumé download and Atlas demo URL remain to be configured. EV Optimization is marked as coming soon. Fire and Ice links to its public repository; email and LinkedIn come from the résumé.
+The résumé download remains to be configured. Atlas and LoL Ping have local demos. EV Optimization is marked as coming soon. Fire and Ice links to its public repository; email and LinkedIn come from the résumé.
 
 ## Publish future changes
 
