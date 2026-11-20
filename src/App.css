@@ -113,7 +113,8 @@ body::after {
 .mobius-ribbon {
   position: relative;
   min-width: 0;
-  aspect-ratio: 1.28;
+  aspect-ratio: 1.38;
+  margin-inline-end: -24px;
   border-radius: var(--radius-panel);
   background: radial-gradient(ellipse at 59% 48%, var(--color-glow-hero), transparent 65%);
   cursor: default;
@@ -154,7 +155,8 @@ body::after {
   .mobius-ribbon {
     width: min(100%, 520px);
     justify-self: center;
-    aspect-ratio: 1.8;
+    aspect-ratio: 1.47;
+    margin-inline-end: 0;
   }
 }
 

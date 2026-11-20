@@ -28,8 +28,8 @@ const vertexSource = `
     surfaceNormal = rotate(normal);
     surfaceTangent = rotate(tangent);
     surfaceUv = materialPosition;
-    float scale = 3.24 * clamp(aspect / 1.42, 1.0, 1.17);
-    gl_Position = vec4(p.x * scale / aspect, p.y * scale, depth - 0.2, depth);
+    float scale = 3.74 * clamp(aspect / 1.34, 1.0, 1.27);
+    gl_Position = vec4(p.x * scale / aspect - 0.045 * depth, p.y * scale, depth - 0.2, depth);
   }
 `
 
@@ -43,38 +43,58 @@ const fragmentSource = `
   varying vec3 surfacePosition;
   varying vec2 surfaceUv;
 
+  float fiberNoise(float coordinate) {
+    float fiber = floor(coordinate);
+    float first = fract(sin(fiber * 127.1) * 43758.5453);
+    float next = fract(sin((fiber + 1.0) * 127.1) * 43758.5453);
+    float grain = mix(first, next, smoothstep(0.0, 1.0, fract(coordinate))) - 0.5;
+    #ifdef FILTER_FIBERS
+      grain *= 1.0 - smoothstep(0.35, 1.15, fwidth(coordinate));
+    #endif
+    return grain;
+  }
+
+  float satinReflection(vec3 n, vec3 t, vec3 b, vec3 v, vec3 l) {
+    vec3 h = normalize(v + l);
+    float facing = max(dot(n, h), 0.0);
+    vec2 slope = vec2(dot(t, h) / 0.54, dot(b, h) / 0.26);
+    return exp(-dot(slope, slope) / max(facing * facing, 0.02))
+      * facing * smoothstep(-0.13, 0.37, dot(n, l));
+  }
+
   void main() {
-    vec3 deepViolet = vec3(0.064, 0.047, 0.112);
-    vec3 violet = vec3(0.35, 0.24, 0.54);
-    vec3 lavender = vec3(0.74, 0.62, 0.92);
+    vec3 shadow = vec3(0.041, 0.033, 0.072);
+    vec3 violet = vec3(0.21, 0.145, 0.33);
+    vec3 lavender = vec3(0.79, 0.63, 0.95);
     vec3 view = normalize(vec3(0.0, 0.0, 4.2) - surfacePosition);
     vec3 normal = normalize(surfaceNormal);
     normal *= dot(normal, view) < 0.0 ? -1.0 : 1.0;
-    vec3 tangent = normalize(surfaceTangent);
-    vec3 key = normalize(vec3(0.66 + lightPosition.x * 0.32, -0.73 + lightPosition.y * 0.29, -0.22));
-    vec3 fill = normalize(vec3(0.36, 0.76, -0.29));
-    vec3 halfKey = normalize(view + key);
-    vec3 halfFill = normalize(view + fill);
+    vec3 tangent = normalize(surfaceTangent - normal * dot(normal, surfaceTangent));
+    vec3 across = cross(normal, tangent);
+    vec3 key = normalize(vec3(0.58 + lightPosition.x * 0.29, -0.86 + lightPosition.y * 0.27, -0.26));
+    vec3 bounce = normalize(vec3(-0.36, 0.81, -0.21));
+    float diffuse = 0.54 * max(dot(normal, key), 0.0) + 0.31 * max(dot(normal, bounce), 0.0);
+    float reflection = 0.91 * satinReflection(normal, tangent, across, view, key)
+      + 0.54 * satinReflection(normal, tangent, across, view, bounce);
 
-    float diffuse = 0.55 * max(dot(normal, key), 0.0) + 0.36 * max(dot(normal, fill), 0.0);
-    float satin = pow(max(dot(normal, halfKey), 0.0), 18.0);
-    satin *= 0.52 + 0.48 * pow(1.0 - abs(dot(tangent, halfKey)), 2.0);
-    satin += 0.42 * pow(max(dot(normal, halfFill), 0.0), 20.0);
-    float grazing = pow(1.0 - clamp(dot(normal, view), 0.0, 1.0), 2.5);
-
-    // Parallel fibers run along the strip, with a second, finer band of grain.
-    // Mirroring the width coordinate keeps the finish continuous at the twist seam.
+    // Irregular longitudinal fibers catch the light without moiré bands.
+    // The coordinates repeat across the reversed seam of the half-twist.
     float width = abs(surfaceUv.y);
     float along = surfaceUv.x * 6.2831853;
-    float fiber = sin(width * 230.0 + sin(along * 6.0) * 0.78);
-    float fineFiber = sin(width * 479.0 - cos(along * 15.0) * 0.86);
-    float brushing = 1.0 + fiber * 0.16 + fineFiber * 0.045;
-    float edge = smoothstep(0.945, 0.997, width);
+    float fibers = fiberNoise(width * 136.0 + 0.37 * sin(along * 5.0))
+      + 0.46 * fiberNoise(width * 52.0 - 0.18 * cos(along * 9.0));
+    float brush = 1.0 + 0.18 * fibers;
 
-    vec3 color = deepViolet;
-    color += violet * (diffuse * 0.40 + grazing * 0.23) * brushing;
-    color += lavender * satin * 0.83 * brushing;
-    color += lavender * edge * (0.26 + diffuse * 0.65 + grazing * 0.21);
+    float grazing = pow(1.0 - max(dot(normal, view), 0.0), 2.2);
+    float edge = smoothstep(0.967, 1.0, width);
+    vec3 rim = normalize(vec3(-0.74, -0.57, 0.33));
+    float edgeLight = 0.14 + 0.52 * diffuse + 0.45 * reflection
+      + 0.24 * max(dot(normal, rim), 0.0);
+
+    vec3 color = shadow + violet * (0.10 + 0.62 * diffuse + 0.16 * grazing);
+    color *= 1.0 + 0.055 * fibers;
+    color += lavender * reflection * brush;
+    color += lavender * edge * edgeLight;
     gl_FragColor = vec4(color, 1.0);
   }
 `
@@ -92,35 +112,46 @@ function compile(gl: WebGLRenderingContext, type: number, source: string) {
 }
 
 function createMesh() {
-  const segments = 192
-  const across = 24
+  const segments = 224
+  const across = 28
+  const majorRadius = 1.12
+  const minorRadius = .82
+  const halfWidth = .40
+  const twistOffset = .34
   const vertices: number[] = []
   const indices: number[] = []
 
   for (let along = 0; along <= segments; along++) {
     const u = along / segments
-    const angle = u * Math.PI * 2
+    const angle = along === segments ? 0 : u * Math.PI * 2
     const cos = Math.cos(angle)
     const sin = Math.sin(angle)
-    const halfCos = Math.cos(angle / 2)
-    const halfSin = Math.sin(angle / 2)
+    // The last row matches the first row in reverse. Duplicate seam vertices
+    // carry the flipped normals required by the non-orientable surface.
+    const seamSign = along === segments ? -1 : 1
+    const halfCos = seamSign * Math.cos(angle / 2 + twistOffset)
+    const halfSin = seamSign * Math.sin(angle / 2 + twistOffset)
+    const length = Math.hypot(minorRadius * cos, majorRadius * sin)
+    const lengthDerivative = (majorRadius ** 2 - minorRadius ** 2) * sin * cos / length
+    const outwardX = minorRadius * cos / length
+    const outwardY = majorRadius * sin / length
+    const outwardDerivativeX = (-minorRadius * sin - outwardX * lengthDerivative) / length
+    const outwardDerivativeY = (majorRadius * cos - outwardY * lengthDerivative) / length
 
     for (let column = 0; column <= across; column++) {
-      const v = (2 * column) / across - 1
-      const offset = v * .37
-      const radius = 1 + offset * halfCos
-      const radiusDerivative = -.5 * offset * halfSin
-
-      // Analytic derivatives of the strip along its length and across its width.
-      const tx = radiusDerivative * cos - radius * sin
-      const ty = radiusDerivative * sin + radius * cos
-      const tz = .5 * offset * halfCos
-      const wx = halfCos * cos
-      const wy = halfCos * sin
+      const v = (2 * column - across) / across
+      const offset = v * halfWidth
+      const wx = outwardX * halfCos
+      const wy = outwardY * halfCos
       const wz = halfSin
+      const tx = -majorRadius * sin + offset * (outwardDerivativeX * halfCos - .5 * outwardX * halfSin)
+      const ty = minorRadius * cos + offset * (outwardDerivativeY * halfCos - .5 * outwardY * halfSin)
+      const tz = .5 * offset * halfCos
 
       vertices.push(
-        radius * cos, radius * sin, offset * halfSin,
+        majorRadius * cos + offset * wx,
+        minorRadius * sin + offset * wy,
+        offset * wz,
         ty * wz - tz * wy, tz * wx - tx * wz, tx * wy - ty * wx,
         tx, ty, tz, u, v,
       )
@@ -139,7 +170,10 @@ const mesh = createMesh()
 
 export function createMobiusRenderer(gl: WebGLRenderingContext) {
   const vertex = compile(gl, gl.VERTEX_SHADER, vertexSource)
-  const fragment = compile(gl, gl.FRAGMENT_SHADER, fragmentSource)
+  const fragmentPrefix = gl.getExtension('OES_standard_derivatives')
+    ? '#extension GL_OES_standard_derivatives : enable\n#define FILTER_FIBERS\n'
+    : ''
+  const fragment = compile(gl, gl.FRAGMENT_SHADER, fragmentPrefix + fragmentSource)
   const program = gl.createProgram()
   const vertices = gl.createBuffer()
   const indices = gl.createBuffer()
@@ -198,7 +232,7 @@ export function createMobiusRenderer(gl: WebGLRenderingContext) {
       gl.viewport(0, 0, width, height)
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
       gl.uniform1f(aspect, width / height)
-      gl.uniform3f(angles, .98 + y * .21, -.20 + x * .29, .38 + x * .08)
+      gl.uniform3f(angles, 1.05 + y * .19, -.29 + x * .25, .51 + x * .065)
       gl.uniform2f(light, x, -y)
       gl.drawElements(gl.TRIANGLES, mesh.indices.length, gl.UNSIGNED_SHORT, 0)
     },
