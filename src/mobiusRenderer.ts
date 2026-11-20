@@ -25,8 +25,8 @@ const vertexSource = `
     surfaceNormal = rotate(normal);
     surfaceTangent = rotate(tangent);
     surfaceUv = materialPosition;
-    float scale = 0.88 * clamp(aspect / 1.36, 1.0, 1.15);
-    gl_Position = vec4(p.x * scale / aspect, p.y * scale, -p.z * 0.5, 1.0);
+    float scale = 0.92 * clamp(aspect / 1.36, 1.0, 1.15);
+    gl_Position = vec4(p.x * scale / aspect - 0.078, p.y * scale - 0.025, -p.z * 0.5, 1.0);
   }
 `
 
@@ -113,10 +113,8 @@ function createMesh() {
   const majorRadius = 1.12
   const minorRadius = .82
   const halfWidth = .40
-  const tipLean = .24
-  const twistStart = .094
-  const twistSpan = .312
-  const twistTaper = .18
+  const copyEnd = .20 * Math.PI
+  const blendEnd = .66 * Math.PI
   const vertices: number[] = []
   const indices: number[] = []
 
@@ -128,20 +126,27 @@ function createMesh() {
     // The last row matches the first row in reverse. Duplicate seam vertices
     // carry the flipped normals required by the non-orientable surface.
     const seamSign = along === segments ? -1 : 1
-    // Keep opposite tips congruent by putting the half-turn on one long side.
-    // The quintic ramp leaves both curvature and tangent smooth at its ends.
-    const progress = along === segments
-      ? 0
-      : Math.max(0, Math.min(1, (u - twistStart) / twistSpan))
-    const ease = progress ** 3 * (10 + progress * (-15 + 6 * progress))
-    const twist = tipLean * cos + Math.PI * ease
-    const twistDerivative = -tipLean * sin + 15 * (progress * (1 - progress)) ** 2 / twistSpan
+    // Keep the original left side. Around the right tip, reverse the
+    // opposite side's width direction so the profiles are congruent.
+    const rightAngle = angle > Math.PI ? angle - 2 * Math.PI : angle
+    const blendRange = blendEnd - copyEnd
+    const progress = Math.max(0, Math.min(1, (Math.abs(rightAngle) - copyEnd) / blendRange))
+    const blend = 1 - progress ** 3 * (10 + progress * (-15 + 6 * progress))
+    const blendDerivative = -30 * (progress * (1 - progress)) ** 2
+      * Math.sign(rightAngle) / blendRange
+    const correction = -Math.PI / 2 - rightAngle
+    const twist = angle / 2 + blend * correction
+    const twistDerivative = .5 - blend + correction * blendDerivative
     const twistCos = seamSign * Math.cos(twist)
     const twistSin = seamSign * Math.sin(twist)
-    const taperPhase = Math.PI * progress
-    const taperSin = Math.sin(taperPhase)
-    const taper = halfWidth * (1 - twistTaper * taperSin ** 4)
-    const taperDerivative = -2 * halfWidth * twistTaper * taperSin ** 3 * Math.cos(taperPhase) / twistSpan
+    // Ease the width in the connecting shoulder. Both tip profiles and the
+    // original lower-left arc retain the full width.
+    const shoulderPhase = Math.PI * progress
+    const shoulderSin = Math.sin(shoulderPhase)
+    const shoulderTaper = rightAngle > 0 ? .16 : 0
+    const width = halfWidth * (1 - shoulderTaper * shoulderSin ** 4)
+    const widthDerivative = -4 * Math.PI * halfWidth * shoulderTaper
+      * shoulderSin ** 3 * Math.cos(shoulderPhase) / blendRange
     const length = Math.hypot(minorRadius * cos, majorRadius * sin)
     const lengthDerivative = (majorRadius ** 2 - minorRadius ** 2) * sin * cos / length
     const outwardX = minorRadius * cos / length
@@ -151,8 +156,8 @@ function createMesh() {
 
     for (let column = 0; column <= across; column++) {
       const v = (2 * column - across) / across
-      const offset = v * taper
-      const offsetDerivative = v * taperDerivative
+      const offset = v * width
+      const offsetDerivative = v * widthDerivative
       const wx = outwardX * twistCos
       const wy = outwardY * twistCos
       const wz = twistSin
@@ -246,8 +251,7 @@ export function createMobiusRenderer(gl: WebGLRenderingContext) {
       gl.viewport(0, 0, width, height)
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
       gl.uniform1f(aspect, width / height)
-      // Orthographic projection keeps both rounded ends the same size.
-      // Cursor input tilts the strip around its center.
+      // Keep the resting view fixed while the cursor adds a small tilt.
       gl.uniform3f(angles, .97 + y * .095, x * .14, .46)
       gl.uniform2f(light, x, -y)
       gl.drawElements(gl.TRIANGLES, mesh.indices.length, gl.UNSIGNED_SHORT, 0)
