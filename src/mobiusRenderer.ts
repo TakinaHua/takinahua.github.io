@@ -27,8 +27,8 @@ const vertexSource = `
     surfaceTangent = rotate(tangent);
     surfaceUv = materialPosition;
     surfaceDepth = p.z;
-    float scale = 0.92 * clamp(aspect / 1.36, 1.0, 1.15);
-    gl_Position = vec4(p.x * scale / aspect + 0.035, p.y * scale + 0.06, -p.z * 0.5, 1.0);
+    float scale = 0.87 * clamp(aspect / 1.32, 1.0, 1.12);
+    gl_Position = vec4(p.x * scale / aspect, p.y * scale, -p.z * 0.5, 1.0);
   }
 `
 
@@ -67,7 +67,6 @@ const fragmentSource = `
     vec3 lavender = vec3(0.79, 0.63, 0.95);
     vec3 view = vec3(0.0, 0.0, 1.0);
     vec3 normal = normalize(surfaceNormal);
-    normal *= dot(normal, view) < 0.0 ? -1.0 : 1.0;
     vec3 tangent = normalize(surfaceTangent - normal * dot(normal, surfaceTangent));
     vec3 across = cross(normal, tangent);
     vec3 key = normalize(vec3(0.58 + lightPosition.x * 0.22, -0.86 + lightPosition.y * 0.22, -0.26));
@@ -85,7 +84,7 @@ const fragmentSource = `
     float brush = 1.0 + 0.18 * fibers;
 
     float grazing = pow(1.0 - max(dot(normal, view), 0.0), 2.2);
-    float edge = smoothstep(0.967, 1.0, width);
+    float edge = smoothstep(0.75, 1.0, width);
     vec3 rim = normalize(vec3(-0.74, -0.57, 0.33));
     float edgeLight = 0.14 + 0.52 * diffuse + 0.45 * reflection
       + 0.24 * max(dot(normal, rim), 0.0);
@@ -96,7 +95,7 @@ const fragmentSource = `
     // A soft rim on the near side keeps the edge readable through the fold.
     float frontAmount = smoothstep(0.13, 0.69, surfaceDepth);
     color += violet * frontAmount * (0.21 + 0.25 * grazing);
-    color += lavender * edge * (edgeLight + 0.65 * frontAmount);
+    color += lavender * edge * (edgeLight * 0.62 + 0.29 * frontAmount);
     gl_FragColor = vec4(color, 1.0);
   }
 `
@@ -115,14 +114,35 @@ function compile(gl: WebGLRenderingContext, type: number, source: string) {
 
 function createMesh() {
   const segments = 224
-  const across = 28
-  const majorRadius = 1.12
-  const minorRadius = .82
-  const halfWidth = .40
-  const shoulderReach = .64 * Math.PI
-  const shoulderTaper = .28
-  const frontTwistPhase = 1.65
+  const majorRadius = 1.14
+  const minorRadius = 1.02
+  const halfWidth = .195
+  const halfThickness = .064
+  const frontTwistPhase = 1.30
   const frontTwistBias = .28
+  const bevel = halfThickness * .78
+  const cornerSteps = 9
+
+  // Two rounded corners and their opposites give the section exact half-turn
+  // symmetry. The straight spans between corners are the faces of the band.
+  const halfSection = Array.from({ length: 2 * (cornerSteps + 1) }, (_, index) => {
+    const corner = Math.floor(index / (cornerSteps + 1))
+    const position = index % (cornerSteps + 1)
+    const angle = (corner + position / cornerSteps) * Math.PI / 2
+    return {
+      across: (corner === 0 ? 1 : -1) * (halfWidth - bevel) + bevel * Math.cos(angle),
+      thickness: halfThickness - bevel + bevel * Math.sin(angle),
+      tangentX: -Math.sin(angle),
+      tangentY: Math.cos(angle),
+    }
+  })
+  const section = halfSection.concat(halfSection.map(({ across, thickness, tangentX, tangentY }) => ({
+    across: -across,
+    thickness: -thickness,
+    tangentX: -tangentX,
+    tangentY: -tangentY,
+  })))
+
   const vertices: number[] = []
   const indices: number[] = []
 
@@ -131,21 +151,13 @@ function createMesh() {
     const angle = along === segments ? 0 : u * Math.PI * 2
     const cos = Math.cos(angle)
     const sin = Math.sin(angle)
-    // The last row matches the first row in reverse. Duplicate seam vertices
-    // carry the flipped normals required by the non-orientable surface.
+    // A half-turn joins opposite points of the bevel at the closed seam.
+    // Duplicate render vertices keep the fibers' longitudinal UV continuous.
     const seamSign = along === segments ? -1 : 1
-    // Keep the rounded shoulder and give the visible near half more of the
-    // twist. Its rotation stays monotonic and adds up to one half-turn.
-    const signedAngle = angle > Math.PI ? angle - 2 * Math.PI : angle
-    const shoulder = Math.max(0, 1 - (signedAngle / shoulderReach) ** 2)
-    const weight = shoulder ** 3
-    const weightDerivative = -6 * signedAngle * shoulder ** 2 / shoulderReach ** 2
     const twist = angle / 2 + frontTwistPhase + frontTwistBias * cos
     const twistDerivative = .5 - frontTwistBias * sin
     const twistCos = seamSign * Math.cos(twist)
     const twistSin = seamSign * Math.sin(twist)
-    const width = halfWidth * (1 - shoulderTaper * weight)
-    const widthDerivative = -halfWidth * shoulderTaper * weightDerivative
     const length = Math.hypot(minorRadius * cos, majorRadius * sin)
     const lengthDerivative = (majorRadius ** 2 - minorRadius ** 2) * sin * cos / length
     const outwardX = minorRadius * cos / length
@@ -153,31 +165,33 @@ function createMesh() {
     const outwardDerivativeX = (-minorRadius * sin - outwardX * lengthDerivative) / length
     const outwardDerivativeY = (majorRadius * cos - outwardY * lengthDerivative) / length
 
-    for (let column = 0; column <= across; column++) {
-      const v = (2 * column - across) / across
-      const offset = v * width
-      const offsetDerivative = v * widthDerivative
-      const wx = outwardX * twistCos
-      const wy = outwardY * twistCos
-      const wz = twistSin
-      const tx = -majorRadius * sin + offsetDerivative * wx
-        + offset * (outwardDerivativeX * twistCos - twistDerivative * outwardX * twistSin)
-      const ty = minorRadius * cos + offsetDerivative * wy
-        + offset * (outwardDerivativeY * twistCos - twistDerivative * outwardY * twistSin)
-      const tz = offsetDerivative * wz + offset * twistDerivative * twistCos
+    for (let column = 0; column < section.length; column++) {
+      const { across, thickness, tangentX, tangentY } = section[column]
+      const radial = across * twistCos - thickness * twistSin
+      const height = across * twistSin + thickness * twistCos
+      const radialDerivative = -height * twistDerivative
+      const tx = -majorRadius * sin + outwardDerivativeX * radial + outwardX * radialDerivative
+      const ty = minorRadius * cos + outwardDerivativeY * radial + outwardY * radialDerivative
+      const tz = radial * twistDerivative
+      const sectionRadial = tangentX * twistCos - tangentY * twistSin
+      const sectionX = outwardX * sectionRadial
+      const sectionY = outwardY * sectionRadial
+      const sectionZ = tangentX * twistSin + tangentY * twistCos
 
       vertices.push(
-        majorRadius * cos + offset * wx,
-        minorRadius * sin + offset * wy,
-        offset * wz,
-        ty * wz - tz * wy, tz * wx - tx * wz, tx * wy - ty * wx,
-        tx, ty, tz, u, v,
+        majorRadius * cos + radial * outwardX,
+        minorRadius * sin + radial * outwardY,
+        height,
+        ty * sectionZ - tz * sectionY,
+        tz * sectionX - tx * sectionZ,
+        tx * sectionY - ty * sectionX,
+        tx, ty, tz, u, across / halfWidth,
       )
 
-      if (along === segments || column === across) continue
-      const first = along * (across + 1) + column
-      const next = first + across + 1
-      indices.push(first, next, first + 1, next, next + 1, first + 1)
+      if (along === segments) continue
+      const first = along * section.length + column
+      const adjacent = along * section.length + (column + 1) % section.length
+      indices.push(first, first + section.length, adjacent, first + section.length, adjacent + section.length, adjacent)
     }
   }
 
@@ -251,7 +265,7 @@ export function createMobiusRenderer(gl: WebGLRenderingContext) {
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT)
       gl.uniform1f(aspect, width / height)
       // Look onto the near half-turn, with the crossover below the opening.
-      gl.uniform3f(angles, -.91 + y * .095, -.20 + x * .14, .36)
+      gl.uniform3f(angles, -.94 + y * .095, -.14 + x * .14, .66)
       gl.uniform2f(light, x, -y)
       gl.drawElements(gl.TRIANGLES, mesh.indices.length, gl.UNSIGNED_SHORT, 0)
     },
