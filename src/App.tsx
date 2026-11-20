@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
+import ComplexPlane from './ComplexPlane'
 import './App.css'
 
 const skillGroups = [
@@ -219,15 +220,18 @@ function App() {
       <SectionCompass />
       <main id="main" tabIndex={-1}>
         <section id="home" className="hero" aria-labelledby="hero-title">
-          <h1 id="hero-title">Hi, I’m Barry Hua.</h1>
-          <p className="intro">I’m a junior at Carnegie Mellon studying computational and applied mathematics. I like taking problems I run into in everyday life and building something to solve them. That’s where many of my projects start.</p>
-          <div className="actions hero-links">
-            <a className="button" href="#projects">Explore my projects</a>
-            <a className="text-link" href="https://github.com/TakinaHua">GitHub</a>
-            <a className="text-link" href="https://www.linkedin.com/in/barry-shan-hua/">LinkedIn</a>
-            <a className="text-link" href="mailto:barry.shanhua@gmail.com">Email</a>
+          <div className="hero-copy">
+            <h1 id="hero-title">Hi, I’m Barry Hua.</h1>
+            <p className="intro">I’m a junior at Carnegie Mellon studying computational and applied mathematics. I like taking problems I run into in everyday life and building something to solve them. That’s where many of my projects start.</p>
+            <div className="actions hero-links">
+              <a className="button" href="#projects">Explore my projects</a>
+              <a className="text-link" href="https://github.com/TakinaHua">GitHub</a>
+              <a className="text-link" href="https://www.linkedin.com/in/barry-shan-hua/">LinkedIn</a>
+              <a className="text-link" href="mailto:barry.shanhua@gmail.com">Email</a>
+            </div>
+            <p className="note">Résumé coming soon</p>
           </div>
-          <p className="note">Résumé coming soon</p>
+          <ComplexPlane />
         </section>
         <section id="about" aria-labelledby="about-title">
           <h2 id="about-title">About me</h2>
