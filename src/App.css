@@ -34,9 +34,6 @@
   --color-skill-edge: #a18bff45;
   --color-link-hover: #7964d826;
   --color-glow-hero: #7964d815;
-  --color-plane-line: #a691d263;
-  --color-plane-bright: #cbb6f4e6;
-  --color-plane-glow: #8962d640;
   --color-glow-right: #363e8426;
   --color-glow-left: #59418a20;
   --color-shadow-action: #7964d834;
@@ -113,27 +110,35 @@ body::after {
   padding-block: 48px;
 }
 
-.complex-plane {
+.mobius-ribbon {
   position: relative;
   min-width: 0;
-  aspect-ratio: 1.22;
+  aspect-ratio: 1.28;
   border-radius: var(--radius-panel);
   background: radial-gradient(ellipse at 59% 48%, var(--color-glow-hero), transparent 65%);
-  cursor: crosshair;
+  cursor: default;
   touch-action: pan-y pinch-zoom;
 }
 
-.complex-plane canvas {
+.mobius-ribbon[data-rendered] { cursor: crosshair; }
+
+.mobius-ribbon:not([data-rendered])::before {
+  position: absolute;
+  inset: 0;
+  background: url('/images/mobius-ribbon.webp') center / contain no-repeat;
+  content: '';
+}
+
+.mobius-ribbon canvas {
   position: absolute;
   inset: 0;
   display: block;
   width: 100%;
   height: 100%;
-  mask-image: radial-gradient(ellipse at 56% 51%, currentColor 33%, transparent 77%);
   pointer-events: none;
 }
 
-.complex-plane:focus-visible {
+.mobius-ribbon:focus-visible {
   outline: 2px solid var(--color-focus);
   outline-offset: 4px;
 }
@@ -146,7 +151,7 @@ body::after {
     padding-block-end: 16px;
   }
 
-  .complex-plane {
+  .mobius-ribbon {
     width: min(100%, 520px);
     justify-self: center;
     aspect-ratio: 1.8;

@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react'
 import type { CSSProperties } from 'react'
-import ComplexPlane from './ComplexPlane'
+import MobiusRibbon from './MobiusRibbon'
 import './App.css'
 
 const skillGroups = [
@@ -231,7 +231,7 @@ function App() {
             </div>
             <p className="note">Résumé coming soon</p>
           </div>
-          <ComplexPlane />
+          <MobiusRibbon />
         </section>
         <section id="about" aria-labelledby="about-title">
           <h2 id="about-title">About me</h2>
