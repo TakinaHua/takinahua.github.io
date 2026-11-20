@@ -113,8 +113,9 @@ function createMesh() {
   const majorRadius = 1.12
   const minorRadius = .82
   const halfWidth = .40
-  const copyEnd = .20 * Math.PI
-  const blendEnd = .66 * Math.PI
+  const shoulderReach = .64 * Math.PI
+  const shoulderTaper = .28
+  const shoulderTurn = .23
   const vertices: number[] = []
   const indices: number[] = []
 
@@ -126,27 +127,18 @@ function createMesh() {
     // The last row matches the first row in reverse. Duplicate seam vertices
     // carry the flipped normals required by the non-orientable surface.
     const seamSign = along === segments ? -1 : 1
-    // Keep the original left side. Around the right tip, reverse the
-    // opposite side's width direction so the profiles are congruent.
-    const rightAngle = angle > Math.PI ? angle - 2 * Math.PI : angle
-    const blendRange = blendEnd - copyEnd
-    const progress = Math.max(0, Math.min(1, (Math.abs(rightAngle) - copyEnd) / blendRange))
-    const blend = 1 - progress ** 3 * (10 + progress * (-15 + 6 * progress))
-    const blendDerivative = -30 * (progress * (1 - progress)) ** 2
-      * Math.sign(rightAngle) / blendRange
-    const correction = -Math.PI / 2 - rightAngle
-    const twist = angle / 2 + blend * correction
-    const twistDerivative = .5 - blend + correction * blendDerivative
+    // Round the upper-right shoulder locally. The twist keeps turning in
+    // the same direction, and the original lower-left curve is outside this region.
+    const signedAngle = angle > Math.PI ? angle - 2 * Math.PI : angle
+    const shoulder = Math.max(0, 1 - (signedAngle / shoulderReach) ** 2)
+    const weight = shoulder ** 3
+    const weightDerivative = -6 * signedAngle * shoulder ** 2 / shoulderReach ** 2
+    const twist = angle / 2 + shoulderTurn * weight
+    const twistDerivative = .5 + shoulderTurn * weightDerivative
     const twistCos = seamSign * Math.cos(twist)
     const twistSin = seamSign * Math.sin(twist)
-    // Ease the width in the connecting shoulder. Both tip profiles and the
-    // original lower-left arc retain the full width.
-    const shoulderPhase = Math.PI * progress
-    const shoulderSin = Math.sin(shoulderPhase)
-    const shoulderTaper = rightAngle > 0 ? .16 : 0
-    const width = halfWidth * (1 - shoulderTaper * shoulderSin ** 4)
-    const widthDerivative = -4 * Math.PI * halfWidth * shoulderTaper
-      * shoulderSin ** 3 * Math.cos(shoulderPhase) / blendRange
+    const width = halfWidth * (1 - shoulderTaper * weight)
+    const widthDerivative = -halfWidth * shoulderTaper * weightDerivative
     const length = Math.hypot(minorRadius * cos, majorRadius * sin)
     const lengthDerivative = (majorRadius ** 2 - minorRadius ** 2) * sin * cos / length
     const outwardX = minorRadius * cos / length
