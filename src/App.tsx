@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react'
+import type { CSSProperties } from 'react'
 import './App.css'
 
 const skillGroups = [
@@ -64,6 +65,7 @@ const compassBars = compassStops.flatMap(({ id, label, subsections }) => [
 
 function SectionCompass() {
   const dial = useRef<HTMLElement>(null)
+  const toggle = useRef<HTMLButtonElement>(null)
   const menuId = useId()
   const [menuOpen, setMenuOpen] = useState(false)
   const [activeSection, setActiveSection] = useState<string | null>(null)
@@ -135,16 +137,26 @@ function SectionCompass() {
   }, [])
 
   return (
-    <div className="compass-zone">
+    <div
+      className="compass-zone"
+      onKeyDown={event => {
+        if (event.key === 'Escape' && menuOpen) {
+          setMenuOpen(false)
+          toggle.current?.focus()
+        }
+      }}
+    >
       <button
         type="button"
         className="compass-toggle"
+        ref={toggle}
         aria-label="Sections"
         aria-controls={menuId}
         aria-expanded={menuOpen}
         onClick={() => setMenuOpen(open => !open)}
       >
-        <span aria-hidden="true" />
+        <span className="compass-icon" aria-hidden="true" />
+        Sections
       </button>
       <nav className="compass" id={menuId} ref={dial} aria-label="Section compass" data-open={menuOpen}>
         <ul className="compass-bars">
@@ -153,14 +165,16 @@ function SectionCompass() {
             const curveOffset = 15 * (1 - position ** 2)
 
             return (
-              <li key={id} style={{ marginInlineStart: curveOffset }}>
+              <li key={id} style={{ '--curve-offset': `${curveOffset}px` } as CSSProperties}>
                 <a
                   className={main ? 'compass-main' : 'compass-sub'}
                   href={`#${id}`}
                   aria-label={label}
                   aria-current={id === activeSection ? 'location' : undefined}
                   onClick={() => setMenuOpen(false)}
-                />
+                >
+                  <span>{label}</span>
+                </a>
               </li>
             )
           })}
@@ -200,7 +214,7 @@ function App() {
     <>
       <a className="skip-link" href="#main">Skip to content</a>
       <header className="site-header">
-        <a className="brand" href="#home">BARRY HUA<span> / PORTFOLIO</span></a>
+        <a className="brand" href="#home">BARRY HUA<span> / Portfolio</span></a>
       </header>
       <SectionCompass />
       <main id="main" tabIndex={-1}>
@@ -223,12 +237,12 @@ function App() {
               <ul className="education-list">
                 <li>
                   <strong>Carnegie Mellon University</strong>
-                  <span>Pittsburgh, Pennsylvania · Expected graduation 2028</span>
-                  <span>B.S. in Computational and Applied Mathematics · Computer Science minor</span>
+                  <span>Pittsburgh, Pennsylvania (expected graduation 2028)</span>
+                  <span>B.S. in Computational and Applied Mathematics, Computer Science minor</span>
                 </li>
                 <li>
                   <strong>Avon Old Farms School</strong>
-                  <span>Avon, Connecticut · <time dateTime="2020">2020</time>–<time dateTime="2024">2024</time></span>
+                  <span>Avon, Connecticut (<time dateTime="2020">2020</time> to <time dateTime="2024">2024</time>)</span>
                   <span>Cum Laude Society</span>
                 </li>
               </ul>
@@ -263,7 +277,7 @@ function App() {
               </ul>
               {selectedInterest?.project && (
                 <a className="interest-project" href={`#${selectedInterest.project.id}`}>
-                  Related project: {selectedInterest.project.label} <span aria-hidden="true">↗</span>
+                  Related project: {selectedInterest.project.label}
                 </a>
               )}
               <span className="about-announcement" role="status">
@@ -301,14 +315,14 @@ function App() {
           <h2 id="projects-title">Things I’ve built.</h2>
           <div className="project-list">
             <article className="project" id="atlas"><div className="project-copy"><h3>Atlas</h3>
-              <p className="entry-date"><time dateTime="2026-08">Aug 2026</time> – Present</p><p>A trip planner for putting together, mapping, and sharing itineraries. I built the web app and a routing system that finds the shortest path between stops, so people can see how a trip fits together.</p><p className="tech">TypeScript · Next.js · Node.js · PostgreSQL</p><div className="actions project-actions"><a className="button" href="/demos/atlas/">Try Demo</a></div></div><div className="project-media">Project screenshot coming soon</div></article>
+              <p className="entry-date"><time dateTime="2026-08">Aug 2026</time> to present</p><p>A trip planner for putting together, mapping, and sharing itineraries. I built the web app and a routing system that finds the shortest path between stops, so people can see how a trip fits together.</p><p className="tech">TypeScript, Next.js, Node.js, PostgreSQL</p><div className="actions project-actions"><a className="button" href="/demos/atlas/">Try Demo</a></div></div><div className="project-media">Project screenshot coming soon</div></article>
             <article className="project" id="fire-and-ice"><div className="project-copy"><h3>Fire and Ice</h3>
-              <p className="entry-date"><time dateTime="2025-03">Mar 2025</time> – <time dateTime="2025-04">Apr 2025</time></p><p>A Python game I built with a team. I worked on player movement, collision detection, and camera and keyboard controls to make the game feel more responsive.</p><p className="tech">Python · OpenCV · cmu_graphics</p><a className="project-link" href="https://github.com/TakinaHua/Fire-and-Ice" target="_blank" rel="noreferrer">View repository <span aria-hidden="true">↗</span></a><span className="project-link-placeholder">Demo link coming soon</span></div><div className="project-media">Gameplay preview coming soon</div></article>
+              <p className="entry-date"><time dateTime="2025-03">Mar 2025</time> to <time dateTime="2025-04">Apr 2025</time></p><p>A Python game I built with a team. I worked on player movement, collision detection, and camera and keyboard controls to make the game feel more responsive.</p><p className="tech">Python, OpenCV, cmu_graphics</p><a className="project-link" href="https://github.com/TakinaHua/Fire-and-Ice" target="_blank" rel="noreferrer">View repository</a><span className="project-link-placeholder">Demo link coming soon</span></div><div className="project-media">Gameplay preview coming soon</div></article>
             <article className="project" id="lol-ping">
               <div className="project-copy">
                 <h3>LoL Ping</h3>
                 <p>I built a macOS menu bar app inspired by the League of Legends ping wheel. Hold a keyboard shortcut and move your cursor to place a directional ping anywhere on your desktop.</p>
-                <p className="tech">Swift · AppKit · macOS</p>
+                <p className="tech">Swift, AppKit, macOS</p>
                 <div className="actions project-actions">
                   <a className="button" href="/demos/lol-ping/">Try demo</a>
                   <a
@@ -317,7 +331,7 @@ function App() {
                     target="_blank"
                     rel="noreferrer"
                   >
-                    GitHub repository <span aria-hidden="true">↗</span>
+                    GitHub repository
                   </a>
                 </div>
               </div>
@@ -331,7 +345,7 @@ function App() {
                 />
               </a>
             </article>
-            <article className="project" id="ev-optimization"><div className="project-copy"><h3>EV Optimization</h3><p>An operations research project exploring optimization for electric vehicles. More about the model and our work will be shared here soon.</p><p className="tech">Operations research · Optimization</p><span className="status">Coming soon</span></div><div className="project-media">Project preview coming soon</div></article>
+            <article className="project" id="ev-optimization"><div className="project-copy"><h3>EV Optimization</h3><p>An operations research project exploring optimization for electric vehicles. More about the model and our work will be shared here soon.</p><p className="tech">Operations research, Optimization</p><span className="status">Coming soon</span></div><div className="project-media">Project preview coming soon</div></article>
           </div>
         </section>
         <section id="experience" aria-labelledby="experience-title">
@@ -339,26 +353,26 @@ function App() {
           <div className="experience-list">
             <article>
               <h3 id="avary-ai">Avary AI</h3>
-              <p className="entry-date"><time dateTime="2026-10">Oct 2026</time> – Present</p>
+              <p className="entry-date"><time dateTime="2026-10">Oct 2026</time> to present</p>
               <p className="role">Software Engineer</p>
               <p>I build Spring Boot APIs that let clients create secure interview links and retrieve candidate evaluation reports. I implemented role-based access controls and request validation to keep each organization’s data separate, and moved file processing to background jobs so uploads don’t block other requests.</p>
             </article>
             <article>
               <h3 id="bigbet-research">BigBet Research · Carnegie Mellon</h3>
-              <p className="entry-date"><time dateTime="2026-05">May 2026</time> – <time dateTime="2026-08">Aug 2026</time></p>
+              <p className="entry-date"><time dateTime="2026-05">May 2026</time> to <time dateTime="2026-08">Aug 2026</time></p>
               <p className="role">Research Assistant</p>
               <p>I built interactive calculus assessments that collected students’ answers and explanations. I developed a Node.js service that gave feedback on their reasoning, used Python to identify patterns in common mistakes, and refined the prompts and grading criteria used to assess responses.</p>
             </article>
             <article>
               <h3 id="parasoft">Parasoft</h3>
-              <p className="entry-date"><time dateTime="2025-06">Jun 2025</time> – <time dateTime="2025-07">Jul 2025</time></p>
+              <p className="entry-date"><time dateTime="2025-06">Jun 2025</time> to <time dateTime="2025-07">Jul 2025</time></p>
               <p className="role">Technical Support Engineer</p>
               <p>I wrote unit and regression tests and investigated API failures in client software. I also reproduced and diagnosed race conditions and deadlocks in multithreaded C and C++ applications.</p>
             </article>
           </div>
         </section>
       </main>
-      <footer><span>Barry Hua</span><a href="#home">Back to top ↑</a></footer>
+      <footer><span>Barry Hua</span><a href="#home">Back to top</a></footer>
     </>
   )
 }
