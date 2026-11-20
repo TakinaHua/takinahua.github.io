@@ -37,7 +37,6 @@
   --color-plane-line: #a691d263;
   --color-plane-bright: #cbb6f4e6;
   --color-plane-glow: #8962d640;
-  --color-plane-point: #e7d8ff;
   --color-glow-right: #363e8426;
   --color-glow-left: #59418a20;
   --color-shadow-action: #7964d834;
@@ -117,9 +116,9 @@ body::after {
 .complex-plane {
   position: relative;
   min-width: 0;
-  aspect-ratio: 1.3;
+  aspect-ratio: 1.22;
   border-radius: var(--radius-panel);
-  background: radial-gradient(ellipse at 64% 47%, var(--color-glow-hero), transparent 68%);
+  background: radial-gradient(ellipse at 59% 48%, var(--color-glow-hero), transparent 65%);
   cursor: crosshair;
   touch-action: pan-y pinch-zoom;
 }
@@ -130,7 +129,7 @@ body::after {
   display: block;
   width: 100%;
   height: 100%;
-  mask-image: radial-gradient(ellipse at 60% 48%, currentColor 14%, transparent 74%);
+  mask-image: radial-gradient(ellipse at 56% 51%, currentColor 33%, transparent 77%);
   pointer-events: none;
 }
 

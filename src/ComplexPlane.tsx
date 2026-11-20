@@ -2,7 +2,7 @@ import { useEffect, useId, useRef } from 'react'
 
 type Point = { x: number; y: number }
 
-const rest: Point = { x: .64, y: .47 }
+const rest: Point = { x: .64, y: .43 }
 const keyboardStep = .04
 const arrowSteps = new Map<string, Point>([
   ['ArrowLeft', { x: -keyboardStep, y: 0 }],
@@ -31,7 +31,8 @@ export default function ComplexPlane() {
     const line = colors.getPropertyValue('--color-plane-line').trim()
     const bright = colors.getPropertyValue('--color-plane-bright').trim()
     const glow = colors.getPropertyValue('--color-plane-glow').trim()
-    const point = colors.getPropertyValue('--color-plane-point').trim()
+    const surfaceColor = colors.getPropertyValue('--color-surface').trim()
+    const raisedColor = colors.getPropertyValue('--color-highlight-surface').trim()
     let width = 0
     let height = 0
     let current = rest
@@ -42,56 +43,104 @@ export default function ComplexPlane() {
     const draw = () => {
       if (width === 0 || height === 0) return
 
-      const spacing = Math.min(width, height) / 13
       const poleX = current.x * width
       const poleY = current.y * height
-      const radius = 5.5 * spacing
-      const softening = .68 * spacing
-      const strength = 3.8 * spacing ** 2
+      const radius = height * .32
+      const radiusSquared = radius ** 2
+      const softeningSquared = (height * .12) ** 2
+      const strength = (height * .15) ** 2
+      const rowCount = 23
+      const columnCount = 72
 
       context.clearRect(0, 0, width, height)
-      const light = context.createRadialGradient(poleX, poleY, 0, poleX, poleY, radius)
+
+      const light = context.createRadialGradient(poleX, poleY, 0, poleX, poleY, radius * 1.65)
       light.addColorStop(0, glow)
       light.addColorStop(1, 'transparent')
       context.fillStyle = light
       context.fillRect(0, 0, width, height)
 
-      // Use a softened reciprocal for the rotation around the pole. Normalizing
-      // the complex multiplier preserves distance from the pole and prevents folds.
-      const trace = (startX: number, startY: number, endX: number, endY: number) => {
-        const steps = Math.ceil(Math.hypot(endX - startX, endY - startY) / 3)
-        for (let i = 0; i <= steps; i++) {
-          const fraction = i / steps
-          const x = startX + (endX - startX) * fraction
-          const y = startY + (endY - startY) * fraction
+      // Project a continuous wave surface and apply a softened complex rotation
+      // around the pointer. Both are sampled on the same mesh.
+      const rows = Array.from({ length: rowCount + 1 }, (_, row) => {
+        const v = row / rowCount
+        return Array.from({ length: columnCount + 1 }, (_, column) => {
+          const u = column / columnCount
+          const ridge = .55 - .23 * u
+          const crest = Math.exp(-(((v - ridge) / .19) ** 2))
+          const shoulder = Math.exp(-(((v - ridge - .31) / .20) ** 2))
+          const lift = Math.sin(Math.PI * u) * (.36 * crest + .11 * shoulder)
+          const x = (.02 + .84 * u + .13 * v) * width
+          const y = (.44 - .18 * u + .46 * v - lift) * height
           const dx = x - poleX
           const dy = y - poleY
           const distanceSquared = dx ** 2 + dy ** 2
-          const influence = Math.exp(-distanceSquared / radius ** 2)
-          const deflection = strength * influence / (distanceSquared + softening ** 2)
-          const magnitude = Math.hypot(1, deflection)
-          const mappedX = poleX + (dx - dy * deflection) / magnitude
-          const mappedY = poleY + (dy + dx * deflection) / magnitude
-          if (i === 0) context.moveTo(mappedX, mappedY)
-          else context.lineTo(mappedX, mappedY)
-        }
+          const turn = strength * Math.exp(-distanceSquared / radiusSquared)
+            / (distanceSquared + softeningSquared)
+          const magnitude = Math.sqrt(1 + turn ** 2)
+          return {
+            x: poleX + (dx - dy * turn) / magnitude,
+            y: poleY + (dy + dx * turn) / magnitude,
+          }
+        })
+      })
+
+      const face = context.createLinearGradient(0, height * .75, width, height * .13)
+      face.addColorStop(0, surfaceColor)
+      face.addColorStop(.56, raisedColor)
+      face.addColorStop(1, surfaceColor)
+
+      const ink = context.createLinearGradient(0, height * .65, width, height * .25)
+      ink.addColorStop(0, 'transparent')
+      ink.addColorStop(.19, line)
+      ink.addColorStop(.49, bright)
+      ink.addColorStop(.8, line)
+      ink.addColorStop(1, 'transparent')
+
+      const highlight = context.createRadialGradient(poleX, poleY, 0, poleX, poleY, radius)
+      highlight.addColorStop(0, bright)
+      highlight.addColorStop(.48, line)
+      highlight.addColorStop(1, 'transparent')
+
+      const trace = (row: Point[]) => {
+        context.moveTo(row[0].x, row[0].y)
+        for (let i = 1; i < row.length; i++) context.lineTo(row[i].x, row[i].y)
       }
 
-      context.beginPath()
-      for (let x = spacing / 2; x < width; x += spacing) trace(x, 0, x, height)
-      for (let y = spacing / 2; y < height; y += spacing) trace(0, y, width, y)
-      const ink = context.createRadialGradient(poleX, poleY, 0, poleX, poleY, radius)
-      ink.addColorStop(0, bright)
-      ink.addColorStop(.35, bright)
-      ink.addColorStop(1, line)
-      context.strokeStyle = ink
-      context.lineWidth = .85
-      context.stroke()
+      // Draw back to front so a raised section can cover the lines behind it.
+      for (let row = 0; row < rowCount; row++) {
+        const back = rows[row]
+        const front = rows[row + 1]
+        context.beginPath()
+        trace(back)
+        for (let column = columnCount; column >= 0; column--) {
+          context.lineTo(front[column].x, front[column].y)
+        }
+        context.closePath()
+        context.fillStyle = face
+        context.globalAlpha = .94
+        context.fill()
 
-      context.beginPath()
-      context.arc(poleX, poleY, 2.2, 0, Math.PI * 2)
-      context.fillStyle = point
-      context.fill()
+        context.beginPath()
+        for (let column = 6; column < columnCount; column += 6) {
+          context.moveTo(back[column].x, back[column].y)
+          context.lineTo(front[column].x, front[column].y)
+        }
+        context.strokeStyle = ink
+        context.lineWidth = .75
+        context.globalAlpha = .36
+        context.stroke()
+
+        context.beginPath()
+        trace(front)
+        context.lineWidth = 1
+        context.globalAlpha = .86
+        context.stroke()
+        context.strokeStyle = highlight
+        context.globalAlpha = .55
+        context.stroke()
+      }
+      context.globalAlpha = 1
     }
 
     function tick(time: number) {
