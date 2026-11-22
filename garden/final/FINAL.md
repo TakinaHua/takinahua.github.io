@@ -40,5 +40,5 @@ at 100 ms per frame. Clear each overlay before drawing its next frame.
 
 | Sheet | Native position (x, y) | Frame size |
 | --- | --- | --- |
-| `window-sheet.png` | (98, 93) | 65 × 48 |
-| `lantern-sheet.png` | (393, 237) | 24 × 32 |
+| `window-sheet.png` | (90, 84) | 82 × 77 |
+| `lantern-sheet.png` | (377, 220) | 60 × 140 |
