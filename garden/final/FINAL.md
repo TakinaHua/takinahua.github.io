@@ -31,3 +31,14 @@ _Background: `garden-wide-v12.png` (redrawn hut), an exact 3× enlargement of th
 - Frame position in the sheet: column = frame % 12, row = floor(frame / 12).
 - The overlay does not change the cat's pixels, but its rectangle covers that area: draw any cat animation above this layer.
 - Settings (position, size, fps) are in `animations/sakura/sakura-sway.json`.
+
+## Lantern and window glow
+
+Use the two transparent sheets in `animations/glow/` over the 640 × 360 master.
+Both contain 48 frames in 8 columns and 6 rows, looping every 4.8 seconds
+at 100 ms per frame. Clear each overlay before drawing its next frame.
+
+| Sheet | Native position (x, y) | Frame size |
+| --- | --- | --- |
+| `window-sheet.png` | (98, 93) | 65 × 48 |
+| `lantern-sheet.png` | (393, 237) | 24 × 32 |

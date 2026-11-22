@@ -8,4 +8,6 @@ Everything for the pixel-art garden background of the portfolio site.
 - `references/`: the original picture with signs, the sign-free style reference, the mockup, the layout guide and the image prompt used during the redesign.
 - `references/concepts/`: concept images for the pages still to build (Projects workshop, Experience board and album, About album, Contact postcard, homepage directions, lighting modes).
 
-Still to animate: lantern and window glow, pond shimmer, fireflies, drifting petals, the cat.
+- `animations/glow/`: workshop window glow and pier lantern flicker, with transparent sheets and a full-scene preview.
+
+Still to animate: pond shimmer, fireflies, drifting petals, the cat.
