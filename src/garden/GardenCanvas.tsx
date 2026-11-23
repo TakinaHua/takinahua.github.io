@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { ART_HEIGHT, ART_WIDTH, layers, masterUrl } from './layers'
+import { ART_HEIGHT, ART_WIDTH, layers as gardenLayers, masterUrl as gardenMaster } from './layers'
 
 function loadImage(src: string) {
   const image = new Image()
@@ -9,8 +9,9 @@ function loadImage(src: string) {
 
 const frameOf = (now: number, frameMs: number, frames: number) => Math.floor(now / frameMs) % frames
 
-// Draws the garden on its native 640 × 360 grid. CSS scales the canvas by a whole number.
-export default function GardenCanvas() {
+// Draws a scene's picture and its animated sprite sheets at the picture's own size (the
+// garden's 640 × 360 grid by default). CSS scales the canvas to the stage.
+export default function GardenCanvas({ layers = gardenLayers, masterUrl = gardenMaster, width = ART_WIDTH, height = ART_HEIGHT } = {}) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -87,7 +88,7 @@ export default function GardenCanvas() {
       observer.disconnect()
       motion.removeEventListener('change', sync)
     }
-  }, [])
+  }, [layers, masterUrl])
 
-  return <canvas ref={canvasRef} className="garden-canvas" width={ART_WIDTH} height={ART_HEIGHT} aria-hidden="true" />
+  return <canvas ref={canvasRef} className="garden-canvas" width={width} height={height} aria-hidden="true" />
 }

@@ -59,6 +59,19 @@
   box-shadow: 0 0 48px 8px #05080f80;
 }
 
+/* The workshop is a painted picture, not pixel art: it scales smoothly to the exact fit, and
+   its animations are looping pictures laid over it. Reduced motion shows the still painting. */
+.garden[data-render=painted] :is(.garden-stage, .garden-canvas) { image-rendering: auto; }
+
+.scene-overlay {
+  position: absolute;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene-overlay { display: none; }
+}
+
 .garden-canvas {
   position: absolute;
   inset: 0;

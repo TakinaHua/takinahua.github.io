@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
-import { ART_HEIGHT, ART_WIDTH, hoverOutlines } from './layers'
+import { hoverOutlines } from './layers'
 import type { LandmarkId } from './layers'
 
 // The clickable shape of each landmark, read from its hover outline so the hover area matches
-// what the visitor sees. `area` is the outline's bounding box in art pixels; `clipPath` is a CSS
+// what the visitor sees. `area` is the outline's bounding box in the picture's own pixels (each
+// outline is drawn at its scene's full size); `clipPath` is a CSS
 // polygon() in percentages of that box.
 export type Silhouette = {
   area: { x: number, y: number, w: number, h: number }
@@ -45,14 +46,14 @@ function convexHull(points: Point[]): Point[] {
 // The outlines are deliberately open where something stands in front of the object (the
 // noticeboard before the hut, grass at the foot of the post), so the shape is the convex hull
 // of the outline rather than its enclosed area.
-function traceSilhouette(pixels: Uint8ClampedArray): Silhouette | null {
+function traceSilhouette(pixels: Uint8ClampedArray, width: number, height: number): Silhouette | null {
   const corners: Point[] = []
-  let left = ART_WIDTH, right = -1, top = ART_HEIGHT, bottom = -1
+  let left = width, right = -1, top = height, bottom = -1
 
-  for (let y = 0; y < ART_HEIGHT; y++) {
+  for (let y = 0; y < height; y++) {
     let first = -1, last = -1
-    for (let x = 0; x < ART_WIDTH; x++) {
-      if (pixels[(y * ART_WIDTH + x) * 4 + 3] < MIN_ALPHA) continue
+    for (let x = 0; x < width; x++) {
+      if (pixels[(y * width + x) * 4 + 3] < MIN_ALPHA) continue
       if (first < 0) first = x
       last = x
     }
@@ -72,29 +73,30 @@ function traceSilhouette(pixels: Uint8ClampedArray): Silhouette | null {
   return { area, clipPath: `polygon(${points.join(', ')})` }
 }
 
-export function useSilhouettes(): Silhouettes {
-  const [silhouettes, setSilhouettes] = useState<Silhouettes>({})
+export function useSilhouettes(outlines: Partial<Record<string, string>> = hoverOutlines) {
+  const [silhouettes, setSilhouettes] = useState<Partial<Record<string, Silhouette>>>({})
 
   useEffect(() => {
     let cancelled = false
     const canvas = document.createElement('canvas')
-    canvas.width = ART_WIDTH
-    canvas.height = ART_HEIGHT
     const context = canvas.getContext('2d', { willReadFrequently: true })
     if (!context) return
 
-    Promise.all(Object.entries(hoverOutlines).map(async ([id, src]) => {
+    Promise.all(Object.entries(outlines).map(async ([id, src]) => {
+      if (!src) return [id, null] as const
       const image = await loadImage(src)
-      context.clearRect(0, 0, ART_WIDTH, ART_HEIGHT)
+      const { naturalWidth: width, naturalHeight: height } = image
+      canvas.width = width
+      canvas.height = height
       context.drawImage(image, 0, 0)
-      return [id, traceSilhouette(context.getImageData(0, 0, ART_WIDTH, ART_HEIGHT).data)] as const
+      return [id, traceSilhouette(context.getImageData(0, 0, width, height).data, width, height)] as const
     })).then(entries => {
       if (cancelled) return
-      setSilhouettes(Object.fromEntries(entries.filter(([, silhouette]) => silhouette)))
+      setSilhouettes(Object.fromEntries(entries.filter((entry): entry is readonly [string, Silhouette] => entry[1] !== null)))
     }).catch(() => { /* keep the rectangular areas */ })
 
     return () => { cancelled = true }
-  }, [])
+  }, [outlines])
 
   return silhouettes
 }

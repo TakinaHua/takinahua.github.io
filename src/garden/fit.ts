@@ -27,34 +27,42 @@ const MIN_HEIGHT_SHARE = 0.7
 // fills the height and visitors pan instead. Anything wider always shows the whole frame.
 const PAN_BELOW_WIDTH = 520
 
+// The picture a scene draws: its own size in pixels, and whether it is pixel art (scaled by whole
+// device pixels to stay crisp) or a painted picture (scaled smoothly to the exact fit).
+export type Art = { width: number, height: number, pixel: boolean }
+const PIXEL_ART: Art = { width: ART_WIDTH, height: ART_HEIGHT, pixel: true }
+
 // Show the entire picture between the bars, centred, with the blurred scene filling any
-// leftover space.
-export function computeWholeLayout(width: number, height: number, dpr: number, insets: Insets = {}): GardenLayout {
+// leftover space. focusX is the x, in the picture's pixels, a narrow screen's pan starts
+// centred on (the garden's landmarks by default).
+export function computeWholeLayout(
+  width: number, height: number, dpr: number, insets: Insets = {}, focusX = SAFE_AREA.x + SAFE_AREA.w / 2, art: Art = PIXEL_ART,
+): GardenLayout {
   const insetTop = insets.top ?? 0
   const bandHeight = height - insetTop - (insets.bottom ?? 0)
   const snap = (value: number) => Math.round(value * dpr) / dpr
-  const exact = Math.min(width / ART_WIDTH, bandHeight / ART_HEIGHT)
+  const exact = Math.min(width / art.width, bandHeight / art.height)
   const whole = Math.floor(exact * dpr) / dpr
-  // Whole device pixels when they cost little size; never larger than the space allows.
-  const scale = whole >= 1 / dpr && exact < whole * PREFER_WHOLE ? whole : exact
+  // Pixel art: whole device pixels when they cost little size; never larger than the space allows.
+  const scale = art.pixel && whole >= 1 / dpr && exact < whole * PREFER_WHOLE ? whole : exact
 
-  if (width < PAN_BELOW_WIDTH && ART_HEIGHT * scale < bandHeight * MIN_HEIGHT_SHARE) {
-    const panScale = Math.ceil((bandHeight / ART_HEIGHT) * dpr) / dpr
-    const artWidth = ART_WIDTH * panScale
-    const safeCentreX = SAFE_AREA.x + SAFE_AREA.w / 2
+  if (width < PAN_BELOW_WIDTH && art.height * scale < bandHeight * MIN_HEIGHT_SHARE) {
+    const fill = bandHeight / art.height
+    const panScale = art.pixel ? Math.ceil(fill * dpr) / dpr : fill
+    const artWidth = art.width * panScale
     return {
       scale: panScale,
       left: 0,
-      top: snap(insetTop + (bandHeight - ART_HEIGHT * panScale) / 2),
+      top: snap(insetTop + (bandHeight - art.height * panScale) / 2),
       pan: artWidth > width,
-      panTo: Math.max(0, Math.min(artWidth - width, safeCentreX * panScale - width / 2)),
+      panTo: Math.max(0, Math.min(artWidth - width, focusX * panScale - width / 2)),
     }
   }
 
   return {
     scale,
-    left: snap((width - ART_WIDTH * scale) / 2),
-    top: snap(insetTop + (bandHeight - ART_HEIGHT * scale) / 2),
+    left: snap((width - art.width * scale) / 2),
+    top: snap(insetTop + (bandHeight - art.height * scale) / 2),
     pan: false,
     panTo: 0,
   }

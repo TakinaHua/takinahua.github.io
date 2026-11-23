@@ -1,14 +1,16 @@
 import { Fragment, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties, MouseEvent } from 'react'
 import { projects } from '../content'
-import { parseRoute, routeClick, usePath } from '../router'
+import { navigate, parseRoute, routeClick, usePath } from '../router'
+import type { Route } from '../router'
 import { computeWholeLayout } from './fit'
 import type { GardenLayout } from './fit'
 import GardenCanvas from './GardenCanvas'
 import GardenView from './GardenView'
 import { useSilhouettes } from './silhouettes'
 import { logoIcon, navIcons, projectIcons } from './icons'
-import { ART_HEIGHT, ART_WIDTH, hoverOutlines, landmarks, masterUrl } from './layers'
+import { returnSpot, sceneFor, scenes, SHELF_ID } from './scenes'
+import type { Scene } from './scenes'
 import './garden.css'
 import './views.css'
 
@@ -55,31 +57,41 @@ function PixelChevron({ direction }: { direction: 'left' | 'right' }) {
   )
 }
 
-function measureLayout(width: number, height: number, trayOpen: boolean) {
+// The projects tray belongs to the garden; the workshop and the shelf use the whole height.
+function measureLayout(width: number, height: number, trayOpen: boolean, scene: Scene) {
   const { bar, tray } = chrome(width)
-  return computeWholeLayout(width, height, devicePixelRatio || 1, { top: bar, bottom: trayOpen ? tray : TRAY_HEAD })
+  const bottom = scene.id === 'garden' ? (trayOpen ? tray : TRAY_HEAD) : 0
+  return computeWholeLayout(width, height, devicePixelRatio || 1, { top: bar, bottom }, scene.focusX, scene.art)
 }
+
+// A garden page or a project book is open over the scene.
+const hasOverlay = (route: Route) =>
+  route.view === 'projects' ? Boolean(route.projectId && route.projectId !== SHELF_ID) : route.view !== 'garden'
 
 export default function Garden() {
   const path = usePath()
   const route = parseRoute(path)
-  const viewOpen = route.view !== 'garden'
+  const scene = scenes[sceneFor(route)]
+  const viewOpen = hasOverlay(route)
+  const inGarden = scene.id === 'garden'
   const viewportRef = useRef<HTMLDivElement>(null)
   const menuId = useId()
   const [size, setSize] = useState({ width: innerWidth, height: innerHeight, dpr: devicePixelRatio || 1 })
   const [trayOpen, setTrayOpen] = useState(readTrayOpen)
   // dpr is part of size so that zooming re-fits the art.
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const layout: GardenLayout = useMemo(() => measureLayout(size.width, size.height, trayOpen), [size, trayOpen])
+  const layout: GardenLayout = useMemo(() => measureLayout(size.width, size.height, trayOpen, scene), [size, trayOpen, scene])
   const trayTilesId = useId()
-  const silhouettes = useSilhouettes()
+  const silhouettes = useSilhouettes(scene.outlines)
+  const sceneHeadingRef = useRef<HTMLHeadingElement>(null)
   const [panEdge, setPanEdge] = useState({ start: true, end: false })
   const [menuOpen, setMenuOpen] = useState(false)
   const [welcomeOpen, setWelcomeOpen] = useState(readWelcomeOpen)
   const [touch] = useState(() => matchMedia('(hover: none)').matches)
   const welcomeId = useId()
-  const welcomeVisible = welcomeOpen && !viewOpen
-  const cameFrom = useRef<string | null>(null)
+  const sceneHeadingId = useId()
+  const welcomeVisible = welcomeOpen && !viewOpen && inGarden
+  const previousRoute = useRef<Route | null>(null)
   const { bar, tray } = chrome(size.width)
   const compact = size.width < COMPACT_WIDTH
 
@@ -101,24 +113,36 @@ export default function Garden() {
     }
   }, [])
 
-  // In pan mode, start centred on the landmarks.
+  // In pan mode, start centred on the scene's main objects.
   useLayoutEffect(() => {
     const viewport = viewportRef.current
     if (viewport) viewport.scrollLeft = layout.pan ? layout.panTo : 0
-  }, [layout.pan, layout.panTo])
+  }, [layout.pan, layout.panTo, scene.id])
 
-  // Back in the garden, return focus to the landmark the visitor came from.
+  // With no page open over it, a scene names itself in the title. Coming back from a page or
+  // a deeper scene returns focus to the object the visitor came from; entering a new scene
+  // moves focus to its heading.
   useEffect(() => {
-    if (viewOpen) {
-      cameFrom.current ??= route.view
-      return
-    }
-    document.title = 'Barry Hua | Portfolio'
-    if (cameFrom.current) {
-      document.querySelector<HTMLElement>(`.landmark[data-landmark="${cameFrom.current}"]`)?.focus({ preventScroll: true })
-      cameFrom.current = null
-    }
-  }, [path, viewOpen, route.view])
+    const from = previousRoute.current
+    previousRoute.current = route
+    if (viewOpen) return
+    document.title = inGarden ? 'Barry Hua | Portfolio' : `${scene.title} · Barry Hua`
+    if (!from) return
+    const spot = returnSpot(from, scene.id)
+    const target = spot && document.querySelector<HTMLElement>(`.landmark[data-landmark="${spot}"]`)
+    if (target) target.focus({ preventScroll: true })
+    else if (sceneFor(from) !== scene.id) sceneHeadingRef.current?.focus({ preventScroll: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- the path identifies the route
+  }, [path])
+
+  // Escape steps back out of the workshop and the shelf, as it does from a page.
+  useEffect(() => {
+    const back = scene.back
+    if (viewOpen || !back) return
+    const onKey = (event: KeyboardEvent) => { if (event.key === 'Escape' && !menuOpen) navigate(back.href) }
+    addEventListener('keydown', onKey)
+    return () => removeEventListener('keydown', onKey)
+  }, [scene, viewOpen, menuOpen])
 
   function trackPan() {
     const viewport = viewportRef.current
@@ -136,11 +160,11 @@ export default function Garden() {
   }
 
   const stageStyle = {
-    width: ART_WIDTH * layout.scale,
-    height: ART_HEIGHT * layout.scale,
+    width: scene.art.width * layout.scale,
+    height: scene.art.height * layout.scale,
     left: layout.left,
     top: layout.top,
-    backgroundImage: `url(${masterUrl})`,
+    backgroundImage: `url(${scene.master})`,
   } as CSSProperties
 
   function dismissWelcome() {
@@ -160,10 +184,12 @@ export default function Garden() {
       className="garden"
       data-intro={welcomeVisible || undefined}
       data-pan={layout.pan || undefined}
+      data-scene={scene.id}
+      data-render={scene.art.pixel ? 'pixel' : 'painted'}
       data-view-open={viewOpen || undefined}
       style={{
         '--art-scale': layout.scale,
-        '--art-url': `url(${masterUrl})`,
+        '--art-url': `url(${scene.master})`,
         '--bar-h': `${bar}px`,
         '--tray-h': `${tray}px`,
         '--tray-head': `${TRAY_HEAD}px`,
@@ -213,41 +239,59 @@ export default function Garden() {
         </aside>
       )}
 
-      <main className="garden-viewport" ref={viewportRef} inert={viewOpen} aria-label="The garden"
+      <main className="garden-viewport" ref={viewportRef} inert={viewOpen} aria-labelledby={sceneHeadingId}
         onScroll={layout.pan ? trackPan : undefined}>
+        <h2 id={sceneHeadingId} className="visually-hidden" ref={sceneHeadingRef} tabIndex={-1}>{scene.title}</h2>
         <div className="garden-stage" style={stageStyle}>
-          <GardenCanvas />
-          {/* Each landmark's hover and click area follows its outline's shape once it is read. */}
-          {landmarks.map(({ id, label, area: box }, index) => {
+          <GardenCanvas key={scene.id} masterUrl={scene.master} layers={scene.layers}
+            width={scene.art.width} height={scene.art.height} />
+          {scene.overlays.map(({ src, x, y, w, h }) => (
+            <img key={src} className="scene-overlay" src={src} alt="" draggable={false}
+              style={{ left: percent(x, scene.art.width), top: percent(y, scene.art.height), width: percent(w, scene.art.width), height: percent(h, scene.art.height) }} />
+          ))}
+          {/* Each spot's hover and click area follows its outline's shape once it is read. */}
+          {scene.spots.map(({ id, href, label, caption, title, area: box, outline }, index) => {
             const silhouette = silhouettes[id]
             const area = silhouette?.area ?? box
             return (
               <Fragment key={id}>
                 <a
-                  href={`/${id}`}
+                  href={href}
                   onClick={go}
-                  className="landmark"
+                  className={title ? 'landmark spine-spot' : 'landmark'}
                   data-landmark={id}
-                  data-outline={hoverOutlines[id] ? '' : undefined}
-                  aria-label={label}
+                  data-outline={outline ? '' : undefined}
+                  aria-label={title ? undefined : label}
                   style={{
-                    left: percent(area.x, ART_WIDTH),
-                    top: percent(area.y, ART_HEIGHT),
-                    width: percent(area.w, ART_WIDTH),
-                    height: percent(area.h, ART_HEIGHT),
+                    left: percent(area.x, scene.art.width),
+                    top: percent(area.y, scene.art.height),
+                    width: percent(area.w, scene.art.width),
+                    height: percent(area.h, scene.art.height),
                     clipPath: silhouette?.clipPath,
                   }}
-                />
-                {/* Laid over the whole stage, right after its landmark so CSS can show it on hover. */}
-                {hoverOutlines[id] && (
-                  <img className="landmark-outline" src={hoverOutlines[id]} alt="" draggable={false}
+                >
+                  {title}
+                </a>
+                {/* Laid over the whole stage, right after its spot so CSS can show it on hover. */}
+                {outline && (
+                  <img className="landmark-outline" src={outline} alt="" draggable={false}
                     style={{ '--intro-order': index } as CSSProperties} />
+                )}
+                {caption && (
+                  <span className="spot-caption" aria-hidden="true"
+                    style={{ left: percent(area.x + area.w / 2, scene.art.width), top: percent(area.y, scene.art.height) }}>
+                    {caption}
+                  </span>
                 )}
               </Fragment>
             )
           })}
         </div>
       </main>
+
+      {scene.back && !viewOpen && (
+        <a className="pixel-button scene-back" href={scene.back.href} onClick={routeClick}>{scene.back.label}</a>
+      )}
 
       {layout.pan && !viewOpen && (
         <div className="pan-controls">
@@ -260,7 +304,7 @@ export default function Garden() {
         </div>
       )}
 
-      <section className="tray" aria-labelledby="tray-title" inert={viewOpen} data-open={trayOpen || undefined}>
+      {inGarden && <section className="tray" aria-labelledby="tray-title" inert={viewOpen} data-open={trayOpen || undefined}>
         <div className="tray-head">
           <h2 id="tray-title" className="tray-title">
             <img src={navIcons.projects} width="16" height="16" alt="" />
@@ -290,9 +334,9 @@ export default function Garden() {
             </li>
           ))}
         </ul>
-      </section>
+      </section>}
 
-      {route.view !== 'garden' && <GardenView route={route} />}
+      {viewOpen && route.view !== 'garden' && <GardenView route={route} />}
     </div>
   )
 }

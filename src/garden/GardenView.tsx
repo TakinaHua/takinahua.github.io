@@ -5,6 +5,7 @@ import { education, interests, intro, links, projects, roles, skillGroups } from
 import type { Project } from '../content'
 import { navigate, routeClick } from '../router'
 import type { Route } from '../router'
+import { bookBack } from './scenes'
 
 type ViewRoute = Exclude<Route, { view: 'garden' }>
 
@@ -15,37 +16,6 @@ function ActionSlot({ href, label, external }: { href?: string, label: string, e
   return external
     ? <a className="pixel-button" href={href} target="_blank" rel="noreferrer">{label}</a>
     : <a className="pixel-button" href={href}>{label}</a>
-}
-
-function Workshop() {
-  const onDesk = projects.filter(project => project.onDesk)
-  return (
-    <>
-      <section aria-labelledby="desk-title">
-        <h3 id="desk-title" className="view-subtitle">On the desk</h3>
-        <ul className="desk">
-          {onDesk.map(project => (
-            <li key={project.id}>
-              <a className="desk-book" href={`/projects/${project.id}`} onClick={routeClick}>
-                <span className="desk-book-title">{project.title}</span>
-                <span className="desk-book-tech">{project.tech}</span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>
-      <section aria-labelledby="shelf-title">
-        <h3 id="shelf-title" className="view-subtitle">On the shelf</h3>
-        <ul className="shelf">
-          {projects.map(project => (
-            <li key={project.id}>
-              <a className="spine" href={`/projects/${project.id}`} onClick={routeClick}>{project.title}</a>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </>
-  )
 }
 
 function ProjectBook({ project }: { project: Project }) {
@@ -145,10 +115,10 @@ function resolve(route: ViewRoute): { title: string, back: { href: string, label
   const home = { href: '/', label: 'Back to the garden' }
   switch (route.view) {
     case 'projects': {
-      if (!route.projectId) return { title: 'Projects', back: home, body: <Workshop /> }
+      // Only project books open over the workshop; the workshop and the shelf are scenes.
       const project = projects.find(item => item.id === route.projectId)
       if (!project) return null
-      return { title: project.title, back: { href: '/projects', label: 'Back to the workshop' }, body: <ProjectBook project={project} /> }
+      return { title: project.title, back: bookBack(project.id), body: <ProjectBook project={project} /> }
     }
     case 'experience': return { title: 'Experience', back: home, body: <Noticeboard /> }
     case 'about': return { title: 'About me', back: home, body: <Album /> }
