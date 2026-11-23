@@ -10,4 +10,8 @@ Everything for the pixel-art garden background of the portfolio site.
 
 - `animations/glow/`: workshop window glow and pier lantern flicker, with transparent sheets and a full-scene preview.
 
-Still to animate: pond shimmer, fireflies, drifting petals, the cat.
+- `animations/pond/`: transparent pond shimmer sheet and a 2× full-scene animated PNG with waterfall and glow.
+
+- `animations/fireflies/`: seven drifting fireflies, a transparent sheet and a full-scene preview with the pond, waterfall and glow.
+
+- `animations/cat/`: sleeping cat breathing and flicking one ear, with a transparent sheet, close-up GIF and full-garden preview.

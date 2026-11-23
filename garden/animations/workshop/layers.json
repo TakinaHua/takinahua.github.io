@@ -1,0 +1,54 @@
+{
+  "canvas": [
+    640,
+    360
+  ],
+  "frames": 80,
+  "columns": 10,
+  "rows": 8,
+  "frameMs": 100,
+  "drawOrder": [
+    "petals",
+    "waterfall",
+    "pond",
+    "lamp",
+    "fire-and-ice"
+  ],
+  "layers": {
+    "petals": {
+      "x": 451,
+      "y": 41,
+      "width": 177,
+      "height": 123,
+      "sheet": "petals-sheet.png"
+    },
+    "waterfall": {
+      "x": 593,
+      "y": 142,
+      "width": 37,
+      "height": 26,
+      "sheet": "waterfall-sheet.png"
+    },
+    "pond": {
+      "x": 497,
+      "y": 163,
+      "width": 143,
+      "height": 33,
+      "sheet": "pond-sheet.png"
+    },
+    "lamp": {
+      "x": 126,
+      "y": 158,
+      "width": 186,
+      "height": 126,
+      "sheet": "lamp-sheet.png"
+    },
+    "fire-and-ice": {
+      "x": 216,
+      "y": 44,
+      "width": 70,
+      "height": 45,
+      "sheet": "fire-and-ice-sheet.png"
+    }
+  }
+}
