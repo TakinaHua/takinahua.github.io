@@ -118,3 +118,34 @@
 
 .landmark:focus-visible { outline: 2px dashed #ffffffb3; outline-offset: 2px; }
 .landmark[data-outline]:focus-visible { outline: none; }
+
+/* Without hover (phones, tablets) the outlines stay faintly on, so the four places read as
+   things to tap. */
+@media (hover: none) {
+  .landmark-outline { opacity: .4; }
+}
+
+/* While the welcome sign is up, the four places glow one after another, on a loop with a
+   rest between rounds. The one under the cursor or focus stays lit. */
+.garden[data-intro] .landmark-outline {
+  animation: outline-intro 6s ease-in-out calc(.8s + var(--intro-order) * 1.1s) infinite backwards;
+}
+
+.garden[data-intro] .landmark:is(:hover, :focus-visible) + .landmark-outline { animation: none; }
+
+@keyframes outline-intro {
+  0%, 30%, 100% { opacity: 0; }
+  8%, 20% { opacity: 1; }
+}
+
+@media (hover: none) {
+  @keyframes outline-intro {
+    0%, 30%, 100% { opacity: .4; }
+    8%, 20% { opacity: 1; }
+  }
+}
+
+/* Reduced motion: no glow sequence; all four show steadily while the sign is up. */
+@media (prefers-reduced-motion: reduce) {
+  .garden[data-intro] .landmark-outline { animation: none; opacity: .7; }
+}

@@ -24,11 +24,16 @@
 
 .brand img, .topnav img, .tray img { image-rendering: pixelated; flex: none; }
 
+.brand-text { display: grid; gap: 4px; }
+
 .brand h1 {
   margin: 0;
   white-space: nowrap;
   font: var(--pixel-text);
 }
+
+/* Says what Barry does on every screen, for visitors who read nothing else. */
+.brand-tagline { color: var(--parchment-shade); font: var(--pixel-small); white-space: nowrap; }
 
 .topnav { position: relative; display: flex; align-items: center; gap: 12px; }
 
@@ -238,7 +243,7 @@
 .pan-button:disabled { visibility: hidden; }
 .pan-button:is(:hover, :focus-visible) { background: var(--wood-light); }
 
-@media (max-width: 959px) {
+@media (max-width: 1019px) {
   .tray-tile { height: 64px; }
   .tray-tile img { width: 32px; height: 32px; }
 }
@@ -460,7 +465,30 @@
   .open-book, .album-spread { grid-template-columns: minmax(0, 1fr); }
 }
 
+/* First-visit welcome sign: a parchment notice over the pond, the garden still moving
+   around it. */
+.welcome {
+  position: absolute;
+  left: 50%;
+  z-index: 3;
+  width: min(380px, calc(100% - 32px));
+  padding: 20px 24px 24px;
+  background: var(--parchment);
+  box-shadow: inset 0 0 0 4px var(--wood), inset 0 0 0 8px var(--wood-dark), 0 12px 28px #0009;
+  color: var(--ink-dark);
+  transform: translateX(-50%);
+  animation: welcome-in 240ms steps(3);
+}
+
+/* Starts visible: only the position steps in. */
+@keyframes welcome-in {
+  from { transform: translate(-50%, 12px); }
+}
+
+.welcome h2 { margin: 0 0 8px; font: var(--pixel-text); }
+.welcome p { margin: 0 0 16px; line-height: 1.5; }
+
 @media (prefers-reduced-motion: reduce) {
   .desk-book, .landmark::before, .landmark::after, .landmark-outline, .tray-tile, .tray { transition: none; }
-  .view { animation: none; }
+  .view, .welcome { animation: none; }
 }

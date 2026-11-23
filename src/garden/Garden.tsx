@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import type { CSSProperties } from 'react'
+import type { CSSProperties, MouseEvent } from 'react'
 import { projects } from '../content'
 import { parseRoute, routeClick, usePath } from '../router'
 import { computeWholeLayout } from './fit'
@@ -16,7 +16,7 @@ const percent = (value: number, total: number) => `${(value / total) * 100}%`
 
 // Bar and tray heights, shared with the CSS through custom properties. The tray's header
 // strip stays visible when the tray is hidden.
-const COMPACT_WIDTH = 960
+const COMPACT_WIDTH = 1020
 const TRAY_HEAD = 40
 const chrome = (width: number) => width < COMPACT_WIDTH ? { bar: 56, tray: 128 } : { bar: 60, tray: 140 }
 
@@ -26,6 +26,15 @@ function readTrayOpen() {
 }
 function saveTrayOpen(open: boolean) {
   try { localStorage.setItem(TRAY_KEY, String(open)) } catch { /* storage unavailable: keep it for this visit */ }
+}
+
+// The welcome sign shows until the visitor dismisses it or goes anywhere, once per browser.
+const WELCOME_KEY = 'garden-welcome-seen'
+function readWelcomeOpen() {
+  try { return localStorage.getItem(WELCOME_KEY) !== 'true' } catch { return true }
+}
+function saveWelcomeSeen() {
+  try { localStorage.setItem(WELCOME_KEY, 'true') } catch { /* storage unavailable: hide it for this visit */ }
 }
 
 const navItems = [
@@ -66,6 +75,10 @@ export default function Garden() {
   const silhouettes = useSilhouettes()
   const [panEdge, setPanEdge] = useState({ start: true, end: false })
   const [menuOpen, setMenuOpen] = useState(false)
+  const [welcomeOpen, setWelcomeOpen] = useState(readWelcomeOpen)
+  const [touch] = useState(() => matchMedia('(hover: none)').matches)
+  const welcomeId = useId()
+  const welcomeVisible = welcomeOpen && !viewOpen
   const cameFrom = useRef<string | null>(null)
   const { bar, tray } = chrome(size.width)
   const compact = size.width < COMPACT_WIDTH
@@ -130,9 +143,22 @@ export default function Garden() {
     backgroundImage: `url(${masterUrl})`,
   } as CSSProperties
 
+  function dismissWelcome() {
+    if (!welcomeOpen) return
+    saveWelcomeSeen()
+    setWelcomeOpen(false)
+  }
+
+  // Following any link into the site also counts as having read the sign.
+  function go(event: MouseEvent<HTMLAnchorElement>) {
+    dismissWelcome()
+    routeClick(event)
+  }
+
   return (
     <div
       className="garden"
+      data-intro={welcomeVisible || undefined}
       data-pan={layout.pan || undefined}
       data-view-open={viewOpen || undefined}
       style={{
@@ -144,10 +170,13 @@ export default function Garden() {
       } as CSSProperties}
     >
       <header className="topbar">
-        <a className="skip-link" href="/projects" onClick={routeClick}>Skip to projects</a>
+        <a className="skip-link" href="/projects" onClick={go}>Skip to projects</a>
         <a className="brand" href="/" onClick={routeClick}>
           <img src={logoIcon} width="32" height="32" alt="" />
-          <h1>Barry Hua</h1>
+          <span className="brand-text">
+            <h1>Barry Hua</h1>
+            <span className="brand-tagline">Software Engineer, CMU math</span>
+          </span>
         </a>
         <nav className="topnav" aria-label="Main">
           {compact && (
@@ -161,7 +190,7 @@ export default function Garden() {
             {navItems.map(item => (
               <li key={item.href}>
                 <a href={item.href} aria-current={route.view === item.view ? 'page' : undefined}
-                  onClick={event => { setMenuOpen(false); routeClick(event) }}>
+                  onClick={event => { setMenuOpen(false); go(event) }}>
                   <img src={item.icon} width="32" height="32" alt="" />
                   {item.label}
                 </a>
@@ -171,19 +200,32 @@ export default function Garden() {
         </nav>
       </header>
 
+      {/* First visit only: says who made the garden and how to use it, without covering it. */}
+      {welcomeVisible && (
+        <aside className="welcome" aria-labelledby={welcomeId}
+          style={{ bottom: (trayOpen ? tray : TRAY_HEAD) + (layout.pan ? 80 : 16) }}>
+          <h2 id={welcomeId}>Hi, I’m Barry.</h2>
+          <p>
+            I build software and study math at Carnegie Mellon. This is my garden: {touch ? 'tap' : 'click'} anything
+            that glows, or use the menu above.
+          </p>
+          <button type="button" className="pixel-button" onClick={dismissWelcome}>Got it</button>
+        </aside>
+      )}
+
       <main className="garden-viewport" ref={viewportRef} inert={viewOpen} aria-label="The garden"
         onScroll={layout.pan ? trackPan : undefined}>
         <div className="garden-stage" style={stageStyle}>
           <GardenCanvas />
           {/* Each landmark's hover and click area follows its outline's shape once it is read. */}
-          {landmarks.map(({ id, label, area: box }) => {
+          {landmarks.map(({ id, label, area: box }, index) => {
             const silhouette = silhouettes[id]
             const area = silhouette?.area ?? box
             return (
               <Fragment key={id}>
                 <a
                   href={`/${id}`}
-                  onClick={routeClick}
+                  onClick={go}
                   className="landmark"
                   data-landmark={id}
                   data-outline={hoverOutlines[id] ? '' : undefined}
@@ -197,7 +239,10 @@ export default function Garden() {
                   }}
                 />
                 {/* Laid over the whole stage, right after its landmark so CSS can show it on hover. */}
-                {hoverOutlines[id] && <img className="landmark-outline" src={hoverOutlines[id]} alt="" draggable={false} />}
+                {hoverOutlines[id] && (
+                  <img className="landmark-outline" src={hoverOutlines[id]} alt="" draggable={false}
+                    style={{ '--intro-order': index } as CSSProperties} />
+                )}
               </Fragment>
             )
           })}
@@ -233,7 +278,7 @@ export default function Garden() {
         <ul className="tray-tiles" id={trayTilesId} inert={!trayOpen}>
           {projects.map(project => (
             <li key={project.id}>
-              <a className="tray-tile" href={`/projects/${project.id}`} onClick={routeClick}>
+              <a className="tray-tile" href={`/projects/${project.id}`} onClick={go}>
                 <img src={projectIcons[project.id]} width="64" height="64" alt="" />
                 <span>
                   <span className="tray-tile-title">{project.title}</span>
