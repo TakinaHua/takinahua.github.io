@@ -1,0 +1,120 @@
+/* Pixel garden first screen. Art is scaled by whole numbers only (see garden/final/FINAL.md). */
+
+.garden {
+  --wood-dark: #3b2414;
+  --wood: #6b4226;
+  --wood-light: #9a6738;
+  --wood-edge: #c98c4f;
+  --parchment: #f2e2c0;
+  --parchment-shade: #e2cb9c;
+  --ink-dark: #2e1d10;
+  --ink-soft: #5b3f27;
+  --lamp: #ffd98a;
+  --night: #0b1020;
+  --bar: #101527;
+  --blossom: #f2a7c3;
+  /* Pixel fonts are sharp only at whole multiples of their grid. Jersey 15 is drawn on a
+     1/27 em grid (27px, 54px); Tiny5 on a 1/8 em grid (8px, 16px, 24px). */
+  --font-pixel: 'Jersey 15', ui-monospace, monospace;
+  --font-pixel-small: 'Tiny5', ui-monospace, monospace;
+  --pixel-text: 400 27px / 1 var(--font-pixel);
+  --pixel-heading: 400 54px / 1 var(--font-pixel);
+  --pixel-small: 400 16px / 1.25 var(--font-pixel-small);
+
+  position: relative;
+  height: 100svh;
+  min-height: 360px;
+  /* clip, not hidden: the blurred band layer overhangs the edges and must never scroll. */
+  overflow: clip;
+  background: var(--night);
+}
+
+/* Bands beside the art show a soft, dimmed continuation of the scene itself. */
+.garden::before {
+  position: absolute;
+  inset: -40px;
+  background: var(--art-url) center / cover no-repeat;
+  filter: blur(18px) brightness(.55) saturate(.9);
+  content: '';
+}
+
+.garden-viewport {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.garden[data-pan] .garden-viewport {
+  overflow: auto hidden;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+}
+
+.garden-viewport::-webkit-scrollbar { display: none; }
+
+.garden-stage {
+  position: absolute;
+  background: center / 100% 100% no-repeat;
+  image-rendering: pixelated;
+  box-shadow: 0 0 48px 8px #05080f80;
+}
+
+.garden-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+}
+
+/* Landmarks */
+
+
+.landmark {
+  position: absolute;
+  cursor: pointer;
+}
+
+/* Under the cursor or keyboard focus the object lifts: it brightens (::before) and a faded
+   white halo rings it (::after). */
+.landmark::before,
+.landmark::after {
+  position: absolute;
+  inset: -14%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease-out;
+  content: '';
+}
+
+.landmark::before {
+  backdrop-filter: brightness(1.35) saturate(1.1);
+  mask: radial-gradient(closest-side, #000 55%, #0000);
+}
+
+.landmark::after {
+  background: radial-gradient(closest-side, #fff0 40%, #ffffff47 68%, #ffffff1a 84%, #fff0);
+  mix-blend-mode: screen;
+}
+
+/* The traced outline from Codex replaces the oval glow (and the focus box) when it exists. */
+.landmark-outline {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms ease-out;
+}
+
+.landmark[data-outline]::before,
+.landmark[data-outline]::after { display: none; }
+
+.landmark:is(:hover, :focus-visible) + .landmark-outline,
+.landmark:is(:hover, :focus-visible)::before,
+.landmark:is(:hover, :focus-visible)::after { opacity: 1; }
+
+.landmark:focus-visible { outline: 2px dashed #ffffffb3; outline-offset: 2px; }
+.landmark[data-outline]:focus-visible { outline: none; }

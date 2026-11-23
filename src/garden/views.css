@@ -1,0 +1,466 @@
+/* Garden chrome: top bar, Projects tray and pan controls, then the landmark views. */
+
+.topbar {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: var(--bar-h);
+  padding-inline: clamp(12px, 2vw, 24px);
+  background: var(--bar);
+  box-shadow: 0 3px 0 var(--wood-dark);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--parchment);
+  text-decoration: none;
+}
+
+.brand img, .topnav img, .tray img { image-rendering: pixelated; flex: none; }
+
+.brand h1 {
+  margin: 0;
+  white-space: nowrap;
+  font: var(--pixel-text);
+}
+
+.topnav { position: relative; display: flex; align-items: center; gap: 12px; }
+
+.topnav-list {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.topnav-list a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--bar-h);
+  padding: 0 12px;
+  color: var(--parchment-shade);
+  font: var(--pixel-text);
+  text-decoration: none;
+}
+
+.topnav-list a:is(:hover, :focus-visible), .topnav-list a[aria-current=page] { color: var(--parchment); }
+
+.topnav-list a[aria-current=page]::after {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  left: 12px;
+  height: 3px;
+  background: var(--blossom);
+  content: '';
+}
+
+.topnav-list a:focus-visible { outline-offset: -3px; }
+
+.menu-button,
+.pixel-button,
+.menu-list :is(a, button) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 0;
+  background: var(--wood);
+  box-shadow: inset 0 2px var(--wood-light), inset 0 -3px var(--wood-dark), 0 0 0 2px var(--wood-dark);
+  color: var(--parchment);
+  cursor: pointer;
+  font: var(--pixel-text);
+  text-decoration: none;
+}
+
+:is(.menu-button, .pixel-button, .menu-list :is(a, button)):is(:hover, :focus-visible) {
+  background: var(--wood-light);
+}
+
+.menu-button[aria-expanded=true] { background: var(--wood-dark); }
+
+.menu-list {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  display: grid;
+  gap: 8px;
+  min-width: 12rem;
+  margin: 0;
+  padding: 10px;
+  list-style: none;
+  background: var(--bar);
+  box-shadow: 0 0 0 3px var(--wood-dark), inset 0 0 0 2px var(--wood);
+}
+
+.menu-list[hidden] { display: none; }
+.menu-list :is(a, button) { width: 100%; }
+.menu-list a[aria-current=page] { box-shadow: inset 0 -3px var(--blossom), 0 0 0 2px var(--wood-dark); }
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 12px;
+  z-index: 5;
+}
+
+.skip-link:focus {
+  top: 12px;
+  padding: 8px 14px;
+  background: var(--parchment);
+  color: var(--ink-dark);
+  font: var(--pixel-text);
+}
+
+.garden :is(a, button):focus-visible {
+  outline: 3px solid var(--lamp);
+  outline-offset: 3px;
+}
+
+/* Projects tray: a header strip that always shows, and tiles that slide away. */
+
+.tray {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  display: grid;
+  grid-template-rows: var(--tray-head) 1fr;
+  height: var(--tray-h);
+  padding-inline: clamp(12px, 2vw, 24px);
+  background: var(--bar);
+  box-shadow: 0 -3px 0 var(--wood-dark);
+  transition: transform 200ms cubic-bezier(.2, .8, .2, 1);
+}
+
+.tray:not([data-open]) { transform: translateY(calc(var(--tray-h) - var(--tray-head))); }
+
+.tray-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.tray-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: var(--parchment);
+  font: var(--pixel-text);
+  white-space: nowrap;
+}
+
+.tray-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 2px 10px;
+  border: 0;
+  background: transparent;
+  box-shadow: 0 0 0 2px var(--wood);
+  color: var(--parchment-shade);
+  cursor: pointer;
+  font: var(--pixel-text);
+}
+
+.tray-toggle:is(:hover, :focus-visible) { background: var(--wood); color: var(--parchment); }
+
+.tray-tiles {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 4px 4px 10px;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: none;
+}
+
+.tray-tile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  height: 80px;
+  padding: 8px 10px 8px 8px;
+  background: #1b2236;
+  box-shadow: 0 0 0 2px var(--wood), inset 0 0 0 4px #141a2b;
+  color: var(--parchment);
+  text-decoration: none;
+  transition: transform 140ms steps(2);
+}
+
+.tray-tile:is(:hover, :focus-visible) { box-shadow: 0 0 0 2px var(--blossom), inset 0 0 0 4px #141a2b; transform: translateY(-3px); }
+.tray-tile > span { display: grid; flex: 1; gap: 4px; }
+/* Tiles share the tray's width but never cut a title short: a tile is at least as wide as its
+   title, and the row scrolls once they no longer fit. The caption does not widen its tile. */
+.tray-tiles > li { flex: 1 1 0; max-width: 260px; }
+.tray-tile-title { font: var(--pixel-text); white-space: nowrap; }
+.tray-tile-tech { width: 0; min-width: 100%; overflow: hidden; color: #aab3c8; font: var(--pixel-small); text-overflow: ellipsis; white-space: nowrap; }
+
+/* Pan controls (narrow portrait screens only) */
+
+.pan-controls {
+  position: absolute;
+  inset: auto 0 calc(var(--tray-h) + 16px);
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  padding-inline: 12px;
+  pointer-events: none;
+}
+
+.pan-button {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  background: var(--wood);
+  box-shadow: inset 0 2px var(--wood-light), inset 0 -3px var(--wood-dark), 0 0 0 2px var(--wood-dark);
+  color: var(--parchment);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.pan-button:disabled { visibility: hidden; }
+.pan-button:is(:hover, :focus-visible) { background: var(--wood-light); }
+
+@media (max-width: 959px) {
+  .tray-tile { height: 64px; }
+  .tray-tile img { width: 32px; height: 32px; }
+}
+
+/* Views: each landmark's page opens over the dimmed garden. */
+
+.view-layer {
+  position: absolute;
+  inset: var(--bar-h) 0 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  padding: clamp(10px, 3vw, 40px);
+  overflow-y: auto;
+}
+
+.view-backdrop {
+  position: fixed;
+  inset: var(--bar-h) 0 0;
+  background: #05080fb8;
+  cursor: default;
+}
+
+.view {
+  position: relative;
+  width: min(980px, 100%);
+  padding: clamp(18px, 3vw, 32px);
+  background: var(--parchment);
+  box-shadow: inset 0 0 0 4px var(--wood), inset 0 0 0 8px var(--wood-dark), 0 18px 40px #0009;
+  color: var(--ink-dark);
+  animation: view-in 180ms steps(3);
+}
+
+/* Starts visible: only the position steps in, so a paused timeline never hides content. */
+@keyframes view-in {
+  from { transform: translateY(12px); }
+}
+
+.view-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.view h2 { margin: 0; font: var(--pixel-heading); outline: none; }
+.view h3 { margin: 0 0 6px; font: var(--pixel-text); }
+.view p { max-width: 68ch; margin: 0 0 10px; line-height: 1.6; }
+.view .view-meta, .view .note-role { color: var(--ink-soft); font-size: 14px; }
+.view .note-role { margin-bottom: 2px; font-weight: 600; }
+.view .view-subtitle { margin-top: 8px; color: var(--ink-soft); font: var(--pixel-small); }
+.view :is(a, button):focus-visible { outline-color: var(--wood-dark); }
+.view ::selection { background: var(--wood-light); color: var(--parchment); }
+
+.pixel-button.is-unavailable {
+  background: transparent;
+  box-shadow: none;
+  outline: 2px dashed var(--wood-light);
+  outline-offset: -2px;
+  color: var(--ink-soft);
+  cursor: default;
+}
+
+.desk, .shelf, .notes, .plain-list, .skills, .postcard-links { margin: 0; padding: 0; list-style: none; }
+
+/* Workshop: three books on the desk, every project on the shelf. */
+
+.desk {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+  padding: 18px 18px 28px;
+  background: var(--wood-light);
+  box-shadow: inset 0 0 0 4px var(--wood), inset 0 -10px var(--wood);
+}
+
+.desk-book {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-height: 120px;
+  padding: 16px 16px 16px 24px;
+  background: #2f6f6a;
+  box-shadow: inset 8px 0 #1d4643, 0 0 0 2px #1d4643;
+  color: var(--parchment);
+  text-decoration: none;
+  transition: transform 140ms steps(2);
+}
+
+.desk li:nth-child(2) .desk-book { background: #8a3b32; box-shadow: inset 8px 0 #5c241e, 0 0 0 2px #5c241e; }
+.desk li:nth-child(3) .desk-book { background: #4b4a7a; box-shadow: inset 8px 0 #2f2e52, 0 0 0 2px #2f2e52; }
+.desk-book:is(:hover, :focus-visible) { transform: translateY(-4px); }
+.desk-book-title { font: var(--pixel-text); }
+.desk-book-tech { color: var(--parchment-shade); font: var(--pixel-small); }
+
+.shelf {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 14px 14px 0;
+  background: var(--wood);
+  box-shadow: inset 0 -10px var(--wood-dark);
+}
+
+.spine {
+  display: block;
+  margin-bottom: 10px;
+  padding: 14px 12px;
+  background: var(--parchment-shade);
+  box-shadow: inset 0 4px var(--wood-light), 0 0 0 2px var(--wood-dark);
+  color: var(--ink-dark);
+  font: var(--pixel-text);
+  text-decoration: none;
+}
+
+.spine:is(:hover, :focus-visible) { background: var(--parchment); }
+
+.open-book {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 4px;
+  padding: 10px;
+  background: var(--wood-dark);
+}
+
+.book-page { padding: 20px; background: #fbf1dc; }
+.book-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+.book-picture { display: grid; place-items: center; }
+.book-picture img { width: 100%; height: auto; box-shadow: 0 0 0 2px var(--wood); }
+.picture-placeholder { color: var(--ink-soft); font: var(--pixel-small); text-align: center; }
+
+/* Noticeboard */
+
+.notes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+  padding: 18px;
+  background: var(--wood);
+  box-shadow: inset 0 0 0 4px var(--wood-dark);
+}
+
+.pinned-note {
+  position: relative;
+  padding: 24px 16px 14px;
+  background: #fbf1dc;
+  box-shadow: 0 6px 10px -4px #0008;
+}
+
+.pinned-note::before {
+  position: absolute;
+  top: 7px;
+  left: 50%;
+  width: 10px;
+  height: 10px;
+  transform: translateX(-50%);
+  background: #c0392b;
+  box-shadow: 0 2px #7a1f15;
+  content: '';
+}
+
+/* Album */
+
+.album { display: grid; gap: 16px; }
+
+.album-spread {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+  padding: 16px;
+  background: #2f6f6a;
+  box-shadow: inset 0 0 0 4px #1d4643;
+}
+
+.album-spread > img { width: 100%; height: auto; box-shadow: 0 0 0 6px #fbf1dc; }
+.album-page { padding: 18px; background: #fbf1dc; }
+.album-page h3 + * { margin-bottom: 14px; }
+.plain-list { display: grid; gap: 12px; }
+.plain-list li { display: grid; }
+.plain-list span { color: var(--ink-soft); font-size: 14px; }
+
+.skills { display: flex; flex-wrap: wrap; gap: 6px; }
+
+.skills li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  background: var(--parchment);
+  box-shadow: 0 0 0 2px var(--parchment-shade);
+  font-size: 14px;
+}
+
+/* Postcard */
+
+.postcard {
+  padding: 28px;
+  background: #fbf1dc;
+  box-shadow: inset 0 0 0 2px var(--wood-light);
+}
+
+.postcard-links { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (max-width: 700px) {
+  .open-book, .album-spread { grid-template-columns: minmax(0, 1fr); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .desk-book, .landmark::before, .landmark::after, .landmark-outline, .tray-tile, .tray { transition: none; }
+  .view { animation: none; }
+}
