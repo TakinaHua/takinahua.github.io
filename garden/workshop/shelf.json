@@ -1,0 +1,32 @@
+{
+  "spines": [
+    {
+      "id": "atlas",
+      "x": 62,
+      "y": 69,
+      "width": 75,
+      "height": 208
+    },
+    {
+      "id": "fire-and-ice",
+      "x": 149,
+      "y": 52,
+      "width": 75,
+      "height": 225
+    },
+    {
+      "id": "lol-ping",
+      "x": 236,
+      "y": 80,
+      "width": 75,
+      "height": 197
+    },
+    {
+      "id": "ev-optimization",
+      "x": 323,
+      "y": 59,
+      "width": 75,
+      "height": 218
+    }
+  ]
+}

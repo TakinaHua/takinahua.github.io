@@ -1,0 +1,76 @@
+{
+  "width": 1672,
+  "height": 941,
+  "layers": [
+    {
+      "file": "sakura-breeze.apng",
+      "label": "Sakura breeze",
+      "rect": [
+        1150,
+        150,
+        470,
+        255
+      ]
+    },
+    {
+      "file": "pond-ripples.apng",
+      "label": "Pond reflections",
+      "rect": [
+        1310,
+        423,
+        362,
+        85
+      ]
+    },
+    {
+      "file": "waterfall.apng",
+      "label": "Waterfall",
+      "rect": [
+        1540,
+        374,
+        94,
+        73
+      ]
+    },
+    {
+      "file": "lamp-glow.apng",
+      "label": "Desk lamp",
+      "rect": [
+        315,
+        425,
+        445,
+        335
+      ]
+    },
+    {
+      "file": "terrain-crt.apng",
+      "label": "Terrain CRT",
+      "rect": [
+        555,
+        109,
+        196,
+        129
+      ]
+    },
+    {
+      "file": "terminal-crt.apng",
+      "label": "Terminal CRT",
+      "rect": [
+        857,
+        160,
+        114,
+        87
+      ]
+    },
+    {
+      "file": "mug-steam.apng",
+      "label": "Tea steam",
+      "rect": [
+        387,
+        596,
+        74,
+        66
+      ]
+    }
+  ]
+}
