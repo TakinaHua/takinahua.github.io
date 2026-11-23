@@ -208,6 +208,15 @@
 }
 
 .tray-tile:is(:hover, :focus-visible) { box-shadow: 0 0 0 2px var(--blossom), inset 0 0 0 4px #141a2b; transform: translateY(-3px); }
+
+/* Pressed: every control sinks a pixel and darkens while held. */
+.tray-tile:active { transform: translateY(-1px); }
+:is(.menu-button, .pixel-button, .menu-list :is(a, button), .tray-toggle, .pan-button):active:not(:disabled) {
+  background: var(--wood-dark);
+  transform: translateY(1px);
+}
+.desk-book:active { transform: translateY(-2px); }
+.spine:active { background: var(--parchment-shade); }
 .tray-tile > span { display: grid; flex: 1; gap: 4px; }
 /* Tiles share the tray's width but never cut a title short: a tile is at least as wide as its
    title, and the row scrolls once they no longer fit. The caption does not widen its tile. */
@@ -246,6 +255,15 @@
 @media (max-width: 1019px) {
   .tray-tile { height: 64px; }
   .tray-tile img { width: 32px; height: 32px; }
+}
+
+/* Phones: the tech list would cut down to "Type…", so tiles show the title alone (plus
+   "Coming soon" where it applies) and size to it, leaving the next tile peeking in as a cue
+   that the row scrolls. */
+@media (max-width: 599px) {
+  .tray-tiles > li { flex: 0 0 auto; max-width: none; }
+  .tray-tile-tech:not([data-soon]) { display: none; }
+  .tray-tile-tech[data-soon] { width: auto; }
 }
 
 /* Views: each landmark's page opens over the dimmed garden. */

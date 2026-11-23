@@ -92,7 +92,7 @@ function Album() {
         <div className="album-page">
           <p>{intro}</p>
           <h3>Interests</h3>
-          <p>{interests.join(' · ')}</p>
+          <p>{interests.join(', ')}</p>
         </div>
       </div>
       <div className="album-spread">

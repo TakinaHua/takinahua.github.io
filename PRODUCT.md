@@ -53,9 +53,15 @@ A wooden noticeboard beside the Projects hut opens to one pinned note per role. 
 
 A small red mailbox beside the garden path opens a postcard with Email, LinkedIn, and GitHub links. The Contact navigation link opens the same postcard directly.
 
-## Landmark labels
+## Landmarks and first visit
 
-On first arrival, all four clickable landmarks show their names on wooden plaques: Projects, Experience, About me, and Contact. Selecting “Hide labels” hides the lettering and keeps each wooden backing visible. Selecting “Show labels” restores the names. The landmarks remain interactive in both states.
+The four clickable landmarks carry no text labels in the scene; the art stays clean. Hovering a landmark, or focusing it with the keyboard, shows a white outline traced around the object (from Codex, in `garden/hover/`), and only the object's own shape responds to the pointer. Keyboard focus adds a lamp-coloured halo to the outline. On touch screens, which have no hover, the outlines stay faintly visible.
+
+The top bar names Barry with a short line under it: “Software Engineer, CMU math”, on every screen.
+
+On a first visit, a small welcome sign sits over the pond without covering the garden: “Hi, I’m Barry. I build software and study math at Carnegie Mellon. This is my garden: click anything that glows, or use the menu above.” While it is up, the four landmarks glow one after another. It closes on “Got it” or as soon as the visitor opens anything, and the browser remembers it.
+
+The menu icons are meant to be small copies of the landmarks they open (request in `garden/icons/REQUEST.md`).
 
 ## Artwork review
 

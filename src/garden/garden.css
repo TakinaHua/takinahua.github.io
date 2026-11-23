@@ -119,6 +119,12 @@
 .landmark:focus-visible { outline: 2px dashed #ffffffb3; outline-offset: 2px; }
 .landmark[data-outline]:focus-visible { outline: none; }
 
+/* Keyboard focus is stronger than hover: the outline also carries a lamp-coloured halo, so
+   the place in focus stands out even against the pale blossom. */
+.landmark:focus-visible + .landmark-outline {
+  filter: drop-shadow(0 0 1px var(--lamp)) drop-shadow(0 0 3px var(--lamp));
+}
+
 /* Without hover (phones, tablets) the outlines stay faintly on, so the four places read as
    things to tap. */
 @media (hover: none) {

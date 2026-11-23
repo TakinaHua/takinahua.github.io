@@ -45,10 +45,10 @@ export type Landmark = {
 }
 
 export const landmarks: Landmark[] = [
-  { id: 'projects', label: 'Projects', area: { x: 75, y: 18, w: 152, h: 176 } },
-  { id: 'experience', label: 'Experience', area: { x: 229, y: 89, w: 74, h: 92 } },
-  { id: 'about', label: 'About me', area: { x: 434, y: 224, w: 106, h: 74 } },
-  { id: 'contact', label: 'Contact', area: { x: 500, y: 70, w: 44, h: 80 } },
+  { id: 'projects', label: 'Projects: the workshop hut', area: { x: 75, y: 18, w: 152, h: 176 } },
+  { id: 'experience', label: 'Experience: the noticeboard', area: { x: 229, y: 89, w: 74, h: 92 } },
+  { id: 'about', label: 'About me: the photo album on the bench', area: { x: 434, y: 224, w: 106, h: 74 } },
+  { id: 'contact', label: 'Contact: the mailbox', area: { x: 500, y: 70, w: 44, h: 80 } },
 ]
 
 // Hover outlines from Codex (see garden/hover/REQUEST.md): full 640 × 360 overlays named after

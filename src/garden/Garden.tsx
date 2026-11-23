@@ -268,7 +268,7 @@ export default function Garden() {
           </h2>
           <button type="button" className="tray-toggle" aria-expanded={trayOpen} aria-controls={trayTilesId}
             onClick={() => setTrayOpen(open => { saveTrayOpen(!open); return !open })}>
-            {trayOpen ? 'Hide' : 'Show'}
+            {trayOpen ? 'Hide' : 'Show'}<span className="visually-hidden"> projects</span>
             <svg viewBox="0 0 7 5" width="14" height="10" aria-hidden="true" shapeRendering="crispEdges"
               style={trayOpen ? undefined : { transform: 'scaleY(-1)' }}>
               <path d="M0 0h1v1h1v1h1v1h1v-1h1v-1h1v-1h1v1h-1v1h-1v1h-1v1h-1v-1h-1v-1h-1v-1h-1z" fill="currentColor" />
@@ -282,7 +282,9 @@ export default function Garden() {
                 <img src={projectIcons[project.id]} width="64" height="64" alt="" />
                 <span>
                   <span className="tray-tile-title">{project.title}</span>
-                  <span className="tray-tile-tech">{project.demo || project.repo ? project.tech : 'Coming soon'}</span>
+                  {project.demo || project.repo
+                    ? <span className="tray-tile-tech">{project.tech}</span>
+                    : <span className="tray-tile-tech" data-soon="">Coming soon</span>}
                 </span>
               </a>
             </li>
