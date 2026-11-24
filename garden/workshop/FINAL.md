@@ -37,3 +37,15 @@ Bright pulses travel downhill along the rivers as the crater glows, embers rise,
 Draw `animations/lol-ping/lol-ping-sheet.png` at **(855, 158)**. Each frame is **120 × 92**. Read the 48 frames left to right across eight columns and six rows, advancing every 100 ms for a 4.8-second loop. Placement and timing are in `animations/lol-ping/lol-ping.json`.
 
 Green strokes type across the bottom row beside a blinking block cursor. Each completed line scrolls up one row, and a soft CRT flicker passes down the glass. Frame zero is transparent. Open `animations/lol-ping/lol-ping-in-scene.apng` for the half-size preview.
+
+## Ivy on the left post
+
+Draw `animations/ivy/ivy-sheet.png` at **(175, 0)**. Each frame is **255 × 590**. Read the 48 frames across eight columns at 120 ms per frame for a 5.76-second loop. Placement and timing are in `animations/ivy/ivy.json`.
+
+A breeze tilts the leaf clusters in sequence from the top of the post to the trailing leaves. Frame zero is transparent. The half-size preview in `animations/ivy/ivy-in-scene.apng` plays the ivy and lamp together for 28.8 seconds, when both loops return to their starting frames.
+
+## Lucky cat on the shelf
+
+Draw `animations/cat/cat-sheet.png` at **(860, 325)**. Each frame is **105 × 115**. Read the 48 frames across eight columns at 100 ms per frame for a 4.8-second loop. Placement and timing are in `animations/cat/cat.json`.
+
+The raised paw beckons twice, dipping about 12 px each time. A small glint crosses the gold bell on each downstroke. Frame zero is transparent. Open `animations/cat/cat-in-scene.apng` for the half-size preview.
