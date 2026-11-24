@@ -71,9 +71,7 @@
 
 .topnav-list a:focus-visible { outline-offset: -3px; }
 
-.menu-button,
-.pixel-button,
-.menu-list :is(a, button) {
+.pixel-button {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -88,29 +86,58 @@
   text-decoration: none;
 }
 
-:is(.menu-button, .pixel-button, .menu-list :is(a, button)):is(:hover, :focus-visible) {
-  background: var(--wood-light);
+.pixel-button:is(:hover, :focus-visible) { background: var(--wood-light); }
+
+/* Menu (narrower screens), cut from the concept sheet (garden/ui/reference): the folded map and
+   "Menu" lettering (185 × 56) open the illustrated parchment (313 × 407), each link laid over
+   its painted row. Both are shown at --menu-scale. */
+.topnav { --menu-scale: .857; }
+
+.menu-button {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
 }
 
-.menu-button[aria-expanded=true] { background: var(--wood-dark); }
+.menu-button img { display: block; width: calc(185px * var(--menu-scale)); height: calc(56px * var(--menu-scale)); image-rendering: auto; }
+
+@media (max-width: 420px) {
+  .menu-button img { width: calc(78px * var(--menu-scale)); height: calc(50px * var(--menu-scale)); }
+}
+.menu-button:is(:hover, :focus-visible), .menu-button[aria-expanded=true] { filter: brightness(1.12); }
 
 .menu-list {
   position: absolute;
-  top: calc(100% + 10px);
+  top: calc(100% + 4px);
   right: 0;
-  display: grid;
-  gap: 8px;
-  min-width: 12rem;
+  width: calc(313px * var(--menu-scale));
+  height: calc(407px * var(--menu-scale));
   margin: 0;
-  padding: 10px;
+  padding: 0;
   list-style: none;
-  background: var(--bar);
-  box-shadow: 0 0 0 3px var(--wood-dark), inset 0 0 0 2px var(--wood);
+  background: 0 0 / 100% 100% no-repeat;
+  filter: drop-shadow(0 8px 6px #0b102099);
 }
 
 .menu-list[hidden] { display: none; }
-.menu-list :is(a, button) { width: 100%; }
-.menu-list a[aria-current=page] { box-shadow: inset 0 -3px var(--blossom), 0 0 0 2px var(--wood-dark); }
+
+/* The painted rows, in the panel's own pixels (the README's link areas). */
+.menu-list li { position: absolute; left: calc(27px * var(--menu-scale)); width: calc(267px * var(--menu-scale)); }
+.menu-list li:nth-child(1) { top: calc(14px * var(--menu-scale)); height: calc(80px * var(--menu-scale)); }
+.menu-list li:nth-child(2) { top: calc(94px * var(--menu-scale)); height: calc(69px * var(--menu-scale)); }
+.menu-list li:nth-child(3) { top: calc(163px * var(--menu-scale)); height: calc(70px * var(--menu-scale)); }
+.menu-list li:nth-child(4) { top: calc(233px * var(--menu-scale)); height: calc(70px * var(--menu-scale)); }
+.menu-list li:nth-child(5) { top: calc(303px * var(--menu-scale)); height: calc(87px * var(--menu-scale)); }
+
+.menu-list a { display: block; height: 100%; }
+.menu-list a img { display: none; }
+.menu-list .nav-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.menu-list a:is(:hover, :focus-visible) { background: #9a673829; }
+.menu-list a[aria-current=page] { box-shadow: inset 4px 0 var(--blossom); }
+/* The lamp-gold focus ring vanishes on cream, so on parchment it is ink. */
+.garden .menu-list a:focus-visible { outline-color: var(--ink-dark); outline-offset: -3px; }
 
 .skip-link {
   position: absolute;
@@ -132,95 +159,146 @@
   outline-offset: 3px;
 }
 
-/* Projects tray: a header strip that always shows, and tiles that slide away. */
+/* Projects tray, cut from the concept sheet (see ProjectTray.tsx): an open lacquered box above
+   a drawer front, centred over the garden, which shows on both sides. Sizes are the art's own
+   pixels times --tray-scale. */
 
 .tray {
   position: absolute;
-  inset: auto 0 0;
+  bottom: 10px;
+  left: 50%;
   z-index: 2;
-  display: grid;
-  grid-template-rows: var(--tray-head) 1fr;
-  height: var(--tray-h);
-  padding-inline: clamp(12px, 2vw, 24px);
-  background: var(--bar);
-  box-shadow: 0 -3px 0 var(--wood-dark);
-  transition: transform 200ms cubic-bezier(.2, .8, .2, 1);
-}
-
-.tray:not([data-open]) { transform: translateY(calc(var(--tray-h) - var(--tray-head))); }
-
-.tray-head {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 4px;
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
-.tray-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin: 0;
-  color: var(--parchment);
-  font: var(--pixel-text);
-  white-space: nowrap;
+.tray-box, .tray-drawer { pointer-events: auto; }
+
+.tray-box {
+  position: relative;
+  transition: opacity 200ms ease-out, transform 200ms cubic-bezier(.2, .8, .2, 1), visibility 200ms;
 }
 
-.tray-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 30px;
-  padding: 2px 10px;
+/* Closed: only the drawer shows; the box sinks into it. */
+.tray:not([data-open]) .tray-box { opacity: 0; transform: translateY(24px); visibility: hidden; }
+
+.tray-art { display: flex; }
+.tray-piece { display: block; flex: none; border: 0 solid transparent; }
+.tray-box .tray-piece { height: calc(239px * var(--tray-scale)); }
+.tray-drawer .tray-piece { height: calc(87px * var(--tray-scale)); }
+
+/* The brass pull on the back rim (x 252–356, y 0–36 in the art), centred like the box's ends. */
+.tray-box-pull {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: calc(104px * var(--tray-scale));
+  height: calc(36px * var(--tray-scale));
+  padding: 0;
   border: 0;
-  background: transparent;
-  box-shadow: 0 0 0 2px var(--wood);
-  color: var(--parchment-shade);
+  border-radius: calc(8px * var(--tray-scale));
+  background: none;
   cursor: pointer;
-  font: var(--pixel-text);
+  transform: translateX(-50%);
 }
 
-.tray-toggle:is(:hover, :focus-visible) { background: var(--wood); color: var(--parchment); }
+.tray-box-pull:hover { backdrop-filter: brightness(1.25); }
+.tray-box-pull:active { backdrop-filter: brightness(.9); }
 
-.tray-tiles {
+/* The pictures lie on the box's floor; any that do not fit scroll sideways. */
+.tray-cards {
+  position: absolute;
+  inset: calc(48px * var(--tray-scale)) calc(44px * var(--tray-scale)) calc(10px * var(--tray-scale));
   display: flex;
-  align-items: center;
-  gap: 12px;
+  gap: calc(30px * var(--tray-scale));
   margin: 0;
-  padding: 4px 4px 10px;
+  padding: calc(8px * var(--tray-scale)) calc(24px * var(--tray-scale)) 0;
   overflow-x: auto;
   list-style: none;
   scrollbar-width: none;
 }
 
-.tray-tile {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  height: 80px;
-  padding: 8px 10px 8px 8px;
-  background: #1b2236;
-  box-shadow: 0 0 0 2px var(--wood), inset 0 0 0 4px #141a2b;
-  color: var(--parchment);
-  text-decoration: none;
-  transition: transform 140ms steps(2);
+.tray-cards > li { flex: none; }
+
+/* When the box is too narrow for every picture, they sit closer so the next one peeks in at
+   the edge, a cue that the row scrolls. (Below 817 px the box cannot hold all four at 70 %.) */
+@media (max-width: 816px) {
+  .tray-cards { gap: calc(12px * var(--tray-scale)); padding-inline: calc(8px * var(--tray-scale)); scroll-snap-type: x mandatory; scroll-padding-inline: calc(8px * var(--tray-scale)); }
+  .tray-cards > li { scroll-snap-align: start; }
 }
 
-.tray-tile:is(:hover, :focus-visible) { box-shadow: 0 0 0 2px var(--blossom), inset 0 0 0 4px #141a2b; transform: translateY(-3px); }
+.tray-card {
+  display: grid;
+  justify-items: center;
+  gap: calc(4px * var(--tray-scale));
+  width: calc(221px * var(--tray-scale));
+  color: var(--parchment);
+  text-decoration: none;
+  transition: transform 140ms ease-out;
+}
+
+.tray-card-picture {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: calc(116px * var(--tray-scale));
+}
+
+.tray-card-picture img { display: block; width: 100%; height: 100%; image-rendering: auto; }
+
+/* The two pictures the concept does not show get a frame like the painted ones: a cream mat
+   with a brown rule inside and a dark edge. */
+.tray-card-picture.is-framed-here {
+  padding: calc(9px * var(--tray-scale));
+  background: #f3c493;
+  box-shadow: inset 0 0 0 calc(3px * var(--tray-scale)) #e2ad7d, inset 0 0 0 calc(7px * var(--tray-scale)) #f3c493, inset 0 0 0 calc(9px * var(--tray-scale)) #ae7655, 0 0 0 2px #1a0d08;
+}
+
+.tray-card-picture.is-framed-here img { object-fit: cover; image-rendering: pixelated; }
+
+.tray-card-soon {
+  position: absolute;
+  inset: auto calc(9px * var(--tray-scale)) calc(9px * var(--tray-scale));
+  padding: 2px 0;
+  background: #0b1020cc;
+  color: var(--parchment);
+  font: var(--pixel-small);
+  text-align: center;
+}
+
+.tray-card-title { font: var(--pixel-text); text-shadow: 0 2px #0b1020; white-space: nowrap; }
+
+.tray-card:is(:hover, :focus-visible) { transform: translateY(-3px); }
+.tray-card:is(:hover, :focus-visible) .tray-card-picture { filter: brightness(1.12); }
+.tray-card:is(:hover, :focus-visible) .tray-card-title { color: #fff; }
+.garden .tray-card:focus-visible { outline-offset: 2px; }
+
+.tray-drawer { margin: 0; }
+
+.tray-toggle {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.tray-toggle:is(:hover, :focus-visible) { filter: brightness(1.12); }
 
 /* Pressed: every control sinks a pixel and darkens while held. */
-.tray-tile:active { transform: translateY(-1px); }
-:is(.menu-button, .pixel-button, .menu-list :is(a, button), .tray-toggle, .pan-button):active:not(:disabled) {
+.tray-card:active { transform: translateY(-1px); }
+:is(.pixel-button, .pan-button):active:not(:disabled) {
   background: var(--wood-dark);
   transform: translateY(1px);
 }
-.tray-tile > span { display: grid; flex: 1; gap: 4px; }
-/* Tiles share the tray's width but never cut a title short: a tile is at least as wide as its
-   title, and the row scrolls once they no longer fit. The caption does not widen its tile. */
-.tray-tiles > li { flex: 1 1 0; max-width: 260px; }
-.tray-tile-title { font: var(--pixel-text); white-space: nowrap; }
-.tray-tile-tech { width: 0; min-width: 100%; overflow: hidden; color: #aab3c8; font: var(--pixel-small); text-overflow: ellipsis; white-space: nowrap; }
+.tray-toggle:active { transform: translateY(1px); }
+/* On parchment, a pressed control darkens the paper instead. */
+.menu-button:active { filter: brightness(.85); transform: translateY(1px); }
+.menu-list a:active { background: #9a673847; }
 
 /* Pan controls (narrow portrait screens only) */
 
@@ -249,20 +327,6 @@
 
 .pan-button:disabled { visibility: hidden; }
 .pan-button:is(:hover, :focus-visible) { background: var(--wood-light); }
-
-@media (max-width: 1019px) {
-  .tray-tile { height: 64px; }
-  .tray-tile img { width: 32px; height: 32px; }
-}
-
-/* Phones: the tech list would cut down to "Type…", so tiles show the title alone (plus
-   "Coming soon" where it applies) and size to it, leaving the next tile peeking in as a cue
-   that the row scrolls. */
-@media (max-width: 599px) {
-  .tray-tiles > li { flex: 0 0 auto; max-width: none; }
-  .tray-tile-tech:not([data-soon]) { display: none; }
-  .tray-tile-tech[data-soon] { width: auto; }
-}
 
 /* Views: each landmark's page opens over the dimmed garden. */
 
@@ -484,6 +548,6 @@
 .welcome p { margin: 0 0 16px; line-height: 1.5; }
 
 @media (prefers-reduced-motion: reduce) {
-  .spine-spot, .landmark::before, .landmark::after, .landmark-outline, .tray-tile, .tray { transition: none; }
+  .spine-spot, .landmark::before, .landmark::after, .landmark-outline, .tray-card, .tray-box { transition: none; }
   .view, .welcome { animation: none; }
 }

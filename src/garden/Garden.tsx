@@ -1,6 +1,5 @@
 import { Fragment, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties, MouseEvent } from 'react'
-import { projects } from '../content'
 import { navigate, parseRoute, routeClick, usePath } from '../router'
 import type { Route } from '../router'
 import { computeWholeLayout } from './fit'
@@ -8,7 +7,9 @@ import type { GardenLayout } from './fit'
 import GardenCanvas from './GardenCanvas'
 import GardenView from './GardenView'
 import { useSilhouettes } from './silhouettes'
-import { logoIcon, navIcons, projectIcons } from './icons'
+import { logoIcon, menuArt, navIcons } from './icons'
+import ProjectTray from './ProjectTray'
+import { trayGeometry } from './trayGeometry'
 import { returnSpot, sceneFor, scenes, SHELF_ID } from './scenes'
 import type { Scene } from './scenes'
 import './garden.css'
@@ -16,11 +17,13 @@ import './views.css'
 
 const percent = (value: number, total: number) => `${(value / total) * 100}%`
 
-// Bar and tray heights, shared with the CSS through custom properties. The tray's header
-// strip stays visible when the tray is hidden.
+// Bar and tray heights, shared with the CSS through custom properties. The tray's drawer stays
+// visible when the tray is closed.
 const COMPACT_WIDTH = 1020
-const TRAY_HEAD = 40
-const chrome = (width: number) => width < COMPACT_WIDTH ? { bar: 56, tray: 128 } : { bar: 60, tray: 140 }
+const chrome = (width: number) => {
+  const { open, closed } = trayGeometry(width)
+  return { bar: width < COMPACT_WIDTH ? 56 : 60, tray: open, trayHead: closed }
+}
 
 const TRAY_KEY = 'garden-tray-open'
 function readTrayOpen() {
@@ -59,8 +62,8 @@ function PixelChevron({ direction }: { direction: 'left' | 'right' }) {
 
 // The projects tray belongs to the garden; the workshop and the shelf use the whole height.
 function measureLayout(width: number, height: number, trayOpen: boolean, scene: Scene) {
-  const { bar, tray } = chrome(width)
-  const bottom = scene.id === 'garden' ? (trayOpen ? tray : TRAY_HEAD) : 0
+  const { bar, tray, trayHead } = chrome(width)
+  const bottom = scene.id === 'garden' ? (trayOpen ? tray : trayHead) : 0
   return computeWholeLayout(width, height, devicePixelRatio || 1, { top: bar, bottom }, scene.focusX, scene.art)
 }
 
@@ -92,7 +95,7 @@ export default function Garden() {
   const sceneHeadingId = useId()
   const welcomeVisible = welcomeOpen && !viewOpen && inGarden
   const previousRoute = useRef<Route | null>(null)
-  const { bar, tray } = chrome(size.width)
+  const { bar, tray, trayHead } = chrome(size.width)
   const compact = size.width < COMPACT_WIDTH
 
   useLayoutEffect(() => {
@@ -192,7 +195,7 @@ export default function Garden() {
         '--art-url': `url(${scene.master})`,
         '--bar-h': `${bar}px`,
         '--tray-h': `${tray}px`,
-        '--tray-head': `${TRAY_HEAD}px`,
+        '--tray-head': `${trayHead}px`,
       } as CSSProperties}
     >
       <header className="topbar">
@@ -209,16 +212,24 @@ export default function Garden() {
             <button type="button" className="menu-button" aria-expanded={menuOpen} aria-controls={menuId}
               onClick={() => setMenuOpen(open => !open)}
               onKeyDown={event => { if (event.key === 'Escape') setMenuOpen(false) }}>
-              Menu
+              {/* The folded map and "Menu" lettering from the concept sheet; the narrowest
+                  phones have room for the map alone. */}
+              <picture>
+                <source media="(max-width: 420px)" srcSet={menuArt.map} />
+                <img src={menuArt.button} alt="Menu" />
+              </picture>
             </button>
           )}
-          <ul id={menuId} className={compact ? 'menu-list' : 'topnav-list'} hidden={compact && !menuOpen}>
+          {/* Narrow screens: the illustrated parchment from the concept, with each link laid over
+              its painted row. Wide screens: the row of names across the bar. */}
+          <ul id={menuId} className={compact ? 'menu-list' : 'topnav-list'} hidden={compact && !menuOpen}
+            style={compact ? { backgroundImage: `url(${menuArt.open})` } : undefined}>
             {navItems.map(item => (
               <li key={item.href}>
                 <a href={item.href} aria-current={route.view === item.view ? 'page' : undefined}
                   onClick={event => { setMenuOpen(false); go(event) }}>
                   <img src={item.icon} width="32" height="32" alt="" />
-                  {item.label}
+                  <span className="nav-label">{item.label}</span>
                 </a>
               </li>
             ))}
@@ -229,7 +240,7 @@ export default function Garden() {
       {/* First visit only: says who made the garden and how to use it, without covering it. */}
       {welcomeVisible && (
         <aside className="welcome" aria-labelledby={welcomeId}
-          style={{ bottom: (trayOpen ? tray : TRAY_HEAD) + (layout.pan ? 80 : 16) }}>
+          style={{ bottom: (trayOpen ? tray : trayHead) + (layout.pan ? 80 : 16) }}>
           <h2 id={welcomeId}>Hi, I’m Barry.</h2>
           <p>
             I build software and study math at Carnegie Mellon. This is my garden: {touch ? 'tap' : 'click'} anything
@@ -296,37 +307,10 @@ export default function Garden() {
         </div>
       )}
 
-      {inGarden && <section className="tray" aria-labelledby="tray-title" inert={viewOpen} data-open={trayOpen || undefined}>
-        <div className="tray-head">
-          <h2 id="tray-title" className="tray-title">
-            <img src={navIcons.projects} width="16" height="16" alt="" />
-            Projects
-          </h2>
-          <button type="button" className="tray-toggle" aria-expanded={trayOpen} aria-controls={trayTilesId}
-            onClick={() => setTrayOpen(open => { saveTrayOpen(!open); return !open })}>
-            {trayOpen ? 'Hide' : 'Show'}<span className="visually-hidden"> projects</span>
-            <svg viewBox="0 0 7 5" width="14" height="10" aria-hidden="true" shapeRendering="crispEdges"
-              style={trayOpen ? undefined : { transform: 'scaleY(-1)' }}>
-              <path d="M0 0h1v1h1v1h1v1h1v-1h1v-1h1v-1h1v1h-1v1h-1v1h-1v1h-1v-1h-1v-1h-1v-1h-1z" fill="currentColor" />
-            </svg>
-          </button>
-        </div>
-        <ul className="tray-tiles" id={trayTilesId} inert={!trayOpen}>
-          {projects.map(project => (
-            <li key={project.id}>
-              <a className="tray-tile" href={`/projects/${project.id}`} onClick={go}>
-                <img src={projectIcons[project.id]} width="64" height="64" alt="" />
-                <span>
-                  <span className="tray-tile-title">{project.title}</span>
-                  {project.demo || project.repo
-                    ? <span className="tray-tile-tech">{project.tech}</span>
-                    : <span className="tray-tile-tech" data-soon="">Coming soon</span>}
-                </span>
-              </a>
-            </li>
-          ))}
-        </ul>
-      </section>}
+      {inGarden && (
+        <ProjectTray open={trayOpen} hidden={viewOpen} windowWidth={size.width} listId={trayTilesId} onProject={go}
+          onToggle={() => setTrayOpen(open => { saveTrayOpen(!open); return !open })} />
+      )}
 
       {viewOpen && route.view !== 'garden' && <GardenView route={route} />}
     </div>
