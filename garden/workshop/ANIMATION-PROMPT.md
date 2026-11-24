@@ -94,6 +94,26 @@ on its own, from the picture's own pixels, reviewed in the real scene before the
 > the rectangle; each ribbon about 10–16 px wide in the full picture so it shows at half size.
 > 48 frames at 100 ms.
 
+### Fix 4a: steam over the lamplight (paste after element 4)
+
+> Redo element 4 (`steam`) only. The site draws the steam **on top of the lamp animation**
+> (`animations/lamp/lamp-sheet.png`), which brightens and dims this whole area. The current
+> steam sheet is fully opaque: about 5,000 pixels per frame are solid colours worked out
+> against the plain, unlit picture, and about 1,500 of them are plain copies of it. Over the
+> lamp they cover its glow, so a dull, steam-shaped patch shows around the wisps when the lamp
+> is bright (on average 30–90 colour levels darker than the lit picture there).
+> - Make the steam a **see-through layer**: each wisp is pale cream-white with partial alpha
+>   (about 15–45 % at its densest, fading to 0 at its edges and as it rises). No pixel may be a
+>   copy of the picture behind it; everywhere that is not steam is fully transparent.
+> - Then it looks the same over the plain picture and over any lamp frame. Check it by laying
+>   it over the lamp sheet's brightest and dimmest frames (the lamp frame's offset for this
+>   rectangle is x 50, y 160).
+> - Keep everything else: same rectangle (350, 540, 130 × 140), 48 frames at 100 ms, three
+>   staggered wisps about 10–16 px wide, visible at half size, frame 0 leading on from frame 47.
+> Make `steam-in-scene.apng` with the lamp animation playing under the steam. Replace
+> `animations/steam/steam-sheet.png`, `steam.json` and `steam-in-scene.apng`, and update the
+> steam section of `garden/workshop/FINAL.md`.
+
 ## 5. The mountain screen, Fire and Ice (`fire-and-ice`)
 
 > Element 5 only. Rectangle: the inside of the left monitor's screen, about **x 553–752,
