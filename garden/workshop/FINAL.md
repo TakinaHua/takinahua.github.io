@@ -31,3 +31,9 @@ Draw `animations/fire-and-ice/fire-and-ice-sheet.png` at **(553, 106)**. Each fr
 The repaint in `painted/workshop-background.png` occupies a **193 × 125** rectangle beginning at **(556, 114)** inside the monitor glass. Branching lava rivers wind through dark basalt beneath a smoking crater.
 
 Bright pulses travel downhill along the rivers as the crater glows, embers rise, and smoke curls. Snow drifts across the icy peaks while a faint scan line passes down the glass. Frame zero is transparent over the repainted background. Open `animations/fire-and-ice/fire-and-ice-in-scene.apng` for the half-size preview.
+
+## LoL Ping terminal
+
+Draw `animations/lol-ping/lol-ping-sheet.png` at **(855, 158)**. Each frame is **120 × 92**. Read the 48 frames left to right across eight columns and six rows, advancing every 100 ms for a 4.8-second loop. Placement and timing are in `animations/lol-ping/lol-ping.json`.
+
+Green strokes type across the bottom row beside a blinking block cursor. Each completed line scrolls up one row, and a soft CRT flicker passes down the glass. Frame zero is transparent. Open `animations/lol-ping/lol-ping-in-scene.apng` for the half-size preview.
