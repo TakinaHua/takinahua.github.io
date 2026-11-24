@@ -1,0 +1,42 @@
+{
+  "parchment-panel": {
+    "slice": [
+      12,
+      12,
+      12,
+      12
+    ]
+  },
+  "parchment-divider": {
+    "left": 8,
+    "right": 8
+  },
+  "tray-case": {
+    "slice": [
+      8,
+      8,
+      8,
+      8
+    ]
+  },
+  "tray-front": {
+    "left": 6,
+    "right": 6
+  },
+  "card-frame": {
+    "slice": [
+      4,
+      4,
+      4,
+      4
+    ]
+  },
+  "tray-box": {
+    "left": 28,
+    "right": 28
+  },
+  "tray-drawer": {
+    "left": 12,
+    "right": 12
+  }
+}

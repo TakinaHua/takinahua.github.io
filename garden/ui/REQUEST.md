@@ -56,6 +56,25 @@ The five page icons stay as they are (`icons/home.png`, `projects.png`, `experie
 `about.png`, `contact.png`). The hovered or current row is marked by the site (a pink
 underline and a slightly darker parchment), so no extra art for states.
 
+### Fix A1: a curvier menu sheet (paste after group A)
+
+> Redo the menu's parchment only. `parchment-panel.png` stretches as a 9-slice, so its edge
+> repeats in a short, even pattern and the open menu reads as a neat rectangle. In the concept
+> sheet the menu is a **single torn piece of old paper** with a lively outline. Since the menu
+> always holds the same five rows, draw it as one picture at its full size instead:
+> - `menu-sheet.png`, **136 × 180** at 1× (the site shows it at exactly 2×, 272 × 360).
+> - **Shape:** gently curving, slightly uneven sides (they bow in and out by 1–3 px), a wavy
+>   torn bottom edge with two or three deeper tears, a softly curled top edge with a little
+>   shadow under the curl, and rounded, slightly dog-eared corners. No straight line longer
+>   than about 12 px anywhere on the outline.
+> - **Paper:** the same cream as `parchment-panel.png`, a darker sepia burn along the whole
+>   edge that follows its curves, a few faint stains and fibres inside, light from the top left.
+> - **Safe area:** keep **x 10–126, y 14–164** plain enough for text (the five rows and their
+>   lines sit there); all the raggedness lives outside it.
+> - Transparent outside the paper. No words.
+> Keep `parchment-panel.png` as it is (the welcome sign may still use it), and update the
+> preview with the new sheet behind the five menu rows.
+
 ## B. Project tray
 
 The tray runs the full width of the window along the bottom of the garden. It is about 40 px
@@ -76,6 +95,34 @@ the handle.
 
 The four pictures must match the 32 × 32 icons in `garden/icons/` (same subjects) and the
 objects in the workshop, so a visitor recognises each project wherever it appears.
+
+### Fix B1: the tray as an object, like the concept (paste after group B)
+
+> Redo the tray's case only; keep the four `card-*.png` pictures and `card-frame.png`. The
+> current `tray-case.png` and `tray-front.png` stretch into a flat strip across the whole
+> window, like a toolbar. In the concept sheet the tray is **an object sitting in the scene**,
+> with the garden showing on both sides:
+> - an **open box seen from slightly above**: a thick dark-navy lacquered back rim with a brass
+>   handle on its top centre, side walls that **slant inward** so the box is a little narrower
+>   at the bottom than at the top, a recessed dark floor where the pictures lie, and a lower
+>   front lip;
+> - beneath it, a separate **drawer front**: a long rounded navy bar with its own brass handle
+>   on its top edge and the word "Projects" (set by the site) in the middle. When the tray is
+>   closed, only this bar shows; when it opens, the box rises above it.
+>
+> Draw both so they can widen with the number of projects (three slices: a left end, a middle
+> that repeats side to side, a right end; all the perspective and corners live in the ends):
+>
+> | File | Size at 1× | What |
+> | --- | --- | --- |
+> | `tray-box.png` | about 72 × 92 (ends 28 px, middle 16 px) | The open box. **Back rim** along the top, about 10 px thick, lacquer navy with a bright bevel line and a darker underside; **side walls** in each end piece slanting inward by about 10 px from top to bottom, showing their inner face; **floor** recessed and darker, with a soft shadow under the back rim; **front lip** along the bottom, about 6 px, with a highlight on its top edge. The middle slice is a straight section of rim, floor and lip that repeats seamlessly. **Safe floor area: y 16–82**, and at least 6 px in from where each slanted wall meets the floor, for the pictures and their names. Transparent outside the box. |
+> | `tray-drawer.png` | about 56 × 24 (ends 12 px, middle 16 px) | The drawer front: a rounded-end navy lacquer bar, a bright bevel along the top, a dark lip below, the same blues as the box. **Text area: y 6–20**, kept plain for the word "Projects". |
+> | `tray-handle-large.png` | about 32 × 12 | The brass handle from the concept: a bar on two posts, a highlight along the bar. It sits on the box's back rim and on the drawer's top edge. Also `tray-handle-large-hover.png`, a little brighter. |
+>
+> Use the night blues of `final/garden-final-640x360.png` (not black) for the lacquer, and
+> the brass of the existing handle. No words. Update `ui.json` with each piece's end widths,
+> and the preview with the box (four pictures in it, names beneath) above the drawer, over a
+> crop of the garden, matching the concept's proportions.
 
 ## C. Welcome sign
 
