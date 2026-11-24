@@ -285,7 +285,9 @@ export default function Garden() {
         </div>
       </main>
 
-      {scene.back && !viewOpen && (
+      {/* A way back drawn in the picture replaces the button, except while the picture pans
+          (phones), where it can start off-screen. */}
+      {scene.back && (!scene.back.inPicture || layout.pan) && !viewOpen && (
         <a className="pixel-button scene-back" href={scene.back.href} onClick={routeClick}>{scene.back.label}</a>
       )}
 

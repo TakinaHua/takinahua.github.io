@@ -28,7 +28,7 @@ front.
 | `hover-fire-and-ice.png` | the left screen with the mountains | the Fire and Ice project |
 | `hover-lol-ping.png` | the right screen with the green terminal | the LoL Ping project |
 | `hover-shelf.png` | the lower shelf: the row of books and the lucky cat | a close-up of every project |
-| `hover-door.png` | the open door on the left, with its ring handle | back to the garden |
+| `hover-door.png` | the ring handle on the door and the "Garden" sign hanging from it | back to the garden |
 
 The site also uses each outline to decide what is clickable, so the outline must surround the
 whole object. Until these exist, each object responds within a rough rectangle with a soft

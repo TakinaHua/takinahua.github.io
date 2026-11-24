@@ -2,7 +2,7 @@
 
 ## How to use it
 1. Paste **The shared rules** below into Codex once, then **one** element brief at a time, in
-   order (1 to 6). Tell Codex to do only that element and stop.
+   order (1 to 8). Tell Codex to do only that element and stop.
 2. Look at its preview. When it is right, tell Claude ("the petals are done"); Claude checks
    it in the site and blends it in, then you paste the next element.
 3. Redo an element as often as needed before moving on. Nothing else changes while you do.
@@ -156,10 +156,37 @@ on its own, from the picture's own pixels, reviewed in the real scene before the
 
 ---
 
-## Optional, after the six
+## 7. Ivy on the left post (`ivy`)
 
-- **Ivy** (`ivy`): the ivy on the left post (about x 185–345, y 0–570) stirs in a light breeze.
-- **Lucky cat** (`cat`): the waving paw on the shelf rocks slowly.
+> Element 7 only. Rectangle: the ivy that climbs the post by the door, about **x 175–430,
+> y 0–590** (the wide clusters at the top reach to about x 430; below y 380 the vine stays left
+> of x 300). A light breeze comes in through the door: the leaves **stir and tilt** a few
+> degrees on their stems, one cluster after another from the top down, and the long trailing
+> strands sway a little. Leaf tips move about **4–8 px** in the full picture (the big top
+> leaves the most, the leaves near the stem the least), so it reads at half size without
+> looking windy. The vine's main stem and the post stay still.
+> - Where a leaf moves off a spot, paint the wood behind it from the picture's own colours, so
+>   no gap or ghost leaf shows.
+> - **Below y 380, change nothing at x 300 or more.** The lamp animation brightens and dims
+>   the wall there and is drawn underneath the ivy; ivy pixels in that area would cover its
+>   light.
+> - Transparent wherever a frame matches the picture, frame 0 transparent, frame 47 leading
+>   back into it. 48 frames at 120 ms (a 5.8 s loop, slower than the others, like a breeze).
+> Make `ivy-in-scene.apng` with the lamp animation playing too.
+
+## 8. Lucky cat on the shelf (`cat`)
+
+> Element 8 only. Rectangle: the beckoning cat and its red cushion on the shelf, about
+> **x 860–965, y 325–440**. The cat's raised paw (upper right, about x 930–955, y 338–372)
+> **waves**: it swings down and forward from the shoulder and back up, the classic slow
+> beckon, **two full waves per loop**, each easing in and out. At the bottom of the swing the
+> paw tip is about **10–14 px** lower than in the picture, so the wave reads at half size. The
+> gold bell on its collar catches the light with a small glint on each downstroke. The head,
+> body, cushion and tassels stay still.
+> - Where the paw moves away, paint the wall and shelf behind it from the picture's own
+>   colours, so no second paw or gap shows.
+> - Transparent wherever a frame matches the picture, frame 0 transparent, frame 47 leading
+>   back into it. 48 frames at 100 ms.
 
 ## What happens after each element
 Claude adds the sheet to the workshop scene at its rectangle, checks it at desktop and phone

@@ -7,7 +7,7 @@ import { hoverOutlines, landmarks, layers as gardenLayers, masterUrl as gardenMa
 import { ART_HEIGHT, ART_WIDTH } from './layers'
 import type { Layer } from './layers'
 import type { Art } from './fit'
-import workshopMaster from '../../garden/workshop/painted/workshop-background.png'
+import workshopMaster from '../../garden/workshop/painted/workshop-background.webp'
 import shelfMaster from '../../garden/workshop/shelf-640x360.png'
 import shelfManifest from '../../garden/workshop/shelf.json'
 
@@ -35,7 +35,9 @@ export type Scene = {
   spots: Spot[]
   outlines: Partial<Record<string, string>>
   focusX: number // where a narrow screen starts its pan, in the picture's pixels
-  back?: { href: string, label: string } // Escape and the scene's own back control
+  // Where Escape leads. The scene shows its own back button unless the way back is drawn in
+  // the picture (the workshop's Garden sign); phones, which pan, keep the button anyway.
+  back?: { href: string, label: string, inPicture?: boolean }
 }
 
 const outlinesOf = (spots: Spot[]) => Object.fromEntries(spots.flatMap(spot => spot.outline ? [[spot.id, spot.outline]] : []))
@@ -72,7 +74,7 @@ const workshopSpots: Spot[] = [
   workshopSpot('fire-and-ice', '/projects/fire-and-ice', 'Fire and Ice: the mountain screen', 'Fire and Ice', [465, 80, 310, 195]),
   workshopSpot('lol-ping', '/projects/lol-ping', 'LoL Ping: the terminal screen', 'LoL Ping', [795, 135, 195, 140]),
   workshopSpot('shelf', '/projects/shelf', 'All projects: the bookshelf', 'All projects', [525, 310, 445, 150]),
-  workshopSpot('door', '/', 'Back to the garden: the door', 'Back to the garden', [0, 0, 200, 941]),
+  workshopSpot('door', '/', 'Back to the garden: the Garden sign on the door', 'Back to the garden', [96, 520, 144, 296]),
 ]
 
 const shelfSpots: Spot[] = shelfManifest.spines.flatMap(({ id, x, y, width, height }) => {
@@ -88,7 +90,7 @@ export const scenes: Record<SceneId, Scene> = {
   workshop: {
     id: 'workshop', title: 'Projects', master: workshopMaster, art: { width: 1672, height: 941, pixel: false },
     layers: workshopLayers, spots: workshopSpots, outlines: outlinesOf(workshopSpots), focusX: 830,
-    back: { href: '/', label: 'Back to the garden' },
+    back: { href: '/', label: 'Back to the garden', inPicture: true },
   },
   shelf: {
     id: 'shelf', title: 'All projects', master: shelfMaster, art: PIXEL_ART, layers: [], spots: shelfSpots, outlines: {},
