@@ -245,10 +245,6 @@ export default function Garden() {
         <div className="garden-stage" style={stageStyle}>
           <GardenCanvas key={scene.id} masterUrl={scene.master} layers={scene.layers}
             width={scene.art.width} height={scene.art.height} />
-          {scene.overlays.map(({ src, x, y, w, h }) => (
-            <img key={src} className="scene-overlay" src={src} alt="" draggable={false}
-              style={{ left: percent(x, scene.art.width), top: percent(y, scene.art.height), width: percent(w, scene.art.width), height: percent(h, scene.art.height) }} />
-          ))}
           {/* Each spot's hover and click area follows its outline's shape once it is read. */}
           {scene.spots.map(({ id, href, label, caption, title, area: box, outline }, index) => {
             const silhouette = silhouettes[id]

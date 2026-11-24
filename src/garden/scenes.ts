@@ -8,7 +8,6 @@ import { ART_HEIGHT, ART_WIDTH } from './layers'
 import type { Layer } from './layers'
 import type { Art } from './fit'
 import workshopMaster from '../../garden/workshop/painted/workshop-background.png'
-import workshopManifest from '../../garden/workshop/painted/layers.json'
 import shelfMaster from '../../garden/workshop/shelf-640x360.png'
 import shelfManifest from '../../garden/workshop/shelf.json'
 
@@ -27,16 +26,12 @@ export type Spot = {
   outline?: string
 }
 
-// An animated picture laid over a painted scene at its own rectangle (APNGs that loop by themselves).
-export type Overlay = { src: string, x: number, y: number, w: number, h: number }
-
 export type Scene = {
   id: SceneId
   title: string // the page title and the scene's hidden heading
   master: string
   art: Art
-  layers: Layer[] // sprite sheets drawn on the pixel canvas
-  overlays: Overlay[] // animated pictures over a painted scene
+  layers: Layer[] // sprite sheets drawn on the scene's canvas
   spots: Spot[]
   outlines: Partial<Record<string, string>>
   focusX: number // where a narrow screen starts its pan, in the picture's pixels
@@ -65,17 +60,6 @@ const workshopLayers: Layer[] = ELEMENT_ORDER.flatMap(name => {
   return [{ src, x, y, w, h, frames, columns, frameMs }]
 })
 
-// The first, faint animations (looping APNGs) stay until the element that replaces them lands.
-const REPLACED_BY: Record<string, string> = {
-  'sakura-breeze.apng': 'petals', 'pond-ripples.apng': 'pond', 'waterfall.apng': 'pond', 'lamp-glow.apng': 'lamp',
-  'mug-steam.apng': 'steam', 'terrain-crt.apng': 'fire-and-ice', 'terminal-crt.apng': 'lol-ping',
-}
-const delivered = new Set(ELEMENT_ORDER.filter(name => sheetFiles[`../../garden/workshop/animations/${name}/${name}-sheet.webp`]))
-const workshopAnimations = import.meta.glob<string>('../../garden/workshop/painted/*.apng', { eager: true, import: 'default', query: '?url' })
-const workshopOverlays: Overlay[] = workshopManifest.layers
-  .filter(({ file }) => !delivered.has(REPLACED_BY[file]))
-  .map(({ file, rect: [x, y, w, h] }) => ({ src: workshopAnimations[`../../garden/workshop/painted/${file}`], x, y, w, h }))
-
 // Outlines for the painted workshop, when Codex adds them (hover-<id>.png at 1672 × 941). Until
 // then each spot is its rectangle with the soft oval glow.
 const workshopOutlines = import.meta.glob<string>('../../garden/workshop/painted/hover-*.png', { eager: true, import: 'default' })
@@ -98,16 +82,16 @@ const shelfSpots: Spot[] = shelfManifest.spines.flatMap(({ id, x, y, width, heig
 
 export const scenes: Record<SceneId, Scene> = {
   garden: {
-    id: 'garden', title: 'The garden', master: gardenMaster, art: PIXEL_ART, layers: gardenLayers, overlays: [],
+    id: 'garden', title: 'The garden', master: gardenMaster, art: PIXEL_ART, layers: gardenLayers,
     spots: gardenSpots, outlines: outlinesOf(gardenSpots), focusX: 311,
   },
   workshop: {
     id: 'workshop', title: 'Projects', master: workshopMaster, art: { width: 1672, height: 941, pixel: false },
-    layers: workshopLayers, overlays: workshopOverlays, spots: workshopSpots, outlines: outlinesOf(workshopSpots), focusX: 830,
+    layers: workshopLayers, spots: workshopSpots, outlines: outlinesOf(workshopSpots), focusX: 830,
     back: { href: '/', label: 'Back to the garden' },
   },
   shelf: {
-    id: 'shelf', title: 'All projects', master: shelfMaster, art: PIXEL_ART, layers: [], overlays: [], spots: shelfSpots, outlines: {},
+    id: 'shelf', title: 'All projects', master: shelfMaster, art: PIXEL_ART, layers: [], spots: shelfSpots, outlines: {},
     focusX: 230, back: { href: '/projects', label: 'Back to the workshop' },
   },
 }
