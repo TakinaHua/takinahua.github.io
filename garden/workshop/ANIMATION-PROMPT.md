@@ -121,6 +121,31 @@ on its own, from the picture's own pixels, reviewed in the real scene before the
 > slope, snow drifts on the icy peaks, and a slow scan line runs down the screen, like an old
 > CRT. Keep the monitor's case still. 48 frames at 100 ms.
 
+### Fix 5a: natural lava instead of the grid (paste after element 5)
+
+> Redo element 5 (`fire-and-ice`), and this time also repaint the screen in the background
+> picture. The left mountain on the monitor is drawn as an orange **wireframe grid** (straight
+> lines in a triangle mesh) in `painted/workshop-background.png` itself, so the animation can
+> only make the grid glow, and it reads as a computer model, not lava.
+> 1. **Repaint the screen in the picture.** In `painted/workshop-background.png`, change only
+>    the inside of the left monitor's glass (about x 556–749, y 109–236). Replace the wire mesh
+>    with a **volcano of dark basalt rock**: a glowing crater at the top and two or three lava
+>    rivers that wind and branch down the slope, with soft orange light on the rock around
+>    them and a little smoke above the crater. Keep the icy peaks, the sunset sky and the
+>    overall layout, so the screen still reads as fire on the left and ice on the right. Same
+>    painted style and lighting as the rest of the picture; the monitor case, the shelf and
+>    every pixel outside the glass stay exactly as they are. Save the full 1672 × 941 picture
+>    back as `workshop-background.png` and note the changed rectangle in `FINAL.md`.
+> 2. **Animate the new screen**, starting from the repainted pixels: bright pulses travel
+>    **down** the lava rivers like slow flowing lava, the crater glow swells and settles, a few
+>    embers drift up, and the smoke curls. Keep the snow blowing over the icy peaks and the
+>    faint scan line. Changes stay inside the glass; transparent wherever a frame matches the
+>    repainted picture; frame 0 transparent and frame 47 leading back into it.
+> Same rectangle (553, 106, 199 × 134), 48 frames at 100 ms. Replace
+> `animations/fire-and-ice/fire-and-ice-sheet.png`, `fire-and-ice.json` and
+> `fire-and-ice-in-scene.apng` (made over the repainted picture), and update the Fire and Ice
+> section of `garden/workshop/FINAL.md`.
+
 ## 6. The terminal screen, LoL Ping (`lol-ping`)
 
 > Element 6 only. Rectangle: the inside of the right monitor's screen, about **x 855–975,
