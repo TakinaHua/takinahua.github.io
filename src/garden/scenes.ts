@@ -20,7 +20,6 @@ export type Spot = {
   id: string
   href: string
   label: string // the accessible name
-  caption?: string // shown beside the object on hover and focus
   title?: string // written on the object itself (book spines)
   area: Box
   outline?: string
@@ -66,15 +65,15 @@ const workshopLayers: Layer[] = ELEMENT_ORDER.flatMap(name => {
 // then each spot is its rectangle with the soft oval glow.
 const workshopOutlines = import.meta.glob<string>('../../garden/workshop/painted/hover-*.png', { eager: true, import: 'default' })
 
-const workshopSpot = (id: string, href: string, label: string, caption: string, [x, y, w, h]: number[]): Spot =>
-  ({ id, href, label, caption, area: { x, y, w, h }, outline: workshopOutlines[`../../garden/workshop/painted/hover-${id}.png`] })
+const workshopSpot = (id: string, href: string, label: string, [x, y, w, h]: number[]): Spot =>
+  ({ id, href, label, area: { x, y, w, h }, outline: workshopOutlines[`../../garden/workshop/painted/hover-${id}.png`] })
 
 const workshopSpots: Spot[] = [
-  workshopSpot('atlas', '/projects/atlas', 'Atlas: the map on the desk', 'Atlas', [455, 530, 780, 240]),
-  workshopSpot('fire-and-ice', '/projects/fire-and-ice', 'Fire and Ice: the mountain screen', 'Fire and Ice', [465, 80, 310, 195]),
-  workshopSpot('lol-ping', '/projects/lol-ping', 'LoL Ping: the terminal screen', 'LoL Ping', [795, 135, 195, 140]),
-  workshopSpot('shelf', '/projects/shelf', 'All projects: the bookshelf', 'All projects', [525, 310, 445, 150]),
-  workshopSpot('door', '/', 'Back to the garden: the Garden sign on the door', 'Back to the garden', [96, 520, 144, 296]),
+  workshopSpot('atlas', '/projects/atlas', 'Atlas: the map on the desk', [455, 530, 780, 240]),
+  workshopSpot('fire-and-ice', '/projects/fire-and-ice', 'Fire and Ice: the mountain screen', [465, 80, 310, 195]),
+  workshopSpot('lol-ping', '/projects/lol-ping', 'LoL Ping: the terminal screen', [795, 135, 195, 140]),
+  workshopSpot('shelf', '/projects/shelf', 'All projects: the bookshelf', [525, 310, 445, 150]),
+  workshopSpot('door', '/', 'Back to the garden: the Garden sign on the door', [96, 520, 144, 296]),
 ]
 
 const shelfSpots: Spot[] = shelfManifest.spines.flatMap(({ id, x, y, width, height }) => {

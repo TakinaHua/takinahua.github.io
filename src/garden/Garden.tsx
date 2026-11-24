@@ -246,7 +246,7 @@ export default function Garden() {
           <GardenCanvas key={scene.id} masterUrl={scene.master} layers={scene.layers}
             width={scene.art.width} height={scene.art.height} />
           {/* Each spot's hover and click area follows its outline's shape once it is read. */}
-          {scene.spots.map(({ id, href, label, caption, title, area: box, outline }, index) => {
+          {scene.spots.map(({ id, href, label, title, area: box, outline }, index) => {
             const silhouette = silhouettes[id]
             const area = silhouette?.area ?? box
             return (
@@ -272,12 +272,6 @@ export default function Garden() {
                 {outline && (
                   <img className="landmark-outline" src={outline} alt="" draggable={false}
                     style={{ '--intro-order': index } as CSSProperties} />
-                )}
-                {caption && (
-                  <span className="spot-caption" aria-hidden="true"
-                    style={{ left: percent(area.x + area.w / 2, scene.art.width), top: percent(area.y, scene.art.height) }}>
-                    {caption}
-                  </span>
                 )}
               </Fragment>
             )

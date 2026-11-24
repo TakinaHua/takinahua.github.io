@@ -344,28 +344,6 @@
 .garden[data-pan] .scene-back { top: auto; bottom: 16px; left: 50%; transform: translateX(-50%); }
 .garden[data-pan] .scene-back:active { transform: translate(-50%, 1px); }
 
-.spot-caption {
-  position: absolute;
-  z-index: 1;
-  padding: 4px 8px;
-  background: var(--wood);
-  box-shadow: inset 0 2px var(--wood-light), 0 0 0 2px var(--wood-dark);
-  color: var(--parchment);
-  font: var(--pixel-small);
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transform: translate(-50%, calc(-100% - 6px));
-  transition: opacity 140ms ease-out;
-}
-
-.landmark:is(:hover, :focus-visible) + .landmark-outline + .spot-caption,
-.landmark:is(:hover, :focus-visible) + .spot-caption { opacity: 1; }
-
-@media (hover: none) {
-  .spot-caption { opacity: 1; }
-}
-
 /* Spine titles stay on the font's grid: 27px, or 54px once the shelf is drawn at 4x or more. */
 .spine-spot {
   display: grid;
@@ -506,6 +484,6 @@
 .welcome p { margin: 0 0 16px; line-height: 1.5; }
 
 @media (prefers-reduced-motion: reduce) {
-  .spine-spot, .spot-caption, .landmark::before, .landmark::after, .landmark-outline, .tray-tile, .tray { transition: none; }
+  .spine-spot, .landmark::before, .landmark::after, .landmark-outline, .tray-tile, .tray { transition: none; }
   .view, .welcome { animation: none; }
 }
