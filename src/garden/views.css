@@ -389,7 +389,7 @@
   cursor: default;
 }
 
-.notes, .plain-list, .skills, .postcard-links { margin: 0; padding: 0; list-style: none; }
+.plain-list, .skills, .postcard-links { margin: 0; padding: 0; list-style: none; }
 
 /* Workshop and bookshelf scenes: a back control under the bar, a name over each object on
    hover and focus (always shown on touch screens), and the shelf's spines titled in pixel type. */
@@ -438,34 +438,99 @@
 .book-picture img { width: 100%; height: auto; box-shadow: 0 0 0 2px var(--wood); }
 .picture-placeholder { color: var(--ink-soft); font: var(--pixel-small); text-align: center; }
 
-/* Noticeboard */
+/* Experience: the lantern-lit noticeboard from the concept sheet (garden/ui/experience,
+   1536 × 1024) is the page itself. The title sits on its top plank (x 415–1170, y 85–190) and
+   the notices on its boards (x 350–1240, y 210–920); sizes follow the board's width (cqw). */
 
-.notes {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 20px;
-  padding: 18px;
-  background: var(--wood);
-  box-shadow: inset 0 0 0 4px var(--wood-dark);
+.view[data-kind=experience] {
+  width: min(1120px, 100%, calc((100svh - var(--bar-h) - 40px) * 1.5));
+  aspect-ratio: 3 / 2;
+  padding: 0;
+  background: var(--board) center / 100% 100% no-repeat;
+  box-shadow: 0 18px 40px #0009;
+  container-type: inline-size;
+  font-family: Georgia, 'Times New Roman', serif;
 }
 
-.pinned-note {
-  position: relative;
-  padding: 24px 16px 14px;
-  background: #fbf1dc;
-  box-shadow: 0 6px 10px -4px #0008;
-}
+.view[data-kind=experience] .view-head { margin: 0; }
 
-.pinned-note::before {
+.view[data-kind=experience] h2 {
   position: absolute;
-  top: 7px;
-  left: 50%;
-  width: 10px;
-  height: 10px;
-  transform: translateX(-50%);
-  background: #c0392b;
-  box-shadow: 0 2px #7a1f15;
-  content: '';
+  top: 8.3%;
+  right: 24%;
+  left: 27%;
+  display: grid;
+  place-items: center;
+  height: 10.2%;
+  color: #3a2216;
+  font: 700 max(24px, 3.8cqw) / 1 Georgia, 'Times New Roman', serif;
+  text-shadow: 0 1px #f3c48d80;
+}
+
+/* The way back sits in the night sky above the right of the board. */
+.view[data-kind=experience] .view-head .pixel-button { position: absolute; top: 12px; right: 12px; }
+
+.notices {
+  position: absolute;
+  inset: 21.5% 20.5% 10.5% 23.5%;
+  display: grid;
+  align-content: start;
+  gap: 1.4cqw;
+  margin: 0;
+  padding: .6cqw;
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-color: #c39656 #4e3023;
+}
+
+/* The paper keeps its torn edge and brass pins at any height: a 9-slice of notice.png. */
+.notice {
+  padding: 0 2.4cqw 0 1.6cqw;
+  border: 2.4cqw solid transparent;
+  border-image: var(--notice) 95 fill / 2.4cqw stretch;
+  color: #341e18;
+  filter: drop-shadow(0 3px 1px #30190e);
+}
+
+.notice summary {
+  display: flex;
+  align-items: center;
+  gap: 2.4cqw;
+  min-height: 5.6cqw;
+  cursor: pointer;
+  list-style: none;
+}
+
+.notice summary::-webkit-details-marker { display: none; }
+.notice summary::after { margin-left: auto; color: #6b4226; font-size: clamp(14px, 1.6cqw, 22px); content: '▾'; transition: transform 180ms ease-out; }
+.notice[open] summary::after { transform: rotate(180deg); }
+
+.notice summary img { width: 7.5cqw; height: 6.4cqw; flex: none; object-fit: contain; transition: transform 180ms ease-out; }
+.notice summary:is(:hover, :focus-visible) img { transform: rotate(-4deg) translateY(-2px); }
+.garden .notice summary:focus-visible { outline: 2px dashed #66362a; outline-offset: 4px; }
+
+.notice-name { display: grid; gap: .3em; }
+.view .notice h3 { margin: 0; font: 700 clamp(18px, 2.3cqw, 32px) / 1.1 Georgia, 'Times New Roman', serif; }
+.notice-role { font-size: clamp(14px, 1.5cqw, 21px); }
+
+/* Room on the right for the painted rose in the paper's corner. */
+.notice-detail { padding: .6em 7cqw .4em 0; font-size: clamp(15px, 1.35cqw, 19px); line-height: 1.5; animation: notice-unfold 260ms ease-out; transform-origin: top; }
+.view .notice-detail p { max-width: none; margin: .3em 0; }
+.notice-dates { font-weight: 700; }
+
+@keyframes notice-unfold {
+  from { opacity: .2; transform: translateY(-5px) scaleY(.94); }
+}
+
+/* Phones: the board fills the height and is cropped at the sides; the notices widen. */
+@media (max-width: 640px) {
+  .view[data-kind=experience] { width: 100%; height: calc(100svh - var(--bar-h) - 20px); aspect-ratio: auto; background-size: cover; container-type: normal; }
+  .view[data-kind=experience] h2 { right: 8%; left: 8%; font-size: 30px; }
+  .notices { inset: 21% 4% 9%; gap: 10px; }
+  .notice { padding: 2px 10px; border-width: 18px; border-image-width: 18px; }
+  .notice summary { gap: 12px; min-height: 52px; }
+  .notice summary img { width: 48px; height: 42px; }
+  .notice-detail { padding-right: 28px; }
 }
 
 /* Album */
@@ -597,6 +662,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .spine-spot, .landmark::before, .landmark::after, .landmark-outline, .tray-card, .tray-box { transition: none; }
-  .view, .welcome { animation: none; }
+  .spine-spot, .landmark::before, .landmark::after, .landmark-outline, .tray-card, .tray-box,
+  .notice summary::after, .notice summary img { transition: none; }
+  .view, .welcome, .notice-detail { animation: none; }
 }

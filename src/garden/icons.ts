@@ -25,6 +25,20 @@ import cardFireAndIce from '../../garden/ui/reference/card-fire-and-ice.png'
 import cardLolPing from '../../garden/ui/card-lol-ping.png'
 import cardEvOptimization from '../../garden/ui/card-ev-optimization.png'
 
+// The Experience page (garden/ui/experience): the lantern-lit noticeboard (1536 × 1024), a
+// pinned paper notice (1470 × 382) and an object for each role.
+import noticeboard from '../../garden/ui/experience/noticeboard.webp'
+import notice from '../../garden/ui/experience/notice.webp'
+import roleAvary from '../../garden/ui/experience/avary-ai.webp'
+import roleBigBet from '../../garden/ui/experience/bigbet-research.webp'
+import roleParasoft from '../../garden/ui/experience/parasoft.webp'
+
+export const experienceArt = {
+  board: noticeboard,
+  notice,
+  roles: { 'avary-ai': roleAvary, 'bigbet-research': roleBigBet, 'parasoft': roleParasoft } as Partial<Record<string, string>>,
+}
+
 export const logoIcon = sakura
 export const menuArt = { button: menuButton, map: menuMap, open: menuOpen }
 export const trayArt = { box: trayBox, drawer: trayDrawer }

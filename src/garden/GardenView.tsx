@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef } from 'react'
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import DateRange from '../DateRange'
 import { education, interests, intro, links, projects, roles, skillGroups } from '../content'
 import type { Project } from '../content'
 import { navigate, routeClick } from '../router'
 import type { Route } from '../router'
+import { experienceArt } from './icons'
 import { bookBack } from './scenes'
 
 type ViewRoute = Exclude<Route, { view: 'garden' }>
@@ -39,15 +40,26 @@ function ProjectBook({ project }: { project: Project }) {
   )
 }
 
+// A notice pinned to the board for each role: its object, the company and the role. Opening it
+// shows the dates and what Barry did; one is open at a time.
 function Noticeboard() {
   return (
-    <ul className="notes">
+    <ul className="notices">
       {roles.map(role => (
-        <li key={role.id} className="pinned-note">
-          <h3>{role.org}</h3>
-          <p className="note-role">{role.role}</p>
-          <p className="view-meta"><DateRange {...role.dates} /></p>
-          <p>{role.summary}</p>
+        <li key={role.id}>
+          <details className="notice" name="role">
+            <summary>
+              {experienceArt.roles[role.id] && <img src={experienceArt.roles[role.id]} alt="" />}
+              <span className="notice-name">
+                <h3>{role.org}</h3>
+                <span className="notice-role">{role.role}</span>
+              </span>
+            </summary>
+            <div className="notice-detail">
+              <p className="notice-dates"><DateRange {...role.dates} /></p>
+              <p>{role.summary}</p>
+            </div>
+          </details>
         </li>
       ))}
     </ul>
@@ -156,7 +168,10 @@ export default function GardenView({ route }: { route: ViewRoute }) {
   return (
     <div className="view-layer">
       <a className="view-backdrop" href={view.back.href} onClick={routeClick} tabIndex={-1} aria-hidden="true" />
-      <section className="view" data-kind={route.view} aria-labelledby="view-title">
+      <section className="view" data-kind={route.view} aria-labelledby="view-title"
+        style={route.view === 'experience'
+          ? { '--board': `url(${experienceArt.board})`, '--notice': `url(${experienceArt.notice})` } as CSSProperties
+          : undefined}>
         <header className="view-head">
           <h2 id="view-title" ref={headingRef} tabIndex={-1}>{view.title}</h2>
           <a className="pixel-button" href={view.back.href} onClick={routeClick}>{view.back.label}</a>
