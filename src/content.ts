@@ -68,6 +68,7 @@ export const links = {
   github: 'https://github.com/TakinaHua',
   linkedin: 'https://www.linkedin.com/in/barry-shan-hua/',
   email: 'mailto:barry.shanhua@gmail.com',
+  resume: '/resume.pdf',
 }
 
 export const projects: Project[] = [

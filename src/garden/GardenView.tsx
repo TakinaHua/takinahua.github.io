@@ -7,6 +7,8 @@ import { navigate, routeClick } from '../router'
 import type { Route } from '../router'
 import { albumArt, experienceArt, postcardArt } from './icons'
 import { bookBack } from './scenes'
+import NoticeboardMotion from './NoticeboardMotion'
+import gardenSign from '../../garden/ui/experience/garden-sign.png'
 
 type ViewRoute = Exclude<Route, { view: 'garden' }>
 
@@ -62,6 +64,18 @@ function Noticeboard() {
           </details>
         </li>
       ))}
+      {/* Below the roles, the whole résumé as a PDF. */}
+      <li>
+        <a className="notice notice-resume" href={links.resume} target="_blank" rel="noreferrer">
+          <img src={experienceArt.resume} alt="" />
+          <span className="notice-name">
+            <h3>Résumé</h3>
+            <span className="notice-role">The full version, as a PDF</span>
+          </span>
+          <span className="notice-open" aria-hidden="true">↗</span>
+          <span className="visually-hidden"> (opens in a new tab)</span>
+        </a>
+      </li>
     </ul>
   )
 }
@@ -145,8 +159,27 @@ function Postcard() {
         <li><a href={links.email}>Email <span aria-hidden="true">↗</span></a></li>
         <li><a href={links.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span>{newTab}</a></li>
         <li><a href={links.github} target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span>{newTab}</a></li>
+        <li><a href={links.resume} target="_blank" rel="noreferrer">Résumé <span aria-hidden="true">↗</span>{newTab}</a></li>
       </ul>
     </div>
+  )
+}
+
+// The way back to the garden belongs to each page's world: a wooden arrow sign hung on the
+// noticeboard, a ribbon bookmark in the album, and words inked on the postcard.
+function GardenReturn({ kind, href, label }: { kind: 'experience' | 'about' | 'contact', href: string, label: string }) {
+  if (kind === 'experience') {
+    return (
+      <a className="garden-return return-sign" href={href} onClick={routeClick} aria-label={label}>
+        <img src={gardenSign} alt="" />
+      </a>
+    )
+  }
+  const cls = kind === 'about' ? 'garden-return return-ribbon' : 'garden-return return-ink'
+  return (
+    <a className={cls} href={href} onClick={routeClick} aria-label={label}>
+      <span aria-hidden="true">← Garden</span>
+    </a>
   )
 }
 
@@ -198,11 +231,14 @@ export default function GardenView({ route }: { route: ViewRoute }) {
       <section className="view" data-kind={route.view} aria-labelledby="view-title"
         style={route.view === 'experience'
           ? { '--board': `url(${experienceArt.board})`, '--notice': `url(${experienceArt.notice})` } as CSSProperties
-          : route.view === 'about' ? { '--album': `url(${albumArt})` } as CSSProperties
+          : route.view === 'about' ? { '--album': `url(${albumArt.withCorners})`, '--album-plain': `url(${albumArt.plain})` } as CSSProperties
           : route.view === 'contact' ? { '--postcard': `url(${postcardArt})` } as CSSProperties : undefined}>
+        {route.view === 'experience' && <NoticeboardMotion />}
         <header className="view-head">
           <h2 id="view-title" ref={headingRef} tabIndex={-1}>{view.title}</h2>
-          <a className="pixel-button" href={view.back.href} onClick={routeClick}>{view.back.label}</a>
+          {route.view === 'projects'
+            ? <a className="pixel-button" href={view.back.href} onClick={routeClick}>{view.back.label}</a>
+            : <GardenReturn kind={route.view} href={view.back.href} label={view.back.label} />}
         </header>
         {view.body}
       </section>

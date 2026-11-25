@@ -32,16 +32,21 @@ import notice from '../../garden/ui/experience/notice.webp'
 import roleAvary from '../../garden/ui/experience/avary-ai.webp'
 import roleBigBet from '../../garden/ui/experience/bigbet-research.webp'
 import roleParasoft from '../../garden/ui/experience/parasoft.webp'
+import resumePapers from '../../garden/ui/experience/resume.webp'
 
 export const experienceArt = {
   board: noticeboard,
   notice,
+  resume: resumePapers, // the paper-clipped résumé pages
   roles: { 'avary-ai': roleAvary, 'bigbet-research': roleBigBet, 'parasoft': roleParasoft } as Partial<Record<string, string>>,
 }
 
 // The About page: the open album on the bench (garden/ui/about, 1536 × 1024).
-import albumBackground from '../../garden/ui/about/album-background.webp'
-export const albumArt = albumBackground
+// Its crimson "← Garden" ribbon is painted on (x 40–415, y 170–256). The second spread uses a
+// copy without the four brass photo corners.
+import albumGarden from '../../garden/ui/about/album-garden.webp'
+import albumGardenPlain from '../../garden/ui/about/album-garden-plain.webp'
+export const albumArt = { withCorners: albumGarden, plain: albumGardenPlain }
 
 // The Contact page: the postcard by the mailbox (garden/ui/contact, 1536 × 1024), its garden
 // picture and "Thanks for visiting." painted on the left, three ruled lines on the right.
