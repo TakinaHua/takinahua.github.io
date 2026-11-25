@@ -1,0 +1,91 @@
+{
+  "canvas": [
+    640,
+    360
+  ],
+  "frames": 48,
+  "columns": 8,
+  "rows": 6,
+  "frameMs": 100,
+  "drawOrder": [
+    "petals",
+    "waterfall",
+    "pond",
+    "lamp",
+    "fire-and-ice",
+    "lol-ping",
+    "steam"
+  ],
+  "layers": {
+    "petals": {
+      "sheet": "petals-sheet.png",
+      "x": 429,
+      "y": 61,
+      "width": 200,
+      "height": 133,
+      "frames": 48,
+      "columns": 8,
+      "frameMs": 100
+    },
+    "waterfall": {
+      "sheet": "waterfall-sheet.png",
+      "x": 583,
+      "y": 134,
+      "width": 42,
+      "height": 57,
+      "frames": 48,
+      "columns": 8,
+      "frameMs": 100
+    },
+    "pond": {
+      "sheet": "pond-sheet.png",
+      "x": 430,
+      "y": 183,
+      "width": 209,
+      "height": 18,
+      "frames": 48,
+      "columns": 8,
+      "frameMs": 100
+    },
+    "lamp": {
+      "sheet": "lamp-sheet.png",
+      "x": 92,
+      "y": 150,
+      "width": 215,
+      "height": 137,
+      "frames": 48,
+      "columns": 8,
+      "frameMs": 100
+    },
+    "fire-and-ice": {
+      "sheet": "fire-and-ice-sheet.png",
+      "x": 177,
+      "y": 46,
+      "width": 79,
+      "height": 45,
+      "frames": 48,
+      "columns": 8,
+      "frameMs": 100
+    },
+    "lol-ping": {
+      "sheet": "lol-ping-sheet.png",
+      "x": 291,
+      "y": 56,
+      "width": 56,
+      "height": 34,
+      "frames": 48,
+      "columns": 8,
+      "frameMs": 100
+    },
+    "steam": {
+      "sheet": "steam-sheet.png",
+      "x": 113,
+      "y": 211,
+      "width": 37,
+      "height": 32,
+      "frames": 48,
+      "columns": 8,
+      "frameMs": 100
+    }
+  }
+}

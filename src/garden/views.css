@@ -1,0 +1,909 @@
+/* Garden chrome: top bar, Projects tray and pan controls, then the landmark views. */
+
+.topbar {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: var(--bar-h);
+  padding-inline: clamp(12px, 2vw, 24px);
+  background: var(--bar);
+  box-shadow: 0 3px 0 var(--wood-dark);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--parchment);
+  text-decoration: none;
+}
+
+.brand img, .topnav img, .tray img { image-rendering: pixelated; flex: none; }
+
+.brand-text { display: grid; gap: 4px; }
+
+.brand h1 {
+  margin: 0;
+  white-space: nowrap;
+  font: var(--pixel-text);
+}
+
+/* Says what Barry does on every screen, for visitors who read nothing else. */
+.brand-tagline { color: var(--parchment-shade); font: var(--pixel-small); white-space: nowrap; }
+
+.topnav { position: relative; display: flex; align-items: center; gap: 12px; }
+
+.topnav-list {
+  display: flex;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.topnav-list a {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: var(--bar-h);
+  padding: 0 12px;
+  color: var(--parchment-shade);
+  font: var(--pixel-text);
+  text-decoration: none;
+}
+
+.topnav-list a:is(:hover, :focus-visible), .topnav-list a[aria-current=page] { color: var(--parchment); }
+
+.topnav-list a[aria-current=page]::after {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  left: 12px;
+  height: 3px;
+  background: var(--blossom);
+  content: '';
+}
+
+.topnav-list a:focus-visible { outline-offset: -3px; }
+
+.pixel-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 40px;
+  padding: 6px 14px;
+  border: 0;
+  background: var(--wood);
+  box-shadow: inset 0 2px var(--wood-light), inset 0 -3px var(--wood-dark), 0 0 0 2px var(--wood-dark);
+  color: var(--parchment);
+  cursor: pointer;
+  font: var(--pixel-text);
+  text-decoration: none;
+}
+
+.pixel-button:is(:hover, :focus-visible) { background: var(--wood-light); }
+
+/* Menu (narrower screens), cut from the concept sheet (garden/ui/reference): the folded map and
+   "Menu" lettering (185 × 56) open the illustrated parchment (313 × 407), each link laid over
+   its painted row. Both are shown at --menu-scale. */
+.topnav { --menu-scale: .857; }
+
+.menu-button {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.menu-button img { display: block; width: calc(185px * var(--menu-scale)); height: calc(56px * var(--menu-scale)); image-rendering: auto; }
+
+@media (max-width: 420px) {
+  .menu-button img { width: calc(78px * var(--menu-scale)); height: calc(50px * var(--menu-scale)); }
+}
+.menu-button:is(:hover, :focus-visible), .menu-button[aria-expanded=true] { filter: brightness(1.12); }
+
+.menu-list {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  width: calc(313px * var(--menu-scale));
+  height: calc(407px * var(--menu-scale));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  background: 0 0 / 100% 100% no-repeat;
+  filter: drop-shadow(0 8px 6px #0b102099);
+}
+
+.menu-list[hidden] { display: none; }
+
+/* The painted rows, in the panel's own pixels (the README's link areas). */
+.menu-list li { position: absolute; left: calc(27px * var(--menu-scale)); width: calc(267px * var(--menu-scale)); }
+.menu-list li:nth-child(1) { top: calc(14px * var(--menu-scale)); height: calc(80px * var(--menu-scale)); }
+.menu-list li:nth-child(2) { top: calc(94px * var(--menu-scale)); height: calc(69px * var(--menu-scale)); }
+.menu-list li:nth-child(3) { top: calc(163px * var(--menu-scale)); height: calc(70px * var(--menu-scale)); }
+.menu-list li:nth-child(4) { top: calc(233px * var(--menu-scale)); height: calc(70px * var(--menu-scale)); }
+.menu-list li:nth-child(5) { top: calc(303px * var(--menu-scale)); height: calc(87px * var(--menu-scale)); }
+
+.menu-list a { display: block; height: 100%; }
+.menu-list a img { display: none; }
+.menu-list .nav-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.menu-list a:is(:hover, :focus-visible) { background: #9a673829; }
+.menu-list a[aria-current=page] { box-shadow: inset 4px 0 var(--blossom); }
+/* The lamp-gold focus ring vanishes on cream, so on parchment it is ink. */
+.garden .menu-list a:focus-visible { outline-color: var(--ink-dark); outline-offset: -3px; }
+
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 12px;
+  z-index: 5;
+}
+
+.skip-link:focus {
+  top: 12px;
+  padding: 8px 14px;
+  background: var(--parchment);
+  color: var(--ink-dark);
+  font: var(--pixel-text);
+}
+
+.garden :is(a, button):focus-visible {
+  outline: 3px solid var(--lamp);
+  outline-offset: 3px;
+}
+
+/* Projects tray, cut from the concept sheet (see ProjectTray.tsx): an open lacquered box above
+   a drawer front, centred over the garden, which shows on both sides. Sizes are the art's own
+   pixels times --tray-scale. */
+
+.tray {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.tray-box, .tray-drawer { pointer-events: auto; }
+
+.tray-box {
+  position: relative;
+  transition: opacity 200ms ease-out, transform 200ms cubic-bezier(.2, .8, .2, 1), visibility 200ms;
+}
+
+/* Closed: only the drawer shows; the box sinks into it. */
+.tray:not([data-open]) .tray-box { opacity: 0; transform: translateY(24px); visibility: hidden; }
+
+.tray-art { display: flex; }
+.tray-piece { display: block; flex: none; border: 0 solid transparent; }
+.tray-box .tray-piece { height: calc(239px * var(--tray-scale)); }
+.tray-drawer .tray-piece { height: calc(87px * var(--tray-scale)); }
+
+/* The brass pull on the back rim (x 252–356, y 0–36 in the art), centred like the box's ends. */
+.tray-box-pull {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: calc(104px * var(--tray-scale));
+  height: calc(36px * var(--tray-scale));
+  padding: 0;
+  border: 0;
+  border-radius: calc(8px * var(--tray-scale));
+  background: none;
+  cursor: pointer;
+  transform: translateX(-50%);
+}
+
+.tray-box-pull:hover { backdrop-filter: brightness(1.25); }
+.tray-box-pull:active { backdrop-filter: brightness(.9); }
+
+/* The pictures lie on the box's floor; any that do not fit scroll sideways. */
+.tray-cards {
+  position: absolute;
+  inset: calc(48px * var(--tray-scale)) calc(44px * var(--tray-scale)) calc(10px * var(--tray-scale));
+  display: flex;
+  gap: calc(30px * var(--tray-scale));
+  margin: 0;
+  padding: calc(8px * var(--tray-scale)) calc(24px * var(--tray-scale)) 0;
+  overflow-x: auto;
+  list-style: none;
+  scrollbar-width: none;
+}
+
+.tray-cards > li { flex: none; }
+
+/* When the box is too narrow for every picture, they sit closer so the next one peeks in at
+   the edge, a cue that the row scrolls. (Below 817 px the box cannot hold all four at 70 %.) */
+@media (max-width: 816px) {
+  .tray-cards { gap: calc(12px * var(--tray-scale)); padding-inline: calc(8px * var(--tray-scale)); scroll-snap-type: x mandatory; scroll-padding-inline: calc(8px * var(--tray-scale)); }
+  .tray-cards > li { scroll-snap-align: start; }
+}
+
+.tray-card {
+  display: grid;
+  justify-items: center;
+  gap: calc(4px * var(--tray-scale));
+  width: calc(221px * var(--tray-scale));
+  color: var(--parchment);
+  text-decoration: none;
+  transition: transform 140ms ease-out;
+}
+
+.tray-card-picture {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: calc(116px * var(--tray-scale));
+}
+
+.tray-card-picture img { display: block; width: 100%; height: 100%; image-rendering: auto; }
+
+/* The two pictures the concept does not show get a frame like the painted ones: a cream mat
+   with a brown rule inside and a dark edge. */
+.tray-card-picture.is-framed-here {
+  padding: calc(9px * var(--tray-scale));
+  background: #f3c493;
+  box-shadow: inset 0 0 0 calc(3px * var(--tray-scale)) #e2ad7d, inset 0 0 0 calc(7px * var(--tray-scale)) #f3c493, inset 0 0 0 calc(9px * var(--tray-scale)) #ae7655, 0 0 0 2px #1a0d08;
+}
+
+.tray-card-picture.is-framed-here img { object-fit: cover; image-rendering: pixelated; }
+
+.tray-card-soon {
+  position: absolute;
+  inset: auto calc(9px * var(--tray-scale)) calc(9px * var(--tray-scale));
+  padding: 2px 0;
+  background: #0b1020cc;
+  color: var(--parchment);
+  font: var(--pixel-small);
+  text-align: center;
+}
+
+.tray-card-title { font: var(--pixel-text); text-shadow: 0 2px #0b1020; white-space: nowrap; }
+
+.tray-card:is(:hover, :focus-visible) { transform: translateY(-3px); }
+.tray-card:is(:hover, :focus-visible) .tray-card-picture { filter: brightness(1.12); }
+.tray-card:is(:hover, :focus-visible) .tray-card-title { color: #fff; }
+.garden .tray-card:focus-visible { outline-offset: 2px; }
+
+.tray-drawer { margin: 0; }
+
+.tray-toggle {
+  display: block;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.tray-toggle:is(:hover, :focus-visible) { filter: brightness(1.12); }
+
+/* Pressed: every control sinks a pixel and darkens while held. */
+.tray-card:active { transform: translateY(-1px); }
+:is(.pixel-button, .pan-button):active:not(:disabled) {
+  background: var(--wood-dark);
+  transform: translateY(1px);
+}
+.tray-toggle:active { transform: translateY(1px); }
+/* On parchment, a pressed control darkens the paper instead. */
+.menu-button:active { filter: brightness(.85); transform: translateY(1px); }
+.menu-list a:active { background: #9a673847; }
+
+/* Pan controls (narrow portrait screens only) */
+
+.pan-controls {
+  position: absolute;
+  inset: auto 0 calc(var(--tray-now) + 16px);
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  padding-inline: 12px;
+  pointer-events: none;
+}
+
+.pan-button {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 0;
+  background: var(--wood);
+  box-shadow: inset 0 2px var(--wood-light), inset 0 -3px var(--wood-dark), 0 0 0 2px var(--wood-dark);
+  color: var(--parchment);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.pan-button:disabled { visibility: hidden; }
+.pan-button:is(:hover, :focus-visible) { background: var(--wood-light); }
+
+/* Views: each landmark's page opens over the dimmed garden. */
+
+.view-layer {
+  position: absolute;
+  inset: var(--bar-h) 0 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  padding: clamp(10px, 3vw, 40px);
+  overflow-y: auto;
+}
+
+.view-backdrop {
+  position: fixed;
+  inset: var(--bar-h) 0 0;
+  background: #05080fb8;
+  cursor: default;
+}
+
+.view {
+  position: relative;
+  width: min(980px, 100%);
+  padding: clamp(18px, 3vw, 32px);
+  background: var(--parchment);
+  box-shadow: inset 0 0 0 4px var(--wood), inset 0 0 0 8px var(--wood-dark), 0 18px 40px #0009;
+  color: var(--ink-dark);
+  animation: view-in 180ms steps(3);
+}
+
+/* Starts visible: only the position steps in, so a paused timeline never hides content. */
+@keyframes view-in {
+  from { transform: translateY(12px); }
+}
+
+.view-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.view h2 { margin: 0; font: var(--pixel-heading); outline: none; }
+.view h3 { margin: 0 0 6px; font: var(--pixel-text); }
+.view p { max-width: 68ch; margin: 0 0 10px; line-height: 1.6; }
+.view .view-meta, .view .note-role { color: var(--ink-soft); font-size: 14px; }
+.view .note-role { margin-bottom: 2px; font-weight: 600; }
+.view .view-subtitle { margin-top: 8px; color: var(--ink-soft); font: var(--pixel-small); }
+.view :is(a, button):focus-visible { outline-color: var(--wood-dark); }
+.view ::selection { background: var(--wood-light); color: var(--parchment); }
+
+.pixel-button.is-unavailable {
+  background: transparent;
+  box-shadow: none;
+  outline: 2px dashed var(--wood-light);
+  outline-offset: -2px;
+  color: var(--ink-soft);
+  cursor: default;
+}
+
+.postcard-links { margin: 0; padding: 0; list-style: none; }
+
+/* Workshop and bookshelf scenes: a back control under the bar, a name over each object on
+   hover and focus (always shown on touch screens), and the shelf's spines titled in pixel type. */
+
+.scene-back {
+  position: absolute;
+  top: calc(var(--bar-h) + 12px);
+  left: 12px;
+  z-index: 2;
+  white-space: nowrap;
+}
+
+/* Scenes without the tray: on narrow screens the back control sits between the pan arrows,
+   both on the bottom edge, so neither covers a name at the top of the picture. */
+.garden:not([data-scene=garden]) .pan-controls { bottom: 16px; }
+.garden[data-pan] .scene-back { top: auto; bottom: 16px; left: 50%; transform: translateX(-50%); }
+.garden[data-pan] .scene-back:active { transform: translate(-50%, 1px); }
+
+/* The painted bookshelf: each project's title runs up its book's spine in gilt serif, sized with
+   the picture; the book glows like the workshop's objects under the cursor or focus. */
+.spine-spot {
+  display: grid;
+  place-items: center;
+  color: #f6dfa8;
+  font: 700 max(15px, calc(var(--art-scale) * 38px)) / 1 Georgia, 'Times New Roman', serif;
+  text-decoration: none;
+  text-shadow: 0 1px 0 #3b2414, 0 0 6px #3b2414cc;
+  writing-mode: vertical-rl;
+  transition: color 140ms ease-out;
+}
+
+.spine-spot:is(:hover, :focus-visible) { color: #fff3cf; }
+
+/* A project's own book (garden/ui/project, 1536 × 1024) is the page itself: its title and words on
+   the left page, its picture in the brass-cornered frame on the right (x 827–1405, y 322–640),
+   and a "← Bookshelf" ribbon painted top left. Sizes follow the book's width (cqw). */
+
+.view[data-kind=projects] {
+  width: min(1120px, 100%, calc((100svh - var(--bar-h) - 40px) * 1.5));
+  aspect-ratio: 3 / 2;
+  padding: 0;
+  background: var(--book) center / 100% 100% no-repeat;
+  box-shadow: 0 18px 40px #0009;
+  color: #3a2216;
+  container-type: inline-size;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(14px, 1.5cqw, 19px);
+}
+
+.view[data-kind=projects] .view-head { margin: 0; }
+.view[data-kind=projects] h2 { position: absolute; top: 21%; left: 9%; color: #3a2216; font: 700 max(26px, 3.8cqw) / 1 Georgia, 'Times New Roman', serif; }
+
+.project-book .book-text { position: absolute; top: 30%; left: 9%; width: 37%; height: 57%; overflow-y: auto; }
+.view .project-book p { max-width: none; margin: 0 0 .8em; line-height: 1.55; }
+.view .project-book .book-dates { color: #6b4a33; font-style: italic; }
+.view .project-book .book-tech { padding-top: .7em; border-top: 2px solid #3a221633; color: #5b3f27; font-size: .92em; }
+
+.book-actions { display: grid; gap: .5em; margin-top: 1.2em; }
+.book-action { width: fit-content; color: #8b2d2a; font: italic 700 max(16px, 1.75cqw) / 1.2 Georgia, 'Times New Roman', serif; text-decoration: none; }
+a.book-action:hover, .garden a.book-action:focus-visible { outline: none; text-decoration: underline 2px; text-underline-offset: 4px; }
+.book-action.is-unavailable { color: #8a6a52; font-weight: 400; }
+
+/* The picture fills the frame; its corners are cut away so the painted brass shows. */
+.book-picture { position: absolute; top: 31.5%; left: 53.9%; display: grid; place-items: center; width: 37.6%; height: 31%; }
+.book-picture img { width: 100%; height: 100%; object-fit: cover; clip-path: polygon(8% 0, 92% 0, 100% 15%, 100% 85%, 92% 100%, 8% 100%, 0 85%, 0 15%); }
+.view .project-book .picture-placeholder { margin: 0; padding: 0 12%; color: #7a5a40; font-style: italic; text-align: center; }
+
+/* Phones: the book's left page fills the screen, with the ribbon in its corner; the words and
+   the picture follow one under the other and scroll inside the page. */
+@media (max-width: 720px) {
+  .view[data-kind=projects] { width: 100%; height: calc(100svh - var(--bar-h) - 20px); aspect-ratio: auto; overflow: hidden; background-size: auto 100%; background-position: 0 0; container-type: size; font-size: 16px; }
+  .view[data-kind=projects] h2 { top: 21cqh; left: 54px; font-size: 30px; }
+  .project-book { position: absolute; inset: calc(21cqh + 48px) 26px 11cqh 54px; overflow-y: auto; }
+  .project-book .book-text, .book-picture { position: static; width: auto; height: auto; overflow: visible; }
+  .book-picture { margin-top: 18px; }
+  .book-picture img { height: auto; aspect-ratio: 16 / 9; clip-path: none; box-shadow: 0 0 0 3px #c9a46a; }
+}
+
+/* Experience: the lantern-lit noticeboard from the concept sheet (garden/ui/experience,
+   1536 × 1024) is the page itself. The title sits on its top plank (x 415–1170, y 85–190) and
+   the notices on its boards (x 350–1240, y 210–920); sizes follow the board's width (cqw). */
+
+.view[data-kind=experience] {
+  width: min(1120px, 100%, calc((100svh - var(--bar-h) - 40px) * 1.5));
+  aspect-ratio: 3 / 2;
+  padding: 0;
+  background: var(--board) center / 100% 100% no-repeat;
+  box-shadow: 0 18px 40px #0009;
+  container-type: inline-size;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.view[data-kind=experience] .view-head { margin: 0; }
+
+.view[data-kind=experience] h2 {
+  position: absolute;
+  top: 8.3%;
+  right: 24%;
+  left: 27%;
+  display: grid;
+  place-items: center;
+  height: 10.2%;
+  color: #3a2216;
+  font: 700 max(24px, 3.8cqw) / 1 Georgia, 'Times New Roman', serif;
+  text-shadow: 0 1px #f3c48d80;
+}
+
+/* The way back sits in the night sky above the right of the board. */
+
+.notices {
+  position: absolute;
+  inset: 21.5% 20.5% 10.5% 23.5%;
+  display: grid;
+  align-content: start;
+  gap: .9cqw;
+  margin: 0;
+  padding: .6cqw;
+  overflow-y: auto;
+  list-style: none;
+  scrollbar-color: #c39656 #4e3023;
+}
+
+/* The paper keeps its torn edge and brass pins at any height: a 9-slice of notice.png. */
+.notice {
+  padding: 0 2.4cqw 0 1.6cqw;
+  border: 2cqw solid transparent;
+  border-image: var(--notice) 95 fill / 2cqw stretch;
+  color: #341e18;
+  filter: drop-shadow(0 3px 1px #30190e);
+}
+
+.notice summary {
+  display: flex;
+  align-items: center;
+  gap: 2.4cqw;
+  min-height: 5.6cqw;
+  cursor: pointer;
+  list-style: none;
+}
+
+.notice summary::-webkit-details-marker { display: none; }
+.notice summary::after { margin-left: auto; color: #6b4226; font-size: clamp(14px, 1.6cqw, 22px); content: '▾'; transition: transform 180ms ease-out; }
+.notice[open] summary::after { transform: rotate(180deg); }
+
+.notice summary img, .notice-resume > img { width: 7.5cqw; height: 5.6cqw; flex: none; object-fit: contain; transition: transform 180ms ease-out; }
+.notice summary:is(:hover, :focus-visible) img, .notice-resume:is(:hover, :focus-visible) > img { transform: rotate(-4deg) translateY(-2px); }
+.garden .notice summary:focus-visible { outline: 2px dashed #66362a; outline-offset: 4px; }
+
+.notice-name { display: grid; gap: .3em; }
+.view .notice h3 { margin: 0; font: 700 clamp(18px, 2.3cqw, 32px) / 1.1 Georgia, 'Times New Roman', serif; }
+.notice-role { font-size: clamp(14px, 1.5cqw, 21px); }
+
+/* Room on the right for the painted rose in the paper's corner. */
+/* The résumé notice is a link, not a fold-out: one line with an arrow. */
+.notice-resume { display: flex; align-items: center; gap: 2.4cqw; min-height: 5.6cqw; text-decoration: none; }
+.notice-resume .notice-open { margin-left: auto; color: #6b4226; font-size: clamp(16px, 2cqw, 26px); transition: transform 140ms ease-out; }
+.notice-resume:hover .notice-open { transform: translate(2px, -2px); }
+.garden .notice-resume:focus-visible { outline: 2px dashed #66362a; outline-offset: -6px; }
+
+.notice-detail { padding: .6em 7cqw .4em 0; font-size: clamp(15px, 1.35cqw, 19px); line-height: 1.5; animation: notice-unfold 260ms ease-out; transform-origin: top; }
+.view .notice-detail p { max-width: none; margin: .3em 0; }
+.notice-dates { font-weight: 700; }
+
+@keyframes notice-unfold {
+  from { opacity: .2; transform: translateY(-5px) scaleY(.94); }
+}
+
+/* Phones: the board fills the height and is cropped at the sides; the notices widen. */
+@media (max-width: 640px) {
+  .view[data-kind=experience] { width: 100%; height: calc(100svh - var(--bar-h) - 20px); aspect-ratio: auto; background-size: cover; container-type: normal; }
+  .view[data-kind=experience] h2 { right: 8%; left: 8%; font-size: 30px; }
+  .notices { inset: 21% 4% 9%; gap: 10px; }
+  .notice { padding: 2px 10px; border-width: 18px; border-image-width: 18px; }
+  .notice summary, .notice-resume { gap: 12px; min-height: 52px; }
+  .notice summary img, .notice-resume > img { width: 48px; height: 42px; }
+  .notice-detail { padding-right: 28px; }
+}
+
+/* About: the open album on the bench (garden/ui/about, 1536 × 1024) is the page itself. Its
+   left page runs x 115–730, its right page x 800–1445, both y 110–900; the brass photo corners
+   hold x 122–722, y 324–654. Sizes follow the album's width (cqw). */
+
+.view[data-kind=about] {
+  width: min(1120px, 100%, calc((100svh - var(--bar-h) - 40px) * 1.5));
+  aspect-ratio: 3 / 2;
+  padding: 0;
+  background: var(--album) center / 100% 100% no-repeat;
+  box-shadow: 0 18px 40px #0009;
+  color: #3a2216;
+  container-type: inline-size;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(14px, 1.45cqw, 19px);
+}
+
+.view[data-kind=about] .view-head { margin: 0; }
+
+/* The page title, and the second spread's, sit on the left page just under the painted
+   bookmark ribbon. */
+.view[data-kind=about] h2, .view .album-heading {
+  position: absolute;
+  top: 25%;
+  left: 10%;
+  margin: 0;
+  color: #3a2216;
+  font: 700 max(24px, 3.4cqw) / 1 Georgia, 'Times New Roman', serif;
+}
+
+/* The second spread's title sits inside the left page box, so the same spot in its terms. */
+.view .album-heading { top: 26%; left: 6.25%; }
+
+/* The second spread holds no photo, so its album has no brass corners. */
+.view[data-kind=about]:has(.album[data-spread="2"]) { background-image: var(--album-plain); }
+
+.view[data-kind=about]:has(.album[data-spread="2"]) h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.album-page { position: absolute; top: 10.7%; height: 77.2%; }
+.album-left { left: 7.5%; width: 40%; }
+/* The right page's text runs nearly the paper's full width, a couple more words to a line. */
+.album-right { left: 51.6%; width: 43.2%; display: grid; align-content: start; justify-items: center; padding: 3.5% 2.5% 0; overflow-y: auto; text-align: center; }
+
+/* Barry's photo in the painted corners: its own corners are cut away so the brass shows. */
+.album-photo {
+  position: absolute;
+  top: 27.1%;
+  left: 1.1%;
+  width: 97.6%;
+  height: 41.8%;
+  object-fit: cover;
+  clip-path: polygon(11% 0, 89% 0, 100% 20%, 100% 80%, 89% 100%, 11% 100%, 0 80%, 0 20%);
+}
+
+.view .album p { max-width: none; margin: 0; }
+.view .album .album-name { margin-top: 2%; font-size: max(24px, 3.2cqw); font-weight: 700; line-height: 1.1; }
+.album-name::after { display: block; width: 3.2em; height: 2px; margin: .45em auto .55em; background: #3a2216; content: ''; }
+.view .album .album-major { font-size: max(16px, 1.75cqw); line-height: 1.3; }
+.view .album .album-school { margin-top: .5em; font-size: max(14px, 1.45cqw); }
+.view .album .album-intro { margin-top: 1.1em; padding-top: .9em; border-top: 2px solid #3a221640; line-height: 1.5; text-align: left; }
+.view .album .album-interests { margin-top: .9em; font-style: italic; }
+
+/* The page turn: plain ink words in the corner of a page. */
+.album-turn {
+  margin-top: 1.1em;
+  padding: 4px 6px;
+  border: 0;
+  background: none;
+  color: #6b2d2a;
+  cursor: pointer;
+  font: italic 700 max(15px, 1.5cqw) Georgia, 'Times New Roman', serif;
+}
+
+/* Hover and keyboard focus underline the words; no box around them. */
+.album-turn:hover { text-decoration: underline; text-underline-offset: 4px; }
+.garden .album .album-turn:focus-visible { outline: none; text-decoration: underline 2px; text-underline-offset: 4px; }
+.album-left .album-turn { position: absolute; bottom: 4%; left: 4%; }
+
+/* On the second spread the two schools fill the left page under its title. */
+.album-schools {
+  position: absolute;
+  top: 36%;
+  left: 1.1%;
+  display: grid;
+  align-content: start;
+  gap: 1em;
+  width: 97.6%;
+  height: 55%;
+  margin: 0;
+  padding: 2% 5%;
+  font-size: max(14px, 1.45cqw);
+  line-height: 1.35;
+  list-style: none;
+}
+
+.album-schools li { display: grid; gap: .25em; padding-bottom: 1em; border-bottom: 2px solid #3a221640; }
+.album-schools li:last-child { border-bottom: 0; }
+.album-schools strong { font-size: max(18px, 2.1cqw); line-height: 1.15; }
+.album-small { color: #6b4a33; font-size: .9em; }
+
+.album-skills { width: 100%; text-align: left; }
+.album-skills + .album-skills { margin-top: 1.2em; }
+.view .album-skills h4 { margin: 0 0 .5em; font: 700 max(16px, 1.8cqw) Georgia, 'Times New Roman', serif; }
+.album-skills ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .45em 1em; margin: 0; padding: 0; list-style: none; }
+.album-skills li { display: flex; align-items: center; gap: .5em; }
+.album-skills img { flex: none; width: 1.3em; height: 1.3em; }
+.skill-mark { flex: none; width: 1.3em; height: 1.3em; border-radius: 3px; background: #3a221633; }
+
+/* Phones: only the album's right page, which is about a phone's shape, with the spread's
+   pages one under the other. */
+@media (max-width: 720px) {
+  .view[data-kind=about] { width: 100%; height: calc(100svh - var(--bar-h) - 20px); aspect-ratio: auto; overflow: hidden; background-size: auto 100%; background-position: 73% 0; container-type: normal; font-size: 16px; }
+  .view[data-kind=about] h2 { top: 108px; left: 28px; font-size: 30px; }
+  .view .album-heading { position: static; margin-bottom: 16px; font-size: 30px; }
+  /* Only the pages scroll, inside the paper and above the album's bottom edge. */
+  .album { position: absolute; inset: 156px 26px 13% 28px; overflow-y: auto; }
+  .album[data-spread="2"] { top: 108px; }
+  .album-page, .album-photo, .album-schools, .album-left .album-turn { position: static; width: auto; height: auto; padding: 0; }
+  .album-photo { width: 100%; aspect-ratio: 16 / 9; clip-path: none; box-shadow: 0 0 0 4px #c9a46a; }
+  .album-right { margin-top: 20px; }
+  .album-schools { margin: 0 0 12px; }
+}
+
+/* Contact: the postcard by the mailbox (garden/ui/contact, 1536 × 1024) is the page itself.
+   Its ruled lines run x 902–1390 at y 500, 591 and 685; each link sits on one. */
+
+.view[data-kind=contact] {
+  width: min(1120px, 100%, calc((100svh - var(--bar-h) - 40px) * 1.5));
+  aspect-ratio: 3 / 2;
+  padding: 0;
+  background: var(--postcard) center / 100% 100% no-repeat;
+  box-shadow: 0 18px 40px #0009;
+  color: #3a2216;
+  container-type: inline-size;
+  font-family: Georgia, 'Times New Roman', serif;
+}
+
+.view[data-kind=contact] .view-head { margin: 0; }
+.view[data-kind=contact] h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.view .postcard-note { position: absolute; top: 37%; left: 58.7%; margin: 0; font: italic max(15px, 1.7cqw) Georgia, 'Times New Roman', serif; }
+
+.postcard-links { position: absolute; inset: 0; margin: 0; padding: 0; list-style: none; pointer-events: none; }
+
+.postcard-links li { position: absolute; left: 58.7%; width: 31.8%; height: 7%; }
+.postcard-links li:nth-child(1) { top: calc(48.8% - 7%); }
+.postcard-links li:nth-child(2) { top: calc(57.7% - 7%); }
+.postcard-links li:nth-child(3) { top: calc(66.9% - 7%); }
+/* The résumé, one line further down; the card has no fourth rule, so it draws its own. */
+.postcard-links li:nth-child(4) { top: calc(76% - 7%); }
+.postcard-links li:nth-child(4)::after { position: absolute; right: 0; bottom: 0; left: 0; height: 2px; background: #b05a4c; content: ''; }
+
+.postcard-links a {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  padding: 0 .2em .15em;
+  color: #2e1d10;
+  font: italic max(18px, 2.3cqw) / 1 Georgia, 'Times New Roman', serif;
+  text-decoration: none;
+  pointer-events: auto;
+}
+
+.postcard-links a:hover { color: #8b2d2a; }
+.postcard-links a span { margin-left: .2em; transition: transform 140ms ease-out; }
+.postcard-links a:hover span { transform: translate(2px, -2px); }
+.garden .postcard-links a:focus-visible { outline: none; color: #8b2d2a; text-decoration: underline 2px; text-underline-offset: 6px; }
+
+/* Phones: the card's right half fills the screen, so the lines and the stamp show. */
+@media (max-width: 720px) {
+  .view[data-kind=contact] { width: 100%; height: min(calc(100svh - var(--bar-h) - 20px), 640px); aspect-ratio: auto; background-size: auto 100%; background-position: 82% 0; container-type: normal; }
+  .view .postcard-note { left: 12%; font-size: 18px; }
+  .postcard-links li { left: 12%; width: 80%; }
+  .postcard-links a { font-size: 24px; }
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+
+/* First-visit welcome sign: a parchment notice over the pond, the garden still moving
+   around it. Its torn edge is the outer 150 px of the concept's sign (1659 × 948, --sign),
+   which holds no lettering, drawn at the sign's scale (380 / 1659, so 34 px); the paper inside
+   is the sign's own cream, a little darker towards the burnt edge. */
+.welcome {
+  position: absolute;
+  left: 50%;
+  z-index: 3;
+  width: min(380px, calc(100% - 32px));
+  padding: 0 4px;
+  border: 34px solid transparent;
+  border-image: var(--sign) 150 / 34px stretch;
+  background: radial-gradient(ellipse at 50% 45%, #fce3ae 45%, #fbd99a 100%) padding-box;
+  filter: drop-shadow(0 10px 12px #0009);
+  color: var(--ink-dark);
+  transform: translateX(-50%);
+  animation: welcome-in 240ms steps(3);
+}
+
+/* Starts visible: only the position steps in. */
+@keyframes welcome-in {
+  from { transform: translate(-50%, 12px); }
+}
+
+.welcome h2 { margin: 0 0 8px; font: var(--pixel-text); }
+.welcome p { margin: 0 0 12px; line-height: 1.5; }
+
+/* The painted "Got it ▶" from the sign (x 985–1515, y 640–780), at the sign's scale, its
+   paper fading into the card's. */
+.welcome-got-it {
+  position: relative;
+  display: block;
+  width: 121px;
+  height: 32px;
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: transparent;
+  cursor: pointer;
+  font-size: 1px;
+  transition: left 120ms ease-out;
+}
+
+/* Only the ink shows: "darken" keeps whichever is darker, so the cut-out's paper gives way to
+   the card's and leaves no patch around the words. */
+.welcome-got-it::before {
+  position: absolute;
+  inset: 0;
+  border: 0 solid transparent;
+  border-image: var(--sign) 640 144 168 985 fill / 0 / 0 stretch;
+  mask-image: linear-gradient(90deg, #0000, #000 3%, #000 97%, #0000), linear-gradient(#0000, #000 12%, #000 88%, #0000);
+  mask-composite: intersect;
+  mix-blend-mode: darken;
+  content: '';
+}
+
+/* Nudged by position, not transform: a transform would isolate the blend from the card. */
+.welcome-got-it:hover { left: 3px; }
+.welcome-got-it:active { top: 1px; left: 3px; }
+/* Keyboard focus: an ink line under the words instead of a box around them. */
+.garden .welcome-got-it:focus-visible { outline: none; }
+.welcome-got-it:focus-visible::after {
+  position: absolute;
+  right: 12%;
+  bottom: -3px;
+  left: 4%;
+  height: 3px;
+  background: var(--ink-dark);
+  content: '';
+}
+
+/* The way back to the garden, in each page's own world. Its name for screen readers is "Back to
+   the garden"; Escape still leads there too. */
+
+.garden-return { position: absolute; z-index: 1; text-decoration: none; }
+
+/* The sign hangs below the lantern, clear of the notices. */
+.noticeboard-motion { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.return-sign { top: 45.7%; left: 4.8%; width: 19%; }
+.return-sign img { display: block; width: 100%; transform-origin: 50% 6%; }
+.return-sign:is(:hover, :focus-visible) img { animation: board-sign-swing 780ms ease-in-out; }
+@keyframes board-sign-swing {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-3deg); }
+  58% { transform: rotate(2deg); }
+  82% { transform: rotate(-.6deg); }
+}
+.garden .return-sign:focus-visible { outline: 2px dashed #ffe0a8; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .noticeboard-motion { display: none; }
+  .return-sign:is(:hover, :focus-visible) img { animation: none; }
+}
+
+/* Album: the crimson "← Garden" ribbon is painted on the album (x 40–415, y 170–256), so the
+   link lies over it, shaped like it, and the ribbon brightens on hover and keyboard focus. */
+.return-ribbon {
+  top: 16.6%;
+  left: 2.6%;
+  width: 24.4%;
+  height: 8.4%;
+  clip-path: polygon(0 0, 100% 0, 93% 50%, 100% 100%, 0 100%);
+  transition: backdrop-filter 160ms ease-out;
+}
+
+.return-ribbon span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+.return-ribbon:hover, .garden .return-ribbon:focus-visible { outline: none; backdrop-filter: brightness(1.22) saturate(1.1); }
+
+/* Phones see only the album's right page, so there the ribbon is drawn instead. */
+@media (max-width: 720px) {
+  .return-ribbon:not(.is-book) { width: auto; height: auto; clip-path: none; filter: drop-shadow(0 2px 1px #3a221666); }
+  .return-ribbon:not(.is-book):hover, .garden .return-ribbon:not(.is-book):focus-visible { backdrop-filter: none; }
+  .return-ribbon:not(.is-book) span {
+    position: static;
+    display: block;
+    width: auto;
+    height: auto;
+    padding: .35em 2.1em .35em .9em;
+    overflow: visible;
+    background: repeating-linear-gradient(90deg, #0000 0 2px, #ffffff0d 2px 3px), linear-gradient(#a3243a, #7d1a2c);
+    clip-path: polygon(0 0, 100% 0, calc(100% - 1.1em) 50%, 100% 100%, 0 100%);
+    color: #f6e3c3;
+    font: 700 18px / 1 Georgia, 'Times New Roman', serif;
+  }
+  .garden .return-ribbon:not(.is-book):focus-visible span { text-decoration: underline 2px; text-underline-offset: 3px; }
+}
+
+/* Project books: the "← Bookshelf" ribbon is painted across the book's top-left corner
+   (x 0–300, y 0–200). Phones show the book's left page at full height, so there the corner is
+   sized by the page's height instead. */
+.return-ribbon.is-book { top: 0; left: 0; width: 19.5%; height: 19.5%; clip-path: polygon(0 18%, 85% 0, 100% 40%, 25% 100%, 0 70%); }
+
+@media (max-width: 720px) {
+  .return-ribbon.is-book { width: 29.3cqh; height: 19.5cqh; }
+}
+
+/* Postcard: written in red ink in the card's top-left margin, above the picture. */
+.return-ink { top: 13.4%; left: 13%; color: #8b2d2a; font: italic max(24px, 3.4cqw) / 1 Georgia, 'Times New Roman', serif; }
+.return-ink:hover span { text-decoration: underline 2px; text-underline-offset: 5px; }
+.garden .return-ink:focus-visible { outline: none; }
+.garden .return-ink:focus-visible span { text-decoration: underline 2px; text-underline-offset: 5px; }
+
+@media (max-width: 720px) {
+  .return-sign { top: 4px; right: 10px; width: 120px; }
+  .return-sign-board { font-size: 18px; }
+  .return-ribbon:not(.is-book) { top: 64px; left: 22px; }
+  .return-ink { top: 15.5%; left: 11%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spine-spot, .landmark::before, .landmark::after, .landmark-outline, .tray-card, .tray-box,
+  .notice summary::after, .notice summary img, .return-sign, .return-ribbon { transition: none; }
+  .view, .welcome, .notice-detail { animation: none; }
+}

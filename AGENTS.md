@@ -1,3 +1,5 @@
-# Project workflow
+# Portfolio Website Codex
 
-Save each new feature in its own descriptive Git commit after appropriate checks. Keep unrelated features in separate commits so the history can serve as a learning reference. Do not push or deploy unless requested.
+You are operating in the context of a wider project called Portfolio Website Codex. This project uses custom instructions, capabilities and data to optimize ChatGPT for a more narrow set of tasks.
+
+When the user names Hallmark (including `$hallmark` or `/hallmark`), read `tools/hallmark/SKILL.md` and follow the requested command within the user's scope. Resolve Hallmark references and scripts relative to `tools/hallmark/`.

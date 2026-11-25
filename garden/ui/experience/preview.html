@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Experience noticeboard</title>
+<style>
+* { box-sizing: border-box }
+body { margin: 0; min-height: 100svh; display: grid; place-items: center; background: #121521; color: #341e18; font-family: Georgia, serif }
+main { position: relative; width: min(100%, 150svh); aspect-ratio: 3/2; background: url(noticeboard.png) center/100% 100%; container-type: inline-size }
+h1 { position: absolute; inset: 9% 25% auto; margin: 0; text-align: center; font-size: 4.5cqw }
+section { position: absolute; inset: 22% 20% 11% 23%; overflow-y: auto; padding: 1%; scrollbar-color: #c39656 #4e3023 }
+details { background: url(notice.png) center/100% 100%; margin-bottom: 2%; padding: 3% 7%; filter: drop-shadow(0 3px 1px #30190e); }
+summary { cursor: pointer; display: flex; align-items: center; gap: 4%; list-style: none; min-height: 5.6cqw }
+summary::-webkit-details-marker { display: none }
+summary:focus-visible { outline: 2px dashed #66362a; outline-offset: 2px }
+summary img { width: 13%; height: 5.2cqw; object-fit: contain; transition: transform .18s }
+summary:hover img, summary:focus-visible img { transform: rotate(-4deg) translateY(-2px) }
+strong, small { display: block }
+strong { font-size: clamp(18px,2.1cqw,34px) }
+small { margin-top: .2em; font-size: clamp(14px,1.3cqw,22px) }
+summary::after { content: '▾'; margin-left: auto }
+details[open] summary::after { transform: rotate(180deg) }
+.detail { padding: .5em 0 .6em; font: clamp(15px,1.3cqw,22px)/1.45 system-ui,sans-serif; animation: unfold .26s ease-out; transform-origin: top }
+.detail p { margin: .4em 0 }
+.dates { font-size: .85em; font-weight: 600 }
+.glow { position: absolute; pointer-events: none; inset: 20% 79% 54% 9%; border-radius: 50%; background: radial-gradient(ellipse,#ffc86166,transparent 70%); animation: glow 3.5s ease-in-out infinite alternate }
+@keyframes glow { from { opacity: .12 } to { opacity: .9 } }
+@keyframes unfold { from { opacity: .2; transform: translateY(-5px) scaleY(.93) } to { opacity: 1; transform: none } }
+@media(max-width:600px) {
+ main { width: 100%; height: 100svh; aspect-ratio: auto; background-size: auto 100% }
+ h1 { inset: 10% 5% auto; font-size: min(9vw,6svh) }
+ section { inset: 22% 4% 11%; padding: 2% }
+ summary { min-height: 52px } summary img { height: 42px } .glow { display: none }
+}
+@media(prefers-reduced-motion:reduce) { *, *::after { animation: none !important; transition: none !important } }
+</style>
+<main><span class="glow" aria-hidden="true"></span><h1>Experience</h1><section aria-label="Experience notices">
+<details name="role"><summary><img alt="" src="avary-ai.png"><span><strong>Avary AI</strong><small>Software Engineer</small></span></summary><div class="detail"><p class="dates">Oct 2026 – present</p><p>I build Spring Boot APIs that let clients create secure interview links and retrieve candidate evaluation reports. I implemented role-based access controls and request validation to keep each organization’s data separate, and moved file processing to background jobs so uploads don’t block other requests.</p></div></details>
+<details name="role"><summary><img alt="" src="bigbet-research.png"><span><strong>BigBet Research · Carnegie Mellon</strong><small>Research Assistant</small></span></summary><div class="detail"><p class="dates">May 2026 – Aug 2026</p><p>I built interactive calculus assessments that collected students’ answers and explanations. I developed a Node.js service that gave feedback on their reasoning, used Python to identify patterns in common mistakes, and refined the prompts and grading criteria used to assess responses.</p></div></details>
+<details name="role"><summary><img alt="" src="parasoft.png"><span><strong>Parasoft</strong><small>Technical Support Engineer</small></span></summary><div class="detail"><p class="dates">Jun 2025 – Jul 2025</p><p>I wrote unit and regression tests and investigated API failures in client software. I also reproduced and diagnosed race conditions and deadlocks in multithreaded C and C++ applications.</p></div></details>
+</section></main>
+</html>

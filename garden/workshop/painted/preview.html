@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Workshop animation preview</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#191619;color:#f6eddc;font:16px system-ui}main{max-width:1672px;margin:auto;padding:16px}.controls{display:flex;align-items:center;gap:12px 24px;flex-wrap:wrap;margin-bottom:14px}select,input{font:inherit;color-scheme:dark}#scene{position:relative;aspect-ratio:1672/941;overflow:hidden;background:#343139}#scene img{position:absolute;display:block;pointer-events:none}#scene img[hidden]{display:none}#background{inset:0;width:100%;height:100%}
+</style><main><div class="controls"><label>Workshop background <input id="file" type="file" accept="image/*"></label><label>Animation <select id="effect"><option value="all">All together</option></select></label></div><div id="scene"><img id="background" src="workshop-background.png" alt="Selected workshop artwork"></div></main>
+<script>
+const layers = [{"file":"sakura-breeze.apng","label":"Sakura breeze","rect":[1150,150,470,255]},{"file":"pond-ripples.apng","label":"Pond reflections","rect":[1310,423,362,85]},{"file":"waterfall.apng","label":"Waterfall","rect":[1540,374,94,73]},{"file":"lamp-glow.apng","label":"Desk lamp","rect":[315,425,445,335]},{"file":"terrain-crt.apng","label":"Terrain CRT","rect":[555,109,196,129]},{"file":"terminal-crt.apng","label":"Terminal CRT","rect":[857,160,114,87]},{"file":"mug-steam.apng","label":"Tea steam","rect":[387,596,74,66]}];
+const scene = document.querySelector('#scene');
+const select = document.querySelector('#effect');
+const plate = document.querySelector('#background');
+let currentURL;
+document.querySelector('#file').onchange = event => {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (currentURL) URL.revokeObjectURL(currentURL);
+  currentURL = URL.createObjectURL(file);
+  plate.src = currentURL;
+  plate.hidden = false;
+};
+for (const {file, label, rect} of layers) {
+  const img = document.createElement('img');
+  const [x, y, w, h] = rect;
+  img.src = file;
+  img.alt = label;
+  img.dataset.effect = file;
+  Object.assign(img.style, {left:x/1672*100+'%',top:y/941*100+'%',width:w/1672*100+'%',height:h/941*100+'%'});
+  scene.append(img);
+  select.add(new Option(label,file));
+}
+select.onchange = () => {
+  for (const img of scene.querySelectorAll('[data-effect]')) {
+    img.hidden = select.value !== 'all' && select.value !== img.dataset.effect;
+  }
+};
+</script></html>

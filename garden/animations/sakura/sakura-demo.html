@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Sakura sway demo</title>
+<style>
+  html, body { margin: 0; background: #0c0d14; }
+  /* the scene keeps its 16:9 shape and scales with the window */
+  .scene { position: relative; width: min(100vw, 177.78vh); aspect-ratio: 16 / 9; margin: 0 auto; }
+  .scene img, .scene canvas { position: absolute; image-rendering: pixelated; }
+  .scene img { inset: 0; width: 100%; height: 100%; }
+  /* overlay position as a fraction of the 640x360 native art: x 262, y 0, 250 x 214 */
+  #sakura { left: calc(262 / 640 * 100%); top: 0; width: calc(250 / 640 * 100%); height: calc(214 / 360 * 100%); }
+</style>
+</head>
+<body>
+<div class="scene">
+  <img src="garden-final-1920x1080.png" alt="">
+  <canvas id="sakura" width="250" height="214"></canvas>
+</div>
+<script>
+  // plays sakura-sway-sheet.png (12 columns of 250x214 frames, 72 frames, 12 fps) over the static scene
+  const cv = document.getElementById("sakura"), ctx = cv.getContext("2d");
+  const sheet = new Image();
+  sheet.src = "sakura-sway-sheet.png";
+  fetch("sakura-sway.json").then((r) => r.json()).catch(() => null).then((m) => {
+    const M = m || { frames: 72, columns: 12, frameWidth: 250, frameHeight: 214, fps: 12 };
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    sheet.decode().then(() => {
+      let start = performance.now();
+      const tick = (now) => {
+        const f = still ? 0 : Math.floor(((now - start) / 1000) * M.fps) % M.frames;
+        const sx = (f % M.columns) * M.frameWidth, sy = Math.floor(f / M.columns) * M.frameHeight;
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        ctx.drawImage(sheet, sx, sy, M.frameWidth, M.frameHeight, 0, 0, M.frameWidth, M.frameHeight);
+        if (!still) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  });
+</script>
+</body>
+</html>

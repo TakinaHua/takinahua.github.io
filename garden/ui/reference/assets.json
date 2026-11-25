@@ -1,0 +1,251 @@
+{
+  "referenceSize": [
+    1536,
+    1024
+  ],
+  "coordinateUnit": "reference pixels",
+  "assets": {
+    "menu-button": {
+      "origin": [
+        66,
+        81
+      ],
+      "size": [
+        185,
+        56
+      ],
+      "role": "Assembled Menu trigger"
+    },
+    "folded-map": {
+      "origin": [
+        68,
+        81
+      ],
+      "size": [
+        78,
+        50
+      ],
+      "role": "Folded map icon"
+    },
+    "menu-open": {
+      "origin": [
+        426,
+        125
+      ],
+      "size": [
+        313,
+        407
+      ],
+      "role": "Assembled open menu"
+    },
+    "icon-home": {
+      "origin": [
+        465,
+        145
+      ],
+      "size": [
+        88,
+        70
+      ],
+      "role": "Menu item icon"
+    },
+    "row-home": {
+      "origin": [
+        453,
+        144
+      ],
+      "size": [
+        267,
+        72
+      ],
+      "role": "Assembled menu row with original lettering"
+    },
+    "icon-projects": {
+      "origin": [
+        463,
+        225
+      ],
+      "size": [
+        91,
+        57
+      ],
+      "role": "Menu item icon"
+    },
+    "row-projects": {
+      "origin": [
+        453,
+        224
+      ],
+      "size": [
+        267,
+        59
+      ],
+      "role": "Assembled menu row with original lettering"
+    },
+    "icon-experience": {
+      "origin": [
+        467,
+        294
+      ],
+      "size": [
+        86,
+        63
+      ],
+      "role": "Menu item icon"
+    },
+    "row-experience": {
+      "origin": [
+        453,
+        293
+      ],
+      "size": [
+        267,
+        65
+      ],
+      "role": "Assembled menu row with original lettering"
+    },
+    "icon-about": {
+      "origin": [
+        467,
+        371
+      ],
+      "size": [
+        83,
+        53
+      ],
+      "role": "Menu item icon"
+    },
+    "row-about": {
+      "origin": [
+        453,
+        370
+      ],
+      "size": [
+        267,
+        55
+      ],
+      "role": "Assembled menu row with original lettering"
+    },
+    "icon-contact": {
+      "origin": [
+        469,
+        435
+      ],
+      "size": [
+        84,
+        76
+      ],
+      "role": "Menu item icon"
+    },
+    "row-contact": {
+      "origin": [
+        453,
+        434
+      ],
+      "size": [
+        267,
+        78
+      ],
+      "role": "Assembled menu row with original lettering"
+    },
+    "menu-rule": {
+      "origin": [
+        566,
+        215
+      ],
+      "size": [
+        132,
+        3
+      ],
+      "role": "Parchment row divider"
+    },
+    "tray-open": {
+      "origin": [
+        852,
+        149
+      ],
+      "size": [
+        608,
+        239
+      ],
+      "role": "Assembled two-project tray"
+    },
+    "tray-drawer": {
+      "origin": [
+        835,
+        459
+      ],
+      "size": [
+        641,
+        87
+      ],
+      "role": "Assembled Projects drawer"
+    },
+    "card-atlas": {
+      "origin": [
+        922,
+        205
+      ],
+      "size": [
+        221,
+        116
+      ],
+      "role": "Illustrated project card, frame included"
+    },
+    "card-fire-and-ice": {
+      "origin": [
+        1174,
+        205
+      ],
+      "size": [
+        223,
+        116
+      ],
+      "role": "Illustrated project card, frame included"
+    },
+    "tray-pull": {
+      "origin": [
+        1104,
+        149
+      ],
+      "size": [
+        103,
+        43
+      ],
+      "role": "Brass pull"
+    },
+    "menu-paper": {
+      "origin": [
+        426,
+        125
+      ],
+      "size": [
+        313,
+        407
+      ],
+      "role": "Empty menu backing for live rows"
+    },
+    "tray-empty": {
+      "origin": [
+        852,
+        149
+      ],
+      "size": [
+        608,
+        239
+      ],
+      "role": "Tray with reconstructed floor; includes handle"
+    },
+    "drawer-empty": {
+      "origin": [
+        835,
+        459
+      ],
+      "size": [
+        641,
+        87
+      ],
+      "role": "Drawer for a live Projects label; includes handle"
+    }
+  }
+}

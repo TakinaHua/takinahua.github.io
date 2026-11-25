@@ -1,0 +1,194 @@
+# Workshop animations: one element at a time (prompt for Codex)
+
+## How to use it
+1. Paste **The shared rules** below into Codex once, then **one** element brief at a time, in
+   order (1 to 8). Tell Codex to do only that element and stop.
+2. Look at its preview. When it is right, tell Claude ("the petals are done"); Claude checks
+   it in the site and blends it in, then you paste the next element.
+3. Redo an element as often as needed before moving on. Nothing else changes while you do.
+
+This is how the garden was made (waterfall, sakura, glow, pond, fireflies, cat): each element
+on its own, from the picture's own pixels, reviewed in the real scene before the next.
+
+---
+
+## The shared rules (paste once)
+
+> We are animating the painted workshop `garden/workshop/painted/workshop-background.png`
+> (1672 × 941). The website shows this picture smoothly scaled to fit the window, usually at
+> **50–70 % of its size**, and lays each animation over it at its exact rectangle. Work on one
+> element at a time and stop after each one for review.
+>
+> For every element:
+> - **Start from the picture's own pixels** in that element's rectangle and animate them, so
+>   the first frame matches the picture exactly and the layer blends in with no seam, halo or
+>   colour shift. Use colours sampled from the picture.
+> - **Transparent wherever a frame matches the picture.** Only changed pixels are opaque, the
+>   same as `animations/sakura/sakura-sway-sheet-clean.png` in the garden.
+> - **Visible at 50 % size.** The earlier set (`painted/*.apng`) changed only a few pixels per
+>   frame, so on the site it looked still. Every motion must read at half size: moving shapes
+>   at least 8–12 px across in the full-size picture, clear contrast against what is behind
+>   them, and motion that covers the element's area, not one corner of it.
+> - **Calm and looping.** Gentle, cosy motion, no flashing. The last frame must lead back into
+>   the first with no jump.
+> - **No text** anywhere in the animation.
+>
+> Deliver, in `garden/workshop/animations/<name>/`:
+> - `<name>-sheet.png`: all frames in one transparent sprite sheet, left to right, top to
+>   bottom, every frame the same size.
+> - `<name>.json`: `{ "x", "y", "width", "height", "frames", "columns", "frameMs" }`, where
+>   `x, y, width, height` place the frame in the 1672 × 941 picture.
+> - `<name>-in-scene.apng` (or `.gif`): the whole workshop at **50 %** with this element
+>   playing, so it can be judged at the size the site shows it.
+> - A short section in `garden/workshop/FINAL.md` (create it if missing) in the style of
+>   `garden/final/FINAL.md`: the file, position, frame size, frame count, timing, and one
+>   line on what moves.
+>
+> Leave everything else alone: no website code, no other element, no other folder.
+
+---
+
+## 1. Sakura and petals through the window (`petals`)
+
+> Element 1 only. Rectangle: the window view, about **x 1140–1672, y 0–520**. The sakura's
+> crown sways gently in gusts (a few pixels at the top, less near the trunk), and **8–12 pink
+> petals** drift down across the window, turning as they fall, some passing in front of the
+> trunk and the pond. 48 frames at 100 ms (4.8 s loop). Keep the window frame and its bars
+> still; petals pass behind the bars.
+
+### Fix 1a: petals in the sky (paste after element 1)
+
+> Redo element 1 (`petals`) only. Pink petals show up in the open night sky of the window
+> view, where nothing could have dropped them. In the current sheet, pink pixels sit over sky
+> in 44 of the 48 frames, up to about 1,400 per frame, mostly in the top 140 px of the
+> rectangle.
+> - Each petal must **start inside the sakura's crown** and fall from there: down and a little
+>   sideways with the breeze, past the trunk, into the pond area. No petal appears, or
+>   drifts, in open sky above the crown or to its right.
+> - The crown's sway must stay within **2–3 px of its edge in the picture**. Blossom must not
+>   swing out into the sky.
+> - Keep everything else as it is: same rectangle (1140, 0, 532 × 520), 48 frames at 100 ms,
+>   transparent where a frame matches the picture, petals passing behind the window bars.
+> Replace `animations/petals/petals-sheet.png`, `petals.json` and `petals-in-scene.apng`, and
+> update the petals section of `garden/workshop/FINAL.md`.
+
+## 2. Pond and waterfall through the window (`pond`)
+
+> Element 2 only. Rectangles: the waterfall at about **x 1535–1640, y 370–450**, and the pond
+> at about **x 1300–1672, y 420–520**. The waterfall's water slides down continuously with
+> foam churning where it lands; the pond carries slow horizontal shimmer lines and the pink
+> reflections of the sakura waver. The lily pads stay still. 48 frames at 100 ms.
+
+## 3. Desk lamp (`lamp`)
+
+> Element 3 only. Rectangle: the lamp and its pool of light, about **x 300–780, y 380–770**
+> (the lamp head, the bulb, and the warm light on the wall, the desk and the left of the map).
+> The bulb and its light breathe slowly in brightness and warmth (a soft flicker, never a
+> strobe); the pool of light on the desk and map grows and shrinks a little with it. Nothing
+> in the scene moves position. 48 frames at 100 ms.
+
+## 4. Tea steam (`steam`)
+
+> Element 4 only. Rectangle: above the cherry-blossom mug, about **x 350–480, y 540–680**.
+> Two or three soft ribbons of pale steam rise from the mug, curl, and fade out by the top of
+> the rectangle; each ribbon about 10–16 px wide in the full picture so it shows at half size.
+> 48 frames at 100 ms.
+
+### Fix 4a: steam over the lamplight (paste after element 4)
+
+> Redo element 4 (`steam`) only. The site draws the steam **on top of the lamp animation**
+> (`animations/lamp/lamp-sheet.png`), which brightens and dims this whole area. The current
+> steam sheet is fully opaque: about 5,000 pixels per frame are solid colours worked out
+> against the plain, unlit picture, and about 1,500 of them are plain copies of it. Over the
+> lamp they cover its glow, so a dull, steam-shaped patch shows around the wisps when the lamp
+> is bright (on average 30–90 colour levels darker than the lit picture there).
+> - Make the steam a **see-through layer**: each wisp is pale cream-white with partial alpha
+>   (about 15–45 % at its densest, fading to 0 at its edges and as it rises). No pixel may be a
+>   copy of the picture behind it; everywhere that is not steam is fully transparent.
+> - Then it looks the same over the plain picture and over any lamp frame. Check it by laying
+>   it over the lamp sheet's brightest and dimmest frames (the lamp frame's offset for this
+>   rectangle is x 50, y 160).
+> - Keep everything else: same rectangle (350, 540, 130 × 140), 48 frames at 100 ms, three
+>   staggered wisps about 10–16 px wide, visible at half size, frame 0 leading on from frame 47.
+> Make `steam-in-scene.apng` with the lamp animation playing under the steam. Replace
+> `animations/steam/steam-sheet.png`, `steam.json` and `steam-in-scene.apng`, and update the
+> steam section of `garden/workshop/FINAL.md`.
+
+## 5. The mountain screen, Fire and Ice (`fire-and-ice`)
+
+> Element 5 only. Rectangle: the inside of the left monitor's screen, about **x 553–752,
+> y 106–240**. This screen stands for the game Fire and Ice: lava glows and pulses on the left
+> slope, snow drifts on the icy peaks, and a slow scan line runs down the screen, like an old
+> CRT. Keep the monitor's case still. 48 frames at 100 ms.
+
+### Fix 5a: natural lava instead of the grid (paste after element 5)
+
+> Redo element 5 (`fire-and-ice`), and this time also repaint the screen in the background
+> picture. The left mountain on the monitor is drawn as an orange **wireframe grid** (straight
+> lines in a triangle mesh) in `painted/workshop-background.png` itself, so the animation can
+> only make the grid glow, and it reads as a computer model, not lava.
+> 1. **Repaint the screen in the picture.** In `painted/workshop-background.png`, change only
+>    the inside of the left monitor's glass (about x 556–749, y 109–236). Replace the wire mesh
+>    with a **volcano of dark basalt rock**: a glowing crater at the top and two or three lava
+>    rivers that wind and branch down the slope, with soft orange light on the rock around
+>    them and a little smoke above the crater. Keep the icy peaks, the sunset sky and the
+>    overall layout, so the screen still reads as fire on the left and ice on the right. Same
+>    painted style and lighting as the rest of the picture; the monitor case, the shelf and
+>    every pixel outside the glass stay exactly as they are. Save the full 1672 × 941 picture
+>    back as `workshop-background.png` and note the changed rectangle in `FINAL.md`.
+> 2. **Animate the new screen**, starting from the repainted pixels: bright pulses travel
+>    **down** the lava rivers like slow flowing lava, the crater glow swells and settles, a few
+>    embers drift up, and the smoke curls. Keep the snow blowing over the icy peaks and the
+>    faint scan line. Changes stay inside the glass; transparent wherever a frame matches the
+>    repainted picture; frame 0 transparent and frame 47 leading back into it.
+> Same rectangle (553, 106, 199 × 134), 48 frames at 100 ms. Replace
+> `animations/fire-and-ice/fire-and-ice-sheet.png`, `fire-and-ice.json` and
+> `fire-and-ice-in-scene.apng` (made over the repainted picture), and update the Fire and Ice
+> section of `garden/workshop/FINAL.md`.
+
+## 6. The terminal screen, LoL Ping (`lol-ping`)
+
+> Element 6 only. Rectangle: the inside of the right monitor's screen, about **x 855–975,
+> y 158–250**. This screen stands for LoL Ping, a small app: green terminal lines type in one
+> after another, the block cursor blinks, the lines scroll up by one, and a soft CRT flicker
+> runs across. Lines about 4–6 px tall in the full picture, so they read at half size. Keep
+> the monitor's case still. 48 frames at 100 ms (or a longer loop if the typing needs it).
+
+---
+
+## 7. Ivy on the left post (`ivy`)
+
+> Element 7 only. Rectangle: the ivy that climbs the post by the door, about **x 175–430,
+> y 0–590** (the wide clusters at the top reach to about x 430; below y 380 the vine stays left
+> of x 300). A light breeze comes in through the door: the leaves **stir and tilt** a few
+> degrees on their stems, one cluster after another from the top down, and the long trailing
+> strands sway a little. Leaf tips move about **4–8 px** in the full picture (the big top
+> leaves the most, the leaves near the stem the least), so it reads at half size without
+> looking windy. The vine's main stem and the post stay still.
+> - Where a leaf moves off a spot, paint the wood behind it from the picture's own colours, so
+>   no gap or ghost leaf shows.
+> - **Below y 380, change nothing at x 300 or more.** The lamp animation brightens and dims
+>   the wall there and is drawn underneath the ivy; ivy pixels in that area would cover its
+>   light.
+> - Transparent wherever a frame matches the picture, frame 0 transparent, frame 47 leading
+>   back into it. 48 frames at 120 ms (a 5.8 s loop, slower than the others, like a breeze).
+> Make `ivy-in-scene.apng` with the lamp animation playing too.
+
+## 8. Lucky cat on the shelf (`cat`)
+
+> Element 8 only. Rectangle: the beckoning cat and its red cushion on the shelf, about
+> **x 860–965, y 325–440**. The cat's raised paw (upper right, about x 930–955, y 338–372)
+> **waves**: it swings down and forward from the shoulder and back up, the classic slow
+> beckon, **two full waves per loop**, each easing in and out. At the bottom of the swing the
+> paw tip is about **10–14 px** lower than in the picture, so the wave reads at half size. The
+> gold bell on its collar catches the light with a small glint on each downstroke. The head,
+> body, cushion and tassels stay still.
+> - Where the paw moves away, paint the wall and shelf behind it from the picture's own
+>   colours, so no second paw or gap shows.
+> - Transparent wherever a frame matches the picture, frame 0 transparent, frame 47 leading
+>   back into it. 48 frames at 100 ms.
+
+## What happens after each element
+Claude adds the sheet to the workshop scene at its rectangle, checks it at desktop and phone
+size, makes sure it stops for visitors who turn motion off, and tells you if anything lines up
+badly or reads too faint, before you send the next one.

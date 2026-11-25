@@ -1,0 +1,24 @@
+{
+  "image": "sakura-sway-sheet.png",
+  "frames": 72,
+  "columns": 12,
+  "frameWidth": 250,
+  "frameHeight": 214,
+  "fps": 12,
+  "loop": true,
+  "pixelScale": 3,
+  "note": "Frame size and position are in native art pixels (the 1920x1080 image is a 3x upscale of 640x360). Draw at 3x with nearest-neighbour scaling.",
+  "position": {
+    "native": {
+      "x": 262,
+      "y": 0
+    },
+    "at1920x1080": {
+      "x": 786,
+      "y": 0,
+      "width": 750,
+      "height": 642
+    }
+  },
+  "transparency": "Each frame is transparent wherever it matches the static background, so it overlays garden-final-1920x1080.png exactly."
+}
