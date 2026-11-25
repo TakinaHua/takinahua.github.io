@@ -17,6 +17,7 @@ import menuButton from '../../garden/ui/reference/menu-button.png'
 import menuMap from '../../garden/ui/reference/folded-map.png'
 import menuOpen from '../../garden/ui/reference/menu-open.png'
 import trayBox from '../../garden/ui/reference/tray-empty.png'
+import welcomeSignArt from '../../garden/ui/reference/welcome-sign.webp'
 import trayDrawer from '../../garden/ui/reference/tray-drawer.png'
 import cardAtlas from '../../garden/ui/reference/card-atlas.png'
 import cardFireAndIce from '../../garden/ui/reference/card-fire-and-ice.png'
@@ -27,6 +28,9 @@ import cardEvOptimization from '../../garden/ui/card-ev-optimization.png'
 export const logoIcon = sakura
 export const menuArt = { button: menuButton, map: menuMap, open: menuOpen }
 export const trayArt = { box: trayBox, drawer: trayDrawer }
+// The concept's first-visit sign (1659 × 948). The site uses its torn edge and its painted
+// "Got it ▶"; the words in between are the site's own.
+export const welcomeSign = welcomeSignArt
 
 // Pictures whose frame is part of the art, and pictures the site frames itself.
 export const projectCards: Partial<Record<string, { src: string, framed: boolean }>> = {

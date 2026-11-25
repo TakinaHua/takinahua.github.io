@@ -7,7 +7,7 @@ import type { GardenLayout } from './fit'
 import GardenCanvas from './GardenCanvas'
 import GardenView from './GardenView'
 import { useSilhouettes } from './silhouettes'
-import { logoIcon, menuArt, navIcons } from './icons'
+import { logoIcon, menuArt, navIcons, welcomeSign } from './icons'
 import ProjectTray from './ProjectTray'
 import { trayGeometry } from './trayGeometry'
 import { returnSpot, sceneFor, scenes, SHELF_ID } from './scenes'
@@ -27,7 +27,8 @@ const chrome = (width: number) => {
 
 const TRAY_KEY = 'garden-tray-open'
 function readTrayOpen() {
-  try { return localStorage.getItem(TRAY_KEY) !== 'false' } catch { return true }
+  // Closed until the visitor opens it; after that, as they last left it.
+  try { return localStorage.getItem(TRAY_KEY) === 'true' } catch { return false }
 }
 function saveTrayOpen(open: boolean) {
   try { localStorage.setItem(TRAY_KEY, String(open)) } catch { /* storage unavailable: keep it for this visit */ }
@@ -196,6 +197,7 @@ export default function Garden() {
         '--bar-h': `${bar}px`,
         '--tray-h': `${tray}px`,
         '--tray-head': `${trayHead}px`,
+        '--tray-now': `${inGarden ? (trayOpen ? tray : trayHead) : 0}px`,
       } as CSSProperties}
     >
       <header className="topbar">
@@ -237,16 +239,17 @@ export default function Garden() {
         </nav>
       </header>
 
-      {/* First visit only: says who made the garden and how to use it, without covering it. */}
+      {/* First visit only: says who made the garden and how to use it, without covering it. The
+          torn edge and the painted "Got it ▶" come from the concept sheet's sign. */}
       {welcomeVisible && (
         <aside className="welcome" aria-labelledby={welcomeId}
-          style={{ bottom: (trayOpen ? tray : trayHead) + (layout.pan ? 80 : 16) }}>
+          style={{ bottom: (trayOpen ? tray : trayHead) + (layout.pan ? 80 : 16), '--sign': `url(${welcomeSign})` } as CSSProperties}>
           <h2 id={welcomeId}>Hi, I’m Barry.</h2>
           <p>
             I build software and study math at Carnegie Mellon. This is my garden: {touch ? 'tap' : 'click'} anything
             that glows, or use the menu above.
           </p>
-          <button type="button" className="pixel-button" onClick={dismissWelcome}>Got it</button>
+          <button type="button" className="welcome-got-it" onClick={dismissWelcome}>Got it</button>
         </aside>
       )}
 
