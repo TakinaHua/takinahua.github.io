@@ -1,6 +1,6 @@
 // The three scenes that share the stage: the garden, the projects workshop inside the hut, and
 // the bookshelf close-up. Art by Codex in /garden (see garden/workshop/REQUEST.md). The garden
-// and the shelf are 640 × 360 pixel art; the workshop is a painted 1672 × 941 picture.
+// is 640 × 360 pixel art; the workshop (1672 × 941) and the shelf (1536 × 1024) are painted.
 import type { Route } from '../router'
 import { projects } from '../content'
 import { hoverOutlines, landmarks, layers as gardenLayers, masterUrl as gardenMaster } from './layers'
@@ -8,8 +8,7 @@ import { ART_HEIGHT, ART_WIDTH } from './layers'
 import type { Layer } from './layers'
 import type { Art } from './fit'
 import workshopMaster from '../../garden/workshop/painted/workshop-background.webp'
-import shelfMaster from '../../garden/workshop/shelf-640x360.png'
-import shelfManifest from '../../garden/workshop/shelf.json'
+import shelfMaster from '../../garden/workshop/shelf-painted.webp'
 
 export type SceneId = 'garden' | 'workshop' | 'shelf'
 
@@ -76,10 +75,22 @@ const workshopSpots: Spot[] = [
   workshopSpot('door', '/', 'Back to the garden: the Garden sign on the door', [96, 520, 144, 296]),
 ]
 
-const shelfSpots: Spot[] = shelfManifest.spines.flatMap(({ id, x, y, width, height }) => {
-  const project = projects.find(item => item.id === id)
-  return project ? [{ id, href: `/projects/${id}`, label: project.title, title: project.title, area: { x, y, w: width, h: height } }] : []
-})
+// The bookshelf close-up is a painted 1536 × 1024 picture: four standing books, one for each
+// project, each titled on its spine, and a crimson "← Workshop" ribbon painted top left.
+const SHELF_SPINES: [string, number[]][] = [
+  ['atlas', [112, 268, 190, 484]],
+  ['fire-and-ice', [302, 222, 164, 530]],
+  ['lol-ping', [468, 282, 132, 470]],
+  ['ev-optimization', [602, 345, 116, 407]],
+]
+
+const shelfSpots: Spot[] = [
+  ...SHELF_SPINES.flatMap(([id, [x, y, w, h]]) => {
+    const project = projects.find(item => item.id === id)
+    return project ? [{ id, href: `/projects/${id}`, label: project.title, title: project.title, area: { x, y, w, h } }] : []
+  }),
+  { id: 'workshop', href: '/projects', label: 'Back to the workshop', area: { x: 112, y: 70, w: 520, h: 118 } },
+]
 
 export const scenes: Record<SceneId, Scene> = {
   garden: {
@@ -92,8 +103,8 @@ export const scenes: Record<SceneId, Scene> = {
     back: { href: '/', label: 'Back to the garden', inPicture: true },
   },
   shelf: {
-    id: 'shelf', title: 'All projects', master: shelfMaster, art: PIXEL_ART, layers: [], spots: shelfSpots, outlines: {},
-    focusX: 230, back: { href: '/projects', label: 'Back to the workshop' },
+    id: 'shelf', title: 'All projects', master: shelfMaster, art: { width: 1536, height: 1024, pixel: false }, layers: [],
+    spots: shelfSpots, outlines: {}, focusX: 560, back: { href: '/projects', label: 'Back to the workshop', inPicture: true },
   },
 }
 

@@ -408,21 +408,20 @@
 .garden[data-pan] .scene-back { top: auto; bottom: 16px; left: 50%; transform: translateX(-50%); }
 .garden[data-pan] .scene-back:active { transform: translate(-50%, 1px); }
 
-/* Spine titles stay on the font's grid: 27px, or 54px once the shelf is drawn at 4x or more. */
+/* The painted bookshelf: each project's title runs up its book's spine in gilt serif, sized with
+   the picture; the book glows like the workshop's objects under the cursor or focus. */
 .spine-spot {
   display: grid;
   place-items: center;
-  color: var(--parchment);
-  font: var(--pixel-text);
-  font-size: max(27px, round(down, calc(var(--art-scale) * 13.5px), 27px));
+  color: #f6dfa8;
+  font: 700 max(15px, calc(var(--art-scale) * 38px)) / 1 Georgia, 'Times New Roman', serif;
   text-decoration: none;
-  text-shadow: 0 2px var(--wood-dark);
+  text-shadow: 0 1px 0 #3b2414, 0 0 6px #3b2414cc;
   writing-mode: vertical-rl;
-  transition: transform 140ms steps(2);
+  transition: color 140ms ease-out;
 }
 
-.spine-spot:is(:hover, :focus-visible) { outline: 3px solid var(--parchment); outline-offset: 2px; transform: translateY(-6px); }
-.spine-spot:active { transform: translateY(-2px); }
+.spine-spot:is(:hover, :focus-visible) { color: #fff3cf; }
 
 .open-book {
   display: grid;
