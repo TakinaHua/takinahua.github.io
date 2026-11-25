@@ -116,11 +116,9 @@ export function sceneFor(route: Route): SceneId {
   return route.projectId === SHELF_ID ? 'shelf' : 'workshop'
 }
 
-// Project books open from the desk return there; the others came from the shelf.
-export function bookBack(projectId: string) {
-  return projects.find(project => project.id === projectId)?.onDesk
-    ? { href: '/projects', label: 'Back to the workshop' }
-    : { href: `/projects/${SHELF_ID}`, label: 'Back to the bookshelf' }
+// Every project book is shelved: its "← Bookshelf" ribbon leads there, wherever it was opened.
+export function bookBack() {
+  return { href: `/projects/${SHELF_ID}`, label: 'Back to the bookshelf' }
 }
 
 // The spot to return focus to when the visitor comes back from `from` to `scene`.

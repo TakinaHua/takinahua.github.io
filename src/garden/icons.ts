@@ -53,6 +53,12 @@ export const albumArt = { withCorners: albumGarden, plain: albumGardenPlain }
 import postcardBackground from '../../garden/ui/contact/postcard-background.webp'
 export const postcardArt = postcardBackground
 
+// Each project's book (garden/ui/project, 1536 × 1024): a "← Bookshelf" ribbon painted top left
+// (x 0–300, y 0–200), the left page for words (x 90–740, y 110–900) and a brass-cornered frame on
+// the right page for the picture (x 827–1405, y 322–640).
+import bookBackground from '../../garden/ui/project/book-background.webp'
+export const projectBookArt = bookBackground
+
 export const logoIcon = sakura
 export const menuArt = { button: menuButton, map: menuMap, open: menuOpen }
 export const trayArt = { box: trayBox, drawer: trayDrawer }

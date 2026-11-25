@@ -5,35 +5,38 @@ import { education, interests, intro, links, projects, roles, skillGroups } from
 import type { Project } from '../content'
 import { navigate, routeClick } from '../router'
 import type { Route } from '../router'
-import { albumArt, experienceArt, postcardArt } from './icons'
+import { albumArt, experienceArt, postcardArt, projectBookArt } from './icons'
 import { bookBack } from './scenes'
 import NoticeboardMotion from './NoticeboardMotion'
 import gardenSign from '../../garden/ui/experience/garden-sign.png'
 
 type ViewRoute = Exclude<Route, { view: 'garden' }>
 
+// A link written in ink on the page, or a quiet note when it is not ready yet.
 function ActionSlot({ href, label, external }: { href?: string, label: string, external?: boolean }) {
   if (!href) {
-    return <span className="pixel-button is-unavailable"><span className="visually-hidden">{label}: </span>Coming soon</span>
+    return <span className="book-action is-unavailable"><span className="visually-hidden">{label}: </span>{label} · coming soon</span>
   }
   return external
-    ? <a className="pixel-button" href={href} target="_blank" rel="noreferrer">{label}</a>
-    : <a className="pixel-button" href={href}>{label}</a>
+    ? <a className="book-action" href={href} target="_blank" rel="noreferrer">{label} <span aria-hidden="true">↗</span><span className="visually-hidden"> (opens in a new tab)</span></a>
+    : <a className="book-action" href={href}>{label} <span aria-hidden="true">↗</span></a>
 }
 
+// The project's own book, taken down from the shelf (garden/ui/project): its words on the left
+// page, its picture in the brass-cornered frame on the right.
 function ProjectBook({ project }: { project: Project }) {
   return (
-    <article className="open-book">
-      <div className="book-page">
-        {project.dates && <p className="view-meta"><DateRange {...project.dates} /></p>}
-        <p>{project.description}</p>
-        <p className="view-meta">{project.tech}</p>
+    <article className="project-book">
+      <div className="book-page book-text">
+        {project.dates && <p className="book-dates"><DateRange {...project.dates} /></p>}
+        <p className="book-description">{project.description}</p>
+        <p className="book-tech">{project.tech}</p>
         <div className="book-actions">
-          <ActionSlot href={project.demo} label="Try demo" />
+          <ActionSlot href={project.demo} label="Try the demo" />
           <ActionSlot href={project.repo} label="View on GitHub" external />
         </div>
       </div>
-      <div className="book-page book-picture">
+      <div className="book-picture">
         {project.image
           ? <img src={project.image.src} width={project.image.width} height={project.image.height} alt={project.image.alt} />
           : <p className="picture-placeholder">{project.mediaNote ?? 'Picture coming soon'}</p>}
@@ -167,7 +170,14 @@ function Postcard() {
 
 // The way back to the garden belongs to each page's world: a wooden arrow sign hung on the
 // noticeboard, a ribbon bookmark in the album, and words inked on the postcard.
-function GardenReturn({ kind, href, label }: { kind: 'experience' | 'about' | 'contact', href: string, label: string }) {
+function GardenReturn({ kind, href, label }: { kind: 'experience' | 'about' | 'contact' | 'projects', href: string, label: string }) {
+  if (kind === 'projects') {
+    return (
+      <a className="garden-return return-ribbon is-book" href={href} onClick={routeClick} aria-label={label}>
+        <span aria-hidden="true">← Bookshelf</span>
+      </a>
+    )
+  }
   if (kind === 'experience') {
     return (
       <a className="garden-return return-sign" href={href} onClick={routeClick} aria-label={label}>
@@ -190,7 +200,7 @@ function resolve(route: ViewRoute): { title: string, back: { href: string, label
       // Only project books open over the workshop; the workshop and the shelf are scenes.
       const project = projects.find(item => item.id === route.projectId)
       if (!project) return null
-      return { title: project.title, back: bookBack(project.id), body: <ProjectBook project={project} /> }
+      return { title: project.title, back: bookBack(), body: <ProjectBook project={project} /> }
     }
     case 'experience': return { title: 'Experience', back: home, body: <Noticeboard /> }
     case 'about': return { title: 'About me', back: home, body: <Album /> }
@@ -232,13 +242,12 @@ export default function GardenView({ route }: { route: ViewRoute }) {
         style={route.view === 'experience'
           ? { '--board': `url(${experienceArt.board})`, '--notice': `url(${experienceArt.notice})` } as CSSProperties
           : route.view === 'about' ? { '--album': `url(${albumArt.withCorners})`, '--album-plain': `url(${albumArt.plain})` } as CSSProperties
-          : route.view === 'contact' ? { '--postcard': `url(${postcardArt})` } as CSSProperties : undefined}>
+          : route.view === 'contact' ? { '--postcard': `url(${postcardArt})` } as CSSProperties
+          : { '--book': `url(${projectBookArt})` } as CSSProperties}>
         {route.view === 'experience' && <NoticeboardMotion />}
         <header className="view-head">
           <h2 id="view-title" ref={headingRef} tabIndex={-1}>{view.title}</h2>
-          {route.view === 'projects'
-            ? <a className="pixel-button" href={view.back.href} onClick={routeClick}>{view.back.label}</a>
-            : <GardenReturn kind={route.view} href={view.back.href} label={view.back.label} />}
+          <GardenReturn kind={route.view} href={view.back.href} label={view.back.label} />
         </header>
         {view.body}
       </section>
