@@ -5,7 +5,7 @@ import { education, interests, intro, links, projects, roles, skillGroups } from
 import type { Project } from '../content'
 import { navigate, routeClick } from '../router'
 import type { Route } from '../router'
-import { albumArt, experienceArt } from './icons'
+import { albumArt, experienceArt, postcardArt } from './icons'
 import { bookBack } from './scenes'
 
 type ViewRoute = Exclude<Route, { view: 'garden' }>
@@ -133,14 +133,18 @@ function Album() {
   )
 }
 
+// The postcard by the mailbox (garden/ui/contact): "Thanks for visiting." is painted on its
+// left; the ways to reach Barry are written on the three ruled lines on its right.
 function Postcard() {
+  const newTab = <span className="visually-hidden"> (opens in a new tab)</span>
   return (
     <div className="postcard">
-      <p>Thanks for visiting the garden. I’d love to hear from you.</p>
+      <p className="visually-hidden">Thanks for visiting the garden.</p>
+      <p className="postcard-note">I’d love to hear from you.</p>
       <ul className="postcard-links">
-        <li><a className="pixel-button" href={links.email}>Email</a></li>
-        <li><a className="pixel-button" href={links.linkedin} target="_blank" rel="noreferrer">LinkedIn</a></li>
-        <li><a className="pixel-button" href={links.github} target="_blank" rel="noreferrer">GitHub</a></li>
+        <li><a href={links.email}>Email <span aria-hidden="true">↗</span></a></li>
+        <li><a href={links.linkedin} target="_blank" rel="noreferrer">LinkedIn <span aria-hidden="true">↗</span>{newTab}</a></li>
+        <li><a href={links.github} target="_blank" rel="noreferrer">GitHub <span aria-hidden="true">↗</span>{newTab}</a></li>
       </ul>
     </div>
   )
@@ -194,7 +198,8 @@ export default function GardenView({ route }: { route: ViewRoute }) {
       <section className="view" data-kind={route.view} aria-labelledby="view-title"
         style={route.view === 'experience'
           ? { '--board': `url(${experienceArt.board})`, '--notice': `url(${experienceArt.notice})` } as CSSProperties
-          : route.view === 'about' ? { '--album': `url(${albumArt})` } as CSSProperties : undefined}>
+          : route.view === 'about' ? { '--album': `url(${albumArt})` } as CSSProperties
+          : route.view === 'contact' ? { '--postcard': `url(${postcardArt})` } as CSSProperties : undefined}>
         <header className="view-head">
           <h2 id="view-title" ref={headingRef} tabIndex={-1}>{view.title}</h2>
           <a className="pixel-button" href={view.back.href} onClick={routeClick}>{view.back.label}</a>

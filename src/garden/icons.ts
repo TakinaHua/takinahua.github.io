@@ -43,6 +43,11 @@ export const experienceArt = {
 import albumBackground from '../../garden/ui/about/album-background.webp'
 export const albumArt = albumBackground
 
+// The Contact page: the postcard by the mailbox (garden/ui/contact, 1536 × 1024), its garden
+// picture and "Thanks for visiting." painted on the left, three ruled lines on the right.
+import postcardBackground from '../../garden/ui/contact/postcard-background.webp'
+export const postcardArt = postcardBackground
+
 export const logoIcon = sakura
 export const menuArt = { button: menuButton, map: menuMap, open: menuOpen }
 export const trayArt = { box: trayBox, drawer: trayDrawer }
