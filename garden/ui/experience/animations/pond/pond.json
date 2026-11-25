@@ -1,0 +1,10 @@
+{
+  "x": 1312,
+  "y": 615,
+  "width": 224,
+  "height": 160,
+  "frames": 48,
+  "columns": 8,
+  "frameMs": 100,
+  "playback": "loop"
+}
