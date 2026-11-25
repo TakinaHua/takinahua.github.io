@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- A remote call: a request going one way and the reply coming back. -->
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="12">
+    <path stroke="#7b5ea7" d="M16 44h84M80 24l20 20-20 20"/>
+    <path stroke="#c2507a" d="M112 84H28M48 64 28 84l20 20"/>
+  </g>
+</svg>

@@ -389,7 +389,7 @@
   cursor: default;
 }
 
-.plain-list, .skills, .postcard-links { margin: 0; padding: 0; list-style: none; }
+.postcard-links { margin: 0; padding: 0; list-style: none; }
 
 /* Workshop and bookshelf scenes: a back control under the bar, a name over each object on
    hover and focus (always shown on touch screens), and the shelf's spines titled in pixel type. */
@@ -533,37 +533,120 @@
   .notice-detail { padding-right: 28px; }
 }
 
-/* Album */
+/* About: the open album on the bench (garden/ui/about, 1536 × 1024) is the page itself. Its
+   left page runs x 115–730, its right page x 800–1445, both y 110–900; the brass photo corners
+   hold x 122–722, y 324–654. Sizes follow the album's width (cqw). */
 
-.album { display: grid; gap: 16px; }
-
-.album-spread {
-  display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  gap: 16px;
-  align-items: start;
-  padding: 16px;
-  background: #2f6f6a;
-  box-shadow: inset 0 0 0 4px #1d4643;
+.view[data-kind=about] {
+  width: min(1120px, 100%, calc((100svh - var(--bar-h) - 40px) * 1.5));
+  aspect-ratio: 3 / 2;
+  padding: 0;
+  background: var(--album) center / 100% 100% no-repeat;
+  box-shadow: 0 18px 40px #0009;
+  color: #3a2216;
+  container-type: inline-size;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(14px, 1.45cqw, 19px);
 }
 
-.album-spread > img { width: 100%; height: auto; box-shadow: 0 0 0 6px #fbf1dc; }
-.album-page { padding: 18px; background: #fbf1dc; }
-.album-page h3 + * { margin-bottom: 14px; }
-.plain-list { display: grid; gap: 12px; }
-.plain-list li { display: grid; }
-.plain-list span { color: var(--ink-soft); font-size: 14px; }
+.view[data-kind=about] .view-head { margin: 0; }
+.view[data-kind=about] .view-head .pixel-button { position: absolute; top: 12px; right: 12px; z-index: 1; }
 
-.skills { display: flex; flex-wrap: wrap; gap: 6px; }
+/* The page title, and the second spread's, sit at the top of the left page. */
+.view[data-kind=about] h2, .view .album-heading {
+  position: absolute;
+  top: 13%;
+  left: 10%;
+  margin: 0;
+  color: #3a2216;
+  font: 700 max(24px, 3.4cqw) / 1 Georgia, 'Times New Roman', serif;
+}
 
-.skills li {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
-  background: var(--parchment);
-  box-shadow: 0 0 0 2px var(--parchment-shade);
-  font-size: 14px;
+.view[data-kind=about]:has(.album[data-spread="2"]) h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.album-page { position: absolute; top: 10.7%; height: 77.2%; }
+.album-left { left: 7.5%; width: 40%; }
+/* The right page's text runs nearly the paper's full width, a couple more words to a line. */
+.album-right { left: 51.6%; width: 43.2%; display: grid; align-content: start; justify-items: center; padding: 3.5% 2.5% 0; overflow-y: auto; text-align: center; }
+
+/* Barry's photo in the painted corners: its own corners are cut away so the brass shows. */
+.album-photo {
+  position: absolute;
+  top: 27.1%;
+  left: 1.1%;
+  width: 97.6%;
+  height: 41.8%;
+  object-fit: cover;
+  clip-path: polygon(11% 0, 89% 0, 100% 20%, 100% 80%, 89% 100%, 11% 100%, 0 80%, 0 20%);
+}
+
+.view .album p { max-width: none; margin: 0; }
+.view .album .album-name { margin-top: 2%; font-size: max(24px, 3.2cqw); font-weight: 700; line-height: 1.1; }
+.album-name::after { display: block; width: 3.2em; height: 2px; margin: .45em auto .55em; background: #3a2216; content: ''; }
+.view .album .album-major { font-size: max(16px, 1.75cqw); line-height: 1.3; }
+.view .album .album-school { margin-top: .5em; font-size: max(14px, 1.45cqw); }
+.view .album .album-intro { margin-top: 1.1em; padding-top: .9em; border-top: 2px solid #3a221640; line-height: 1.5; text-align: left; }
+.view .album .album-interests { margin-top: .9em; font-style: italic; }
+
+/* The page turn: plain ink words in the corner of a page. */
+.album-turn {
+  margin-top: 1.1em;
+  padding: 4px 6px;
+  border: 0;
+  background: none;
+  color: #6b2d2a;
+  cursor: pointer;
+  font: italic 700 max(15px, 1.5cqw) Georgia, 'Times New Roman', serif;
+}
+
+/* Hover and keyboard focus underline the words; no box around them. */
+.album-turn:hover { text-decoration: underline; text-underline-offset: 4px; }
+.garden .album .album-turn:focus-visible { outline: none; text-decoration: underline 2px; text-underline-offset: 4px; }
+.album-left .album-turn { position: absolute; bottom: 4%; left: 4%; }
+
+/* On the second spread the brass corners hold the two schools, like a mounted card. */
+.album-schools {
+  position: absolute;
+  top: 27.1%;
+  left: 1.1%;
+  display: grid;
+  align-content: center;
+  gap: .6em;
+  width: 97.6%;
+  height: 41.8%;
+  margin: 0;
+  padding: 2% 12%;
+  font-size: max(13px, 1.25cqw);
+  line-height: 1.35;
+  list-style: none;
+}
+
+.album-schools li { display: grid; gap: .15em; padding-bottom: .6em; border-bottom: 2px solid #3a221640; }
+.album-schools li:last-child { border-bottom: 0; }
+.album-schools strong { font-size: max(16px, 1.7cqw); line-height: 1.15; }
+.album-small { color: #6b4a33; font-size: .9em; }
+
+.album-skills { width: 100%; text-align: left; }
+.album-skills + .album-skills { margin-top: 1.2em; }
+.view .album-skills h4 { margin: 0 0 .5em; font: 700 max(16px, 1.8cqw) Georgia, 'Times New Roman', serif; }
+.album-skills ul { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .45em 1em; margin: 0; padding: 0; list-style: none; }
+.album-skills li { display: flex; align-items: center; gap: .5em; }
+.album-skills img { flex: none; width: 1.3em; height: 1.3em; }
+.skill-mark { flex: none; width: 1.3em; height: 1.3em; border-radius: 3px; background: #3a221633; }
+
+/* Phones: only the album's right page, which is about a phone's shape, with the spread's
+   pages one under the other. */
+@media (max-width: 720px) {
+  .view[data-kind=about] { width: 100%; height: calc(100svh - var(--bar-h) - 20px); aspect-ratio: auto; overflow: hidden; background-size: auto 100%; background-position: 73% 0; container-type: normal; font-size: 16px; }
+  .view[data-kind=about] h2 { top: 64px; left: 28px; font-size: 30px; }
+  .view .album-heading { position: static; margin-bottom: 16px; font-size: 30px; }
+  /* Only the pages scroll, inside the paper and above the album's bottom edge. */
+  .album { position: absolute; inset: 112px 26px 13% 28px; overflow-y: auto; }
+  .album[data-spread="2"] { top: 64px; }
+  .album-page, .album-photo, .album-schools, .album-left .album-turn { position: static; width: auto; height: auto; padding: 0; }
+  .album-photo { width: 100%; aspect-ratio: 16 / 9; clip-path: none; box-shadow: 0 0 0 4px #c9a46a; }
+  .album-right { margin-top: 20px; }
+  .album-schools { margin: 0 0 12px; }
 }
 
 /* Postcard */
@@ -586,7 +669,7 @@
 }
 
 @media (max-width: 700px) {
-  .open-book, .album-spread { grid-template-columns: minmax(0, 1fr); }
+  .open-book { grid-template-columns: minmax(0, 1fr); }
 }
 
 /* First-visit welcome sign: a parchment notice over the pond, the garden still moving

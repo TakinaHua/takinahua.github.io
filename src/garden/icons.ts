@@ -39,6 +39,10 @@ export const experienceArt = {
   roles: { 'avary-ai': roleAvary, 'bigbet-research': roleBigBet, 'parasoft': roleParasoft } as Partial<Record<string, string>>,
 }
 
+// The About page: the open album on the bench (garden/ui/about, 1536 × 1024).
+import albumBackground from '../../garden/ui/about/album-background.webp'
+export const albumArt = albumBackground
+
 export const logoIcon = sakura
 export const menuArt = { button: menuButton, map: menuMap, open: menuOpen }
 export const trayArt = { box: trayBox, drawer: trayDrawer }

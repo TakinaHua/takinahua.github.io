@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import type { CSSProperties, ReactNode } from 'react'
 import DateRange from '../DateRange'
 import { education, interests, intro, links, projects, roles, skillGroups } from '../content'
 import type { Project } from '../content'
 import { navigate, routeClick } from '../router'
 import type { Route } from '../router'
-import { experienceArt } from './icons'
+import { albumArt, experienceArt } from './icons'
 import { bookBack } from './scenes'
 
 type ViewRoute = Exclude<Route, { view: 'garden' }>
@@ -66,45 +66,68 @@ function Noticeboard() {
   )
 }
 
+// The album on the bench (garden/ui/about): two spreads, "About me" with Barry's photo held in
+// the painted brass corners, and "Education & skills". A page turn moves between them and keeps
+// keyboard focus on the turn.
 function Album() {
-  return (
-    <div className="album">
-      <div className="album-spread">
-        <img src="/images/barry-waterfront.jpg" alt="Barry Hua standing by the waterfront" width="1200" height="675" />
-        <div className="album-page">
-          <p>{intro}</p>
-          <h3>Interests</h3>
-          <p>{interests.join(', ')}</p>
+  const [spread, setSpread] = useState<1 | 2>(1)
+  const turnRef = useRef<HTMLButtonElement>(null)
+  const turned = useRef(false)
+
+  useEffect(() => {
+    if (turned.current) turnRef.current?.focus({ preventScroll: true })
+  }, [spread])
+
+  const turn = (to: 1 | 2) => { turned.current = true; setSpread(to) }
+
+  if (spread === 1) {
+    return (
+      <div className="album" data-spread="1" key="1">
+        <div className="album-page album-left">
+          <img className="album-photo" src="/images/barry-waterfront.jpg" alt="Barry Hua standing by the waterfront"
+            width="1200" height="675" />
+        </div>
+        <div className="album-page album-right">
+          <p className="album-name">Barry Hua</p>
+          <p className="album-major">Computational and Applied Mathematics</p>
+          <p className="album-school">{education[0].school}</p>
+          <p className="album-intro">{intro}</p>
+          <p className="album-interests">{interests.join(' · ')}</p>
+          <button type="button" className="album-turn" ref={turnRef} onClick={() => turn(2)}>Education &amp; skills ›</button>
         </div>
       </div>
-      <div className="album-spread">
-        <div className="album-page">
-          <h3>Education</h3>
-          <ul className="plain-list">
-            {education.map(entry => (
-              <li key={entry.school}>
-                <strong>{entry.school}</strong>
-                <span>{entry.place}{entry.dates && <>, <DateRange {...entry.dates} /></>}</span>
-                <span>{entry.detail}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-        <div className="album-page">
-          {skillGroups.map(group => (
-            <div key={group.title}>
-              <h3>{group.title}</h3>
-              <ul className="skills">
-                {group.skills.map(([name, icon]) => (
-                  <li key={name}>
-                    {icon && <img src={`/skills/${icon}.svg`} width="20" height="20" alt="" />}
-                    {name}
-                  </li>
-                ))}
-              </ul>
-            </div>
+    )
+  }
+
+  return (
+    <div className="album" data-spread="2" key="2">
+      <div className="album-page album-left">
+        <h3 className="album-heading">Education &amp; skills</h3>
+        <ul className="album-schools">
+          {education.map(entry => (
+            <li key={entry.school}>
+              <strong>{entry.school}</strong>
+              <span>{entry.detail}</span>
+              <span className="album-small">{entry.place}{entry.dates && <>, <DateRange {...entry.dates} /></>}</span>
+            </li>
           ))}
-        </div>
+        </ul>
+        <button type="button" className="album-turn" ref={turnRef} onClick={() => turn(1)}>‹ About me</button>
+      </div>
+      <div className="album-page album-right">
+        {skillGroups.map(group => (
+          <div key={group.title} className="album-skills">
+            <h4>{group.title}</h4>
+            <ul>
+              {group.skills.map(([name, icon]) => (
+                <li key={name}>
+                  {icon ? <img src={`/skills/${icon}.svg`} width="20" height="20" alt="" /> : <span className="skill-mark" aria-hidden="true" />}
+                  {name}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </div>
     </div>
   )
@@ -171,7 +194,7 @@ export default function GardenView({ route }: { route: ViewRoute }) {
       <section className="view" data-kind={route.view} aria-labelledby="view-title"
         style={route.view === 'experience'
           ? { '--board': `url(${experienceArt.board})`, '--notice': `url(${experienceArt.notice})` } as CSSProperties
-          : undefined}>
+          : route.view === 'about' ? { '--album': `url(${albumArt})` } as CSSProperties : undefined}>
         <header className="view-head">
           <h2 id="view-title" ref={headingRef} tabIndex={-1}>{view.title}</h2>
           <a className="pixel-button" href={view.back.href} onClick={routeClick}>{view.back.label}</a>

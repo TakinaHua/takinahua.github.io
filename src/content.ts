@@ -41,14 +41,14 @@ export const skillGroups: { title: string, skills: [string, string | null][] }[]
     title: 'Programming languages',
     skills: [
       ['Python', 'python'], ['Java', 'java'], ['C', 'c'], ['C++', 'cplusplus'],
-      ['TypeScript', 'typescript'], ['JavaScript', 'javascript'], ['SQL', null], ['Bash', 'bash'],
+      ['TypeScript', 'typescript'], ['JavaScript', 'javascript'], ['SQL', 'sql'], ['Bash', 'bash'],
     ],
   },
   {
     title: 'Frameworks and tools',
     skills: [
       ['Spring Boot', 'spring'], ['NumPy', 'numpy'], ['Pandas', 'pandas'], ['PyTorch', 'pytorch'],
-      ['Node.js', 'nodejs'], ['React.js', 'react'], ['Django', 'django'], ['RPC', null],
+      ['Node.js', 'nodejs'], ['React.js', 'react'], ['Django', 'django'], ['RPC', 'rpc'],
       ['MySQL', 'mysql'], ['PostgreSQL', 'postgresql'], ['HTML/CSS', 'html5'],
     ],
   },
